@@ -17,7 +17,7 @@ class BuyContractService {
       // 저장된 토큰 가져오기
       const token = getAuthToken(this.tokenPath);
       
-      const response = await axios.patch('http://13.125.188.151:3000/order/update-contract-state', {
+      const response = await axios.patch('http://3.37.206.255:3000/order/update-contract-state', {
         orderId: orderId,
         contractState: contractState
       }, {

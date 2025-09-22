@@ -3,13 +3,13 @@ const { Builder, By, until, Key } = require('selenium-webdriver');
 const axios = require('axios');
 const { getAuthToken } = require('../common/commonService');
 const path = require('path');
-
+const os = require('os');
 const { app } = require('electron');
 class LongtermLoginService {
   constructor(webdriverManager) {
     this.webdriverManager = webdriverManager;
     // this.driver = null;
-    this.tokenPath = path.join(app.getPath('userData'), 'auth_token.json');
+    this.tokenPath = path.join(os.homedir(), 'Documents', 'hanq_token', 'auth_token.json');
   }
 
   async createSession(cookies_dict, companyId) {
@@ -27,7 +27,7 @@ class LongtermLoginService {
         return { success: false, error: '필수 쿠키 누락' };
       }
       
-      const response = await axios.post('http://localhost:3000/company/session', {
+      const response = await axios.post('http://3.37.206.255:3000/company/session', {
         jsessionid: cookies_dict.JSESSIONID,
         ccsession: cookies_dict.ccsession,
         companyId: companyId

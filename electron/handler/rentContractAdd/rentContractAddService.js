@@ -16,7 +16,7 @@ class RentContractAddService extends LookupService{
   async updateRentContract(items,rentStartOrigin) {
     try {
       const token = getAuthToken(this.tokenPath);
-      const response = await axios.patch(`http://13.125.188.151:3000/rent/${items.rentId}`, {
+      const response = await axios.patch(`http://3.37.206.255:3000/rent/${items.rentId}`, {
         rentStart: rentStartOrigin,
         rentEnd: items.contractEndDate
       },
@@ -34,7 +34,7 @@ class RentContractAddService extends LookupService{
   async createAddContract(items) {
     try {
       const token = getAuthToken(this.tokenPath);
-      const response = await axios.post('http://13.125.188.151:3000/rent/create/add-contract', {
+      const response = await axios.post('http://3.37.206.255:3000/rent/create/add-contract', {
         items: items
       },
         {

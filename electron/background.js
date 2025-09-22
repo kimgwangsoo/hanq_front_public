@@ -15,6 +15,7 @@ const ipcManager = require('./ipcManager')
 const WebdriverManager = require('./webdriverManager')
 const path = require('path')
 const fs = require('fs')
+const os = require('os')
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 const isPackaged = app.isPackaged;            // 이게 가장 정확함
@@ -127,7 +128,7 @@ async function createWindow() {
   })
 
   // 개발자 도구 열기
-  // win.webContents.openDevTools();
+  win.webContents.openDevTools();
 
   // 윈도우를 최대화하여 전체화면으로 표시
   win.maximize()
@@ -138,7 +139,7 @@ async function createWindow() {
   const devUrl = process.env.ELECTRON_START_URL || process.env.WEBPACK_DEV_SERVER_URL
   // if (devUrl) {
     // 개발 모드 - 외부 dev 서버 사용
-     await win.loadURL("http://13.125.188.151:8080/")
+     await win.loadURL("http://3.37.206.255:8080/")
     // await win.loadURL("http://localhost:8080/")
   // } else {
   //   // 프로덕션 모드 - 빌드된 파일 로드
@@ -488,8 +489,12 @@ ipcMain.on('webdriver-check', async (event) => {
 // 토큰 저장 함수
 const saveAuthToken = (token) => {
   try {
-    const tokenPath = path.join(app.getPath('userData'), 'auth_token.json');
+    const tokenDir = path.join(os.homedir(), 'Documents', 'hanq_token');
+    const tokenPath = path.join(os.homedir(), 'Documents', 'hanq_token', 'auth_token.json');
     const authData = { token, timestamp: Date.now() };
+    if (!fs.existsSync(tokenDir)) {
+      fs.mkdirSync(tokenDir, { recursive: true }); // 중첩 폴더도 생성
+    }
     fs.writeFileSync(tokenPath, JSON.stringify(authData));
     console.log('인증 토큰이 저장되었습니다.',tokenPath);
   } catch (error) {
@@ -501,7 +506,7 @@ const saveAuthToken = (token) => {
 ipcMain.on('save-auth-token', (event, token) => {
   if (token === null) {
     // 토큰이 null이면 파일 삭제 (로그아웃)
-    const tokenPath = path.join(app.getPath('userData'), 'auth_token.json');
+    const tokenPath = path.join(os.homedir(), 'Documents', 'hanq_token', 'auth_token.json');
     if (fs.existsSync(tokenPath)) {
       try {
         fs.unlinkSync(tokenPath);
