@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+    <head>
+        <meta http_quiv="content-type" content="text/html; charset=utf-8">
+        <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    </head>
+    <style type="text/css">
+        .flexe {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+        .br {
+            border-right: 1px solid #000;
+        }
+        .bl {
+            border-left: 1px solid #000;
+        }
+        .bd {
+            border-bottom: 1px solid #000;
+        }
+        .bt {
+            border-top: 1px solid #000;
+        }
+
+        .tg {
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+        .tg td {
+            border-color: black;
+            border-style: solid;
+            border-width: 1px;
+            font-family: Arial, sans-serif;
+            padding: 5px 1px;
+            word-break: normal;
+        }
+        .tg th {
+            border-color: black;
+            border-style: solid;
+            border-width: 1px;
+            font-family: Arial, sans-serif;
+            font-weight: normal;
+            overflow: hidden;
+            padding: 8px 5px;
+            word-break: normal;
+        }
+        .tg .tg-lboi {
+            text-align: left;
+            vertical-align: middle;
+        }
+        .tg .tg-123x {
+            font-size: 100%;
+            text-align: left;
+            vertical-align: middle;
+        }
+        .tg .tg-9wq8 {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .tg .tg-baqh {
+            text-align: center;
+            vertical-align: top;
+        }
+        .tg .tg-0pky {
+            text-align: left;
+            vertical-align: top;
+        }
+        .tg .tg-0lax {
+            text-align: left;
+            vertical-align: top;
+        }
+        .tg .tg-lqy6 {
+            text-align: right;
+            vertical-align: top;
+        }
+        .tg .tg-c3ow {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .info_container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .info_item {
+            display: flex;
+            justify-content: flex-start;
+            width: 41%;
+        }
+
+        .info_label {
+            display: inline-block;
+            width: 80px; /* 라벨 너비를 설정하여 일치시킴 */
+            text-align: right; /* 오른쪽 정렬 */
+            margin-right: 10px; /* 라벨과 값 사이의 간격 */
+        }
+    </style>
+    <body>
+        <table class="tg">
+            <!-- <thead>
+            
+            </thead> -->
+            <tbody>
+                <tr class="client_num_area" style="display:none;">
+                    <td style="border:none;">NO.<span class="client_num"></span></td>
+                </tr>
+                <tr>
+                    <td class="tg-c3ow tit" colspan="7" style="font-weight:bold; font-size:22px;">개인정보 수집 및 활용 동의서</td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky">수급자</td>
+                    <td class="tg-0pky"><span class="name"></span>&nbsp;&nbsp;&nbsp;</td>
+                    <td class="tg-0pky">생년월일</td>
+                    <td class="tg-0pky"><span class="resident"></span>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                    <td class="tg-0pky">상품명(판매)</td>
+                    <td class="tg-0pky bcnt"></td>
+                    <td class="tg-0pky">건</td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky">인정번호</td>
+                    <td class="tg-0pky number"></td>
+                    <td class="tg-0pky">작성일</td>
+                    <td class="tg-0pky pdfday"></td>
+                    <td class="tg-0pky">상품명(대여)</td>
+                    <td class="tg-0pky rcnt"></td>
+                    <td class="tg-0pky">건</td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky" colspan="7">1. 수집 및 이용목적</td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky" colspan="7">○ 대상자 급여 관련에 필요한 정보의 활용<br><br>○ 제공기관 간의 서비스 연계와 관련사항에 관한 대상자 정보 제공<br><br>○ 관련기관 정보제공 요청 시 제공<br><br>○ 장기요양계획, 욕구조사, 장기요양서비스 질 수준 향상 등에 활용</td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky" colspan="7">2. 수집항목</td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky" colspan="7">○ 장기요양급여 관련 정보<br><br>○ 이용자의 지역관계 관련 정보<br><br>○ 관련기관 정보제공 요청 시 필요한 정보<br><br>○ 기타 목적사업 수행에 필요한 정보</td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky" colspan="7">3. 개인정보의 보유 및 이용기간</td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky" colspan="7">○ 수급자의 급여제공에 관한 자료 등 개인정보 자료는 노인장기요양보험법 시행 규칙 제 27조에 따라 급여가 종료된 날로부터 <br>5년간 보유(보존)하고, 수집한 개인정보 항목의 이용기간은 급여계약 종료일까지로 한다.<br></td>
+                </tr>
+                <tr style="text-align:center;">
+                    <td class="tg-0pky" colspan="7" style="text-align:center;">※ 상기 본인은 위와 같이 개인정보를 제공하고 활용하는것에 동의합니다. ※</td>
+                </tr>
+                <tr>
+                    <td class="tg-c3ow" colspan="7" style="position:relative">
+                        <div style="display:flex; flex-direction:column; align-items: center; justify-content: center;">
+                            <div>*복지용구 신청자(대리인)*</div><br/>
+                            <div>수급자와의 관계 :<span class="pdfguardtarget clientRelationInfo"></span></div><br/>
+                            <div style="position:relative">성함 :&nbsp;&nbsp;&nbsp;&nbsp;<span class="pdfguardname guardName"></span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="pdfsign clientSignBox">(서명 또는 인)</span></div>
+                        </div>
+                    </td>
+                </tr>
+                <!-- <tr>
+                <td class="tg-c3ow" colspan="7">수급자와의 관계 :<span class="pdfguardtarget"></span></td>
+                </tr>
+                <tr>
+                <td class="tg-c3ow" colspan="7">성함 :&nbsp;&nbsp;&nbsp;&nbsp;<span class="pdfguardname"></span>&nbsp;&nbsp;&nbsp;&nbsp;(서명 또는 인)</td>
+                </tr> -->
+                <tr>
+                    <td class="tg-c3ow" colspan="7">■정보수집 · 이용기관■</td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky" colspan="7">
+                        <div class="info_container">
+                            <div class="info_item" style="position:relative;">
+                                <div class="info_label">회사명 :</div>
+                                <span class="companyName"></span>
+                                <span class="pdfsign2 privacy_custum" style="margin-left:10px; display:none;"></span>
+                            </div>
+                            <div class="info_item">
+                                <div class="info_label">대표자 :</div>
+                                <span class="ceoName"></span>
+                            </div>
+                            <div class="info_item">
+                                <div class="info_label">연락처 :</div>
+                                <span class="phone"></span>
+                            </div>
+                            <div class="info_item">
+                                <div class="info_label">팩스 :</div>
+                                <span class="fax"></span>
+                            </div>
+                            <div class="info_item">
+                                <div class="info_label">주소 :</div>
+                                <span class="address"></span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <!-- <tr>
+                <td class="tg-0pky" colspan="7">대표자 :&nbsp;&nbsp;&nbsp;&nbsp;<span class="ceo"></span></td>
+                </tr>
+                <tr>
+                <td class="tg-0pky" colspan="7">연락처 :&nbsp;&nbsp;&nbsp;&nbsp;<span class=""></span></td>
+                </tr>
+                <tr>
+                <td class="tg-0pky" colspan="7">팩스 :&nbsp;&nbsp;&nbsp;&nbsp;<span class=""></span></td>
+                </tr>
+                <tr>
+                <td class="tg-0pky" colspan="7">주소 :&nbsp;&nbsp;&nbsp;&nbsp;<span class=""></span></td>
+                </tr> -->
+            </tbody>
+        </table>
+    </body>
+</html>

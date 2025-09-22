@@ -1,0 +1,2210 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="//code.jquery.com/jquery-latest.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+<script src="https://fastly.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script src="https://fastly.jsdelivr.net/npm/less@4"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.5/xlsx.full.min.js"></script>
+<script src="https://fastly.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<head>
+  <title>
+    <%= title %>
+  </title>
+</head>
+
+<script>
+  function Mobile() { return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent); }
+</script>
+<style>
+  @font-face {
+    font-family: 'Source Sans Pro';
+    font-style: normal;
+    font-weight: 200;
+    src: url(https://fonts.gstatic.com/s/sourcesanspro/v21/6xKydSBYKcSV-LCoeQqfX1RYOo3i94_wlxdr.ttf) format('truetype');
+  }
+
+  @font-face {
+    font-family: 'Source Sans Pro';
+    font-style: normal;
+    font-weight: 300;
+    src: url(https://fonts.gstatic.com/s/sourcesanspro/v21/6xKydSBYKcSV-LCoeQqfX1RYOo3ik4zwlxdr.ttf) format('truetype');
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 300;
+  }
+
+  .wrapper {
+    background: #f1f1f1;
+    background: linear-gradient(to top right, #fdfdfd 0%, #ffffff 100%);
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1000px;
+    margin-top: -500px;
+    overflow: hidden;
+    color: white;
+    z-index: -999;
+  }
+
+  .bg-bubbles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .bg-bubbles li {
+    position: absolute;
+    list-style: none;
+    display: block;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(0, 33, 104, 0.15);
+    bottom: -160px;
+    -webkit-animation: square 25s infinite;
+    animation: square 25s infinite;
+    transition-timing-function: linear;
+  }
+
+  .bg-bubbles li:nth-child(1) {
+    left: 10%;
+  }
+
+  .bg-bubbles li:nth-child(2) {
+    left: 20%;
+    width: 80px;
+    height: 80px;
+    -webkit-animation-delay: 2s;
+    animation-delay: 2s;
+    -webkit-animation-duration: 17s;
+    animation-duration: 17s;
+  }
+
+  .bg-bubbles li:nth-child(3) {
+    left: 25%;
+    -webkit-animation-delay: 4s;
+    animation-delay: 4s;
+  }
+
+  .bg-bubbles li:nth-child(4) {
+    left: 40%;
+    width: 60px;
+    height: 60px;
+    -webkit-animation-duration: 22s;
+    animation-duration: 22s;
+    background-color: rgba(0, 0, 0, 0.25);
+  }
+
+  .bg-bubbles li:nth-child(5) {
+    left: 70%;
+  }
+
+  .bg-bubbles li:nth-child(6) {
+    left: 80%;
+    width: 120px;
+    height: 120px;
+    -webkit-animation-delay: 3s;
+    animation-delay: 3s;
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+
+  .bg-bubbles li:nth-child(7) {
+    left: 32%;
+    width: 160px;
+    height: 160px;
+    -webkit-animation-delay: 7s;
+    animation-delay: 7s;
+  }
+
+  .bg-bubbles li:nth-child(8) {
+    left: 55%;
+    width: 20px;
+    height: 20px;
+    -webkit-animation-delay: 15s;
+    animation-delay: 15s;
+    -webkit-animation-duration: 40s;
+    animation-duration: 40s;
+  }
+
+  .bg-bubbles li:nth-child(9) {
+    left: 25%;
+    width: 10px;
+    height: 10px;
+    -webkit-animation-delay: 2s;
+    animation-delay: 2s;
+    -webkit-animation-duration: 40s;
+    animation-duration: 40s;
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+
+  .bg-bubbles li:nth-child(10) {
+    left: 90%;
+    width: 160px;
+    height: 160px;
+    -webkit-animation-delay: 11s;
+    animation-delay: 11s;
+  }
+
+  @-webkit-keyframes square {
+    0% {
+      transform: translateY(0);
+    }
+
+    100% {
+      transform: translateY(-700px) rotate(600deg);
+    }
+  }
+
+  @keyframes square {
+    0% {
+      transform: translateY(0);
+    }
+
+    100% {
+      transform: translateY(-700px) rotate(600deg);
+    }
+  }
+
+  @font-face {
+    font-family: 'Material Icons';
+    font-style: normal;
+    font-weight: 400;
+    src: url(path/to/MaterialIcons-Regular.eot);
+    /* For IE6-8 */
+    src:
+      local('Material Icons'),
+      local('MaterialIcons-Regular'),
+  }
+
+  .material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 16px;
+    /* Preferred icon size */
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+    /* Support for all WebKit browsers. */
+    -webkit-font-smoothing: antialiased;
+    /* Support for Safari and Chrome. */
+    text-rendering: optimizeLegibility;
+    /* Support for Firefox. */
+    -moz-osx-font-smoothing: grayscale;
+    /* Support for IE. */
+    font-feature-settings: 'liga';
+  }
+
+  .title {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .title span {
+    font-size: 30px;
+  }
+
+  .search-form {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .search-form input:nth-child(1) {
+    width: 250px;
+    border: 1px solid #000000;
+    background: #ffffff;
+    border-radius: 5px;
+    height: 40px;
+  }
+
+  .search-form input:nth-child(2),
+  .search-form input:nth-child(3) {
+    background: #ffffff;
+    border-radius: 5px;
+    border: 2px solid #000000;
+    width: 60px;
+    margin-left: 5px;
+  }
+
+  .search-form input:nth-child(2):hover,
+  .search-form input:nth-child(3):hover {
+    border: 2px solid #2e89ff;
+    background: #dcffff;
+    width: 60px;
+  }
+
+  .maincontainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    position: relative;
+    padding-top: 50px;
+    padding-left: 50px;
+    padding-right: 50px;
+  }
+
+  /*.maincontainer::before{
+        content : "";
+        display: block;
+        position: absolute;
+        background-size: cover;
+        top: 0;
+        left: 0;
+        background-image: url( "/img3" );
+        width: 100%;
+        height: 100%;
+        opacity : 0.1;
+        z-index: -1;
+    }*/
+  .topmenu {
+    width: 100%;
+    font-size: 15px;
+  }
+
+  .topmenu tr td {
+    padding-bottom: 15px;
+  }
+
+  .topmenu tr td:nth-child(1) span {
+    width: 100px;
+    padding: 10px;
+    border: 1px solid #000000;
+    border-radius: 5px;
+    background: #1a2136;
+    font-weight: bold;
+    cursor: pointer;
+    color: #fff;
+  }
+
+  .topmenu tr td:nth-child(1) span:hover {
+    border: 1px solid #2e89ff;
+    background: #dcffff;
+    color: #000;
+  }
+
+  .topmenu tr td:nth-child(2) div,.topmenu tr td:nth-child(3) div {
+    /* width: 150px; */
+    padding: 10px;
+    margin:0 10px;
+    /* border: 1px solid #000000; */
+    border-radius: 5px;
+    box-shadow: 0 8px 9px -4px rgba(0, 0, 0, 0.3), 0 4px 18px 0 rgba(0, 0, 0, 0.2);
+    font-weight: bold;
+    cursor: pointer;
+    color: #000;
+    text-align: center;
+  }
+
+  #success_count, #ing_count{
+    padding: 10px;
+    margin:0 10px;
+    /* border: 1px solid #000000; */
+    border-radius: 5px;
+    box-shadow: 0 8px 9px -4px rgba(0, 0, 0, 0.3), 0 4px 18px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .topmenu tr td:nth-child(2) div:hover,.topmenu tr td:nth-child(3) div:hover {
+    /* border: 1px solid #2e89ff; */
+    background: #1a2136;
+    color: #fff;
+  }
+
+  /* .topmenu tr td:nth-child(2),.topmenu tr td:nth-child(3) {
+    display: flex;
+    justify-content: flex-end;
+    font-weight: bold;
+  } */
+
+  .table {
+    border: 2px solid #000000;
+  }
+
+  .center td {
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .table tr:nth-child(1) {
+    font-size: 20px;
+    background: #1a2136;
+  }
+
+  .table tr:nth-child(2) {
+    font-size: 16px;
+  }
+
+  .pagingnum {
+    border: 1px solid #ffffff;
+    padding: 5px;
+    border-radius: 4px;
+    background: #ffffff;
+  }
+
+  .table tr:nth-child(1),
+  .table tr:nth-child(2) {
+    border: 2px solid #000000;
+    font-weight: bold;
+  }
+
+  .table>tbody>tr>td {
+    padding: 6px;
+  }
+
+  /* Outer */
+  .popup {
+    width: 100%;
+    height: 100%;
+    display: none;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  /* Inner */
+  .popup-inner {
+    max-width: 900px;
+    height: 880px;
+    width: 100%;
+    /*padding:40px;*/
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 1);
+    border-radius: 8px;
+    background: #fff;
+  }
+
+  /* Close Button */
+  .popup-close {
+    width: 30px;
+    height: 30px;
+    padding-top: 4px;
+    display: inline-block;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    transition: ease 0.25s all;
+    -webkit-transform: translate(50%, -50%);
+    transform: translate(50%, -50%);
+    border-radius: 1000px;
+    background: rgba(0, 0, 0, 0.8);
+    font-family: Arial, Sans-Serif;
+    font-size: 20px;
+    text-align: center;
+    line-height: 100%;
+    color: #fff;
+  }
+
+  .popup-close:hover {
+    -webkit-transform: translate(50%, -50%) rotate(180deg);
+    transform: translate(50%, -50%) rotate(180deg);
+    background: rgba(0, 0, 0, 1);
+    text-decoration: none;
+  }
+
+
+  /* Outer */
+  .popup2 {
+    width: 100%;
+    height: 100%;
+    display: none;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  /* Inner */
+  .popup2-inner {
+    max-width: 900px;
+    height: 870px;
+    width: 100%;
+    /*padding:40px;*/
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 1);
+    border-radius: 8px;
+    background: #fff;
+  }
+
+  /* Close Button */
+  .popup2-close {
+    width: 30px;
+    height: 30px;
+    padding-top: 4px;
+    display: inline-block;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    transition: ease 0.25s all;
+    -webkit-transform: translate(50%, -50%);
+    transform: translate(50%, -50%);
+    border-radius: 1000px;
+    background: rgba(0, 0, 0, 0.8);
+    font-family: Arial, Sans-Serif;
+    font-size: 20px;
+    text-align: center;
+    line-height: 100%;
+    color: #fff;
+  }
+
+  .popup2-close:hover {
+    -webkit-transform: translate(50%, -50%) rotate(180deg);
+    transform: translate(50%, -50%) rotate(180deg);
+    background: rgba(0, 0, 0, 1);
+    text-decoration: none;
+  }
+
+
+  iframe {
+    width: 100%;
+    height: 100%;
+  }
+
+  .topline {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 32px;
+    background: #1a2136;
+    z-index: 999;
+  }
+
+  .tablemenutop {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .tablemenutop div,
+  .tablemenutop ul {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .flex {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .flexcolumn {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .flexcolumnstart {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .topmenuright {
+    color: #ffffff;
+  }
+
+  .topmenuright div span {
+    font-size: 16px;
+    font-weight: bold;
+    padding-right: 10px;
+  }
+
+  .menu1 {
+    display: block;
+    position: relative;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 18px;
+
+  }
+
+  /* Hide the browser's default checkbox */
+  .menu1 input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+
+  /* Create a custom checkbox */
+  .checkmark {
+    position: absolute;
+    top: -7px;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+  }
+
+  /* On mouse-over, add a grey background color */
+  .menu1:hover input~.checkmark {
+    background-color: #ccc;
+  }
+
+  /* When the checkbox is checked, add a "red" background */
+  .menu1 input:checked~.checkmark {
+    background-color: #e91b00e8;
+  }
+
+  /* Create the checkmark/indicator (hidden when not checked) */
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+
+  /* Show the checkmark when checked */
+  .menu1 input:checked~.checkmark:after {
+    display: block;
+  }
+
+  /* Style the checkmark/indicator */
+  .menu1 .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 6px;
+    height: 11px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+
+  .datepickerall {
+    font-weight: bold;
+    height: 35px;
+    width: 12%;
+    border-radius: 5px;
+    text-align: center;
+  }
+
+  @media (max-width: 600px) {
+    body {
+      font-size: 10px;
+    }
+
+    .search-form input:nth-child(1) {
+      width: 140px;
+    }
+
+    .popup-inner {
+      height: 520px;
+      width: 98%;
+    }
+
+    .popup2-inner {
+      max-width: 360px;
+      height: 680px;
+    }
+
+    .popup-close {
+      right: 20px;
+    }
+
+    .topmenu {
+      font-size: 10px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .datepickerall {
+      width: 20%;
+    }
+
+    .table tr:nth-child(1) {
+      font-size: 15px;
+    }
+
+    .table tr:nth-child(2) {
+      font-size: 10px;
+    }
+
+    .deliverytxtm {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .maincontainer {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+  }
+  @media (max-width: 1450px) {
+        .popup-inner{
+          width:70%;
+            height:600px;
+        }
+        .popup2-inner {
+          width: 50%;
+          height: 600px;
+        }
+
+    }
+  .excelbutton{
+    width:150px;
+    height:50px;
+    border:1px solid #000;
+    font-size:18px;
+    font-weight:bold;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+  .excelbutton:hover{
+    border:1px solid #122459;
+    background:#122459;
+    color:#fff;
+  }
+
+  .swal2-title {
+      font-size: 2.875em;
+  }
+
+  .swal2-content {
+      font-size: 2.0em;
+  }
+
+  .swal2-icon {
+      width: 8em;
+      height: 8em;
+  }
+
+  .swal2-icon .swal2-icon-content {
+      font-size: 5.75em;
+  }
+
+  .swal2-styled.swal2-confirm,
+  .swal2-styled.swal2-cancel {
+      font-size: 2em;
+  }
+  .msgpersonadd{
+    height:50px;
+    padding:10px;
+    border:1px solid #122459;
+    border-radius: 5px;
+    background:#122459;
+    color:#fff;
+    cursor: pointer;
+    margin-top:15px;
+    margin-bottom:15px;
+  }
+  .msgpersonadd:hover{
+      background:#fff;
+      color:#000;
+      border:1px solid #122459;
+  }
+  .msgpersonlistbox{
+      width:240px;
+      height:400px;
+      border:1px solid #000;
+      border-radius: 5px;
+      background:#fbffd8; 
+      color:#000
+  }
+  .sendmsg{
+      font-size:20px;
+  }
+
+  .sendmsg span{
+      font-size:30px;
+      color:#002e13;
+  }
+  .msgnumber{
+      margin-bottom:2px; 
+      width:100%; 
+      background:rgb(37, 37, 37); 
+      color:rgb(255, 255, 255);
+  }
+  .flexs{
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-start;
+  }
+  .flexcolumns{
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+  }
+  .sendnumber{
+    font-size:24px;
+  }
+
+  .msgpersoncnt{
+    font-size:22px;
+    padding:3px;
+    font-weight:bold;
+  }
+  .swal_date input{
+    width:120px;
+    font-weight:bold;
+    height:40px;
+    text-align: center;
+    background: #333;
+    color: #fff;
+    font-size: 23px;
+    border-radius: 10px;
+    border: none;
+  }
+  .swal_date_button{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    cursor:pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    width: 70px;
+    margin-left:5px;
+    height: 40px;
+    box-shadow: 0 8px 9px -4px rgb(59 113 202 / 30%), 0 4px 18px 0 rgb(59 113 202 / 20%);
+  }
+  .swal_date_button:hover{
+    box-shadow: 0 8px 9px -4px rgba(5, 20, 46, 0.3), 0 4px 18px 0 rgba(1, 13, 31, 0.2);
+    opacity:0.8;
+  }
+  .swal_top_txt{
+    font-weight:bold;
+  }
+  .swal_flex{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .swal_flex2{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .swal_cms_table{
+    width: 100%;
+    margin-top:50px;
+    text-align: center;
+  }
+  .swal_cms_table thead tr{
+    padding-right:20px;
+  }
+
+  .swal_cms_table thead tr th{
+    font-size:20px;
+    font-weight:bold;
+    width:12.5%;
+    height:50px;
+    text-align: center;
+  }
+
+  .swal_cms_table tbody{
+    display: block;
+    height: 500px;
+    overflow: auto;
+    width: 100%;
+  }
+
+  .swal_cms_table tbody tr {
+    width: 100%;
+    display: flex;
+    height:45px;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid #00000052;
+    background: rgba(221, 221, 221, 0.274);
+    font-size:20px;
+  }
+
+  .cms_data:hover{
+    border:1px solid #414141;
+    opacity:0.8;
+    cursor:pointer;
+  }
+
+  .swal_cms_table tbody tr td {
+      font-size: 17px;
+      font-weight: bold;
+      text-align: center;
+      padding-top: 7px;
+      padding-bottom: 7px;
+      width:12.5%;
+  }
+  .success{
+    background:#dff0d8;
+  }
+  .warning{
+    background: #fcf8e3;
+  }
+  .error{
+    background:#f2dede;
+  }
+  .swal_top_txt_children{
+    background: #414141;
+    font-size: 25px;
+    color: #fff;
+    width: 110px;
+    border-radius: 5px;
+  }
+  .swal_top_txt_children2{
+    background: #414141;
+    font-size: 25px;
+    color: #f76060;
+    width: 110px;
+    border-radius: 5px;
+  }
+  .swal_top_search{
+    height:40px;
+    width: 220px;
+    font-size: 13px;
+  }
+  .total_end_fail,.total_end_ing,.total_end_len,.total_end_stop,.total_end_reqfail,.total_end_soon,.total_end_error{
+    cursor: pointer;
+  }
+
+  .total_end_fail:hover,.total_end_ing:hover,.total_end_len:hover,.total_end_stop:hover,.total_end_reqfail:hover,.total_end_soon:hover,.total_end_error:hover{
+    opacity:0.8;
+  }
+  .swal_top_click{
+    border: 3px solid #337ab7;
+  }
+</style>
+<script>
+  // var socket = io();
+  var uid = '<%=firstData%>';
+  var nomal = '<%=nomal%>';
+  var company = '<%=company%>';
+  // socket.emit('login', { 'name': uid });
+  // socket.on('exceluse', function(data) {
+  //   datasplit=data.split(';');
+  //   if(datasplit[1]=='end'){ Swal.hideLoading(); $('.excelstate').html('수급자 일괄등록완료');}
+  //   if(datasplit[1]=='n'){ 
+  //     $('.excelmember').eq(datasplit[0]).children('span').eq(1).text('check_circle'); 
+  //     $('.excelmember').eq(datasplit[0]).children('span').eq(1).css('color','rgb(55, 138, 55)');
+  //   }
+  //   if(datasplit[1]=='y'){ 
+  //     $('.excelmember').eq(datasplit[0]).children('span').eq(1).text('cancel'); 
+  //     $('.excelmember').eq(datasplit[0]).children('span').eq(2).text('(중복등록)'); 
+  //     $('.excelmember').eq(datasplit[0]).children('span').eq(1).css('color','#ff0000');
+  //   }
+  // });
+
+  $(document).ready(function () {
+    $.datepicker.setDefaults({
+      dateFormat: 'yy-mm-dd',
+      prevText: '이전 달',
+      nextText: '다음 달',
+      monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+      monthNamesShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+      dayNames: ['일', '월', '화', '수', '목', '금', '토'],
+      dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
+      dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
+      showMonthAfterYear: true,
+      yearSuffix: '년'
+    });
+    $("#datepicker,#datepicker2").datepicker({
+      changeMonth: true,
+      changeYear: true
+    });
+    $("#datepicker,#datepicker2").datepicker("option", "showAnim", "slide");
+    $(function () {
+      var tr_length = $('.table tr td').length;
+      var tab_td = $('.table tr td');//tb 테이블의 td들 불러오기
+      for (var i = 0; i < tr_length; i++) {
+        var td2 = tab_td.eq(i).text();
+        if (td2 == "일반") $(".table tr td:eq(" + i + ")").parent().addClass('success');
+        if (td2 == "의료급여") $(".table tr td:eq(" + i + ")").parent().addClass('info');
+        if (td2 == "감경") $(".table tr td:eq(" + i + ")").parent().addClass('warning');
+        if (td2 == "기초") $(".table tr td:eq(" + i + ")").parent().addClass('danger');
+
+      }
+      $(tab_td).click(function () {
+        if ($(this).parent().hasClass('tablemenu') != 1) {
+          //window.frames['clientmodify'].location.reload();
+          $('.clientmodify').attr('src', "//localhost:802/clientmodify?username=<%=username%>&chk=program&chk2=cms&number=" + $(this).parent().children('td:eq(2)').text());
+          window.frames['clientmodify'].src = "//localhost:802/clientmodify?username=<%=username%>&chk=program&chk2=cms&number=" + $(this).parent().children('td:eq(2)').text();
+          var targeted_popup_class = $('[data-popup-open2]').attr('data-popup-open2');
+          $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+          //e.preventDefault();
+        }
+      });
+      $(tab_td).hover(function () {
+        if ($(this).parent().hasClass('tablemenu') != 1) $(this).parent().css({ 'border': '2px solid #000000', "cursor": "pointer", "opacity": "0.5" });
+      }, function () {
+        if ($(this).parent().hasClass('tablemenu') != 1) $(this).parent().css({ 'border': '1px solid #bebebe', "opacity": "1" });
+      });
+      for (var i = 0; i < tr_length; i++) {
+        var td2 = tab_td.eq(i);
+      }
+    });
+    $(".table").hide();
+    $(".table").fadeIn(500);
+    var pagen = '<%=page%>';
+    $(".pagingnum").eq(pagen - 1).css("background", "#000000");
+
+    // $(".clientup span").eq(0).click(function () {
+    //   window.frames['clientup'].location.reload();
+    //   var targeted_popup_class = $('[data-popup-open]').attr('data-popup-open');
+    //   $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+    //   //e.preventDefault();
+    // });
+
+
+    $(function () {
+      //----- OPEN
+      $('[data-popup-open]').on('click', function (e) {
+        var targeted_popup_class = jQuery(this).attr('data-popup-open');
+        $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+
+        //e.preventDefault();
+      });
+
+      //----- CLOSE
+      $('[data-popup-close]').on('click', function (e) {
+        var targeted_popup_class = jQuery(this).attr('data-popup-close');
+        $('[data-popup="' + targeted_popup_class + '"]').fadeOut(350);
+
+        //e.preventDefault();
+      });
+    });
+
+    if(Mobile()==true){
+        $('.mobile').css("display","none");
+        $('.pc').css("display","");
+    }else{
+        $('.pc').css("display","none");
+        $('.mobile').css("display","");
+    }
+
+    var now = new Date();
+    var year = now.getFullYear();
+    var mon = (now.getMonth() + 1) > 9 ? '' + (now.getMonth() + 1) : '0' + (now.getMonth() + 1);
+    var day = now.getDate() > 9 ? '' + now.getDate() : '0' + now.getDate();
+    var chan_val = year + '-' + mon + '-' + day;
+    $('.date1').val('<%=datetarget%>');
+    $('.date2').val('<%=datetargete%>');
+    $(".search-form").attr("action", "//localhost:802/cmspay/1/" + uid + "/2022-01-01/" + chan_val);
+
+    if (nomal == 'ok') $('.menu1').eq(0).children('input').prop('checked', false);
+
+    //말줄임
+    const boxTit = Array.from(document.querySelectorAll('.deliverytxt'));
+    const box = [];
+    const textSlice = function (tits, lengths) {
+      tits.forEach((el, idx) => {
+        const tix = el.textContent;
+        const memberPart = tix.slice(0, lengths);
+        const t = memberPart.concat('...');
+        box.push(t);
+
+        tits[idx].innerHTML = box[idx];
+      });
+    };
+    textSlice(boxTit, 10);
+  });
+
+  function datesearch() {
+    location.href = '//localhost:802/cmspay/1/' + uid + '/' + $('.date1').val() + '/' + $('.date2').val();
+  }
+
+  function optionchk(x) {
+    nomal = 'none';
+    var inputchk = [];
+    $.each($('.menu1'), function (i) {
+      if ($('.menu1').eq(i).children('input').prop('checked')) inputchk.push(i);
+    });
+
+    if (!inputchk.includes(0)) nomal = 'ok'; else nomal = 'none';
+
+    location.href = '//localhost:802/cmspay/1/' + uid + '/' + $('.date1').val() + '/' + $('.date2').val() + '?nomal=' + nomal;
+  }
+  
+  function download(filename, filepath) {
+      var element = document.createElement('a');
+      element.setAttribute('href', filepath);
+      element.setAttribute('download', filename);
+      document.body.appendChild(element);
+      element.click();
+      //document.body.removeChild(element);
+    }
+  
+  function exceldown(){
+    download('(수의료기)수급자일괄등록','/수급자일괄등록.xlsx');
+  }
+  
+  function readExcel() {
+      var name = [];
+      var number = [];
+      var sex = [];
+      var address1 = [];
+      var address2 = [];
+      var guardname = [];
+      var guardtarget = [];
+      var phone1 = [];
+      var phone2 = [];
+      var center = [];
+      var manager = [];
+      let input = event.target;
+      let reader = new FileReader();
+      reader.onload = function () {
+        let data = reader.result;
+        let workBook = XLSX.read(data, { type: 'binary' });
+        workBook.SheetNames.forEach(function (sheetName) {
+          let rows = XLSX.utils.sheet_to_json(workBook.Sheets[sheetName]);
+          var data2 = rows;
+          $.each(data2, function (i) {
+            if(data2[i]['성함']!='' && data2[i]['성함']!=null){
+              name.push(data2[i]['성함']);
+              number.push(data2[i]['인정번호']);
+              sex.push(data2[i]['성별']);
+              address1.push(data2[i]['주소'] + ' ' + data2[i]['배송주소']);
+              address2.push(data2[i]['주소'] + ' ' + data2[i]['배송주소']);
+              guardname.push(data2[i]['보호자성함']);
+              guardtarget.push(data2[i]['관계(본인,자녀,배우자,자부,형제)']);
+              phone1.push(data2[i]['연락처1']);
+              phone2.push(data2[i]['연락처2']);
+              center.push(data2[i]['센터명']);
+              manager.push(data2[i]['담당자']);
+            }
+          });
+        });
+        // socket.emit('disconnect2',{ 'name':uid});
+        // socket.emit('login', {'name': uid});
+        // socket.emit('clientexcel',{'name':uid, 'msg':name+'|'+number+'|'+sex+'|'+address1+'|'+address2+'|'+guardname+'|'+guardtarget+'|'+phone1+'|'+phone2+'|'+center+'|'+manager});
+        var excelstr = '';
+        $.each(name,function(i){
+          excelstr += '<div class="flex excelmember">'+name[i]+'&nbsp;&nbsp;<span style="font-weight:bold;">'+number[i]+'</span>&nbsp;&nbsp;<span class="material-icons" style="color:rgb(55, 138, 55); font-size:28px;"></span><span class="re"></span></div>';
+        });
+        Swal.fire({
+          width: '550px',
+          fontsize: '23px',
+          didOpen: () => {
+            Swal.showLoading()
+          },
+          title: '',
+          html:
+            '<div style="font-size:27px; font-weight:bold; padding:10px;">총 '+name.length+'명</div>'+
+            '<div class="flexcolumnstart" style="height:300px; overflow-y:scroll;"><div>'+excelstr+'</div></div>' +
+            '<div class="excelstate" style="font-size:25px; font-weight:bold; padding:10px;">수급자일괄등록 진행중...</div>',
+          //icon: 'info',
+          showCancelButton: true,
+          cancelButtonColor: '#d33',
+          confirmButtonText: '확인',
+          cancelButtonText: '취소',
+          allowOutsideClick: false,
+          
+        });
+      };
+      reader.readAsBinaryString(input.files[0]);
+      
+    }
+
+  function paysend(){
+    Swal.fire({
+        width: '750px',
+        fontsize:'13px',
+        title: '가상계좌를 발송 하시겠습니까?',
+        text: "가상계좌발송",
+        html:
+            '<table class="confirmtable">'+
+            '<tr>'+
+            '<td>선택</td><td class="mobile">품목코드</td><td>바코드</td><td>품목</td><td>품목명</td><td>금액</td>'+
+            '</tr>'+
+            '</table></br>'+
+            '<div style="font-weight:bold; font-size:22px;"><div>수신번호 : '+'</div><div>발송금액:<span class="buypres">'+'</span>원</div></div>',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: '발송',
+            cancelButtonText: '취소',
+            allowOutsideClick: false,
+        }).then((result) => {
+            if (result.isConfirmed) {
+            }
+        });
+  }
+
+  function sendmsg(){
+    Swal.fire({
+            width: '1000px',
+            fontsize:'25px',
+            title: '<div class="sendmsg flex"><span class="material-icons">phone_iphone</span>문자 발송</div>',
+            text: "가상계좌발송",
+            html:'<div class="flexs" style="font-size:18px; font-weight:bold; margin-top:20px;">'+
+                '<div>'+
+                '<div class="sendnumber">발신번호 [ 1811-8559 ] </div><div class="flex msgpersonadd"><span class="material-icons" style="font-size:30px;">group_add</span>&nbsp;&nbsp;&nbsp;수신자 등록</div><div><div>메시지 내용</div><div><textarea style="width:600px; height:290px;" placeholder="내용을 입력해주세요."></textarea></div></div>'+
+                '</div><div>'+
+                '<div class="msgpersonlist flexcolumns"><div>수신자 목록</div><div class="msgpersonlistbox flexcolumns"><span class="msgnumber">010-5886-1136</span><span class="msgnumber">010-9559-0656</span></div></div>'+
+                '</div></div>',
+            //icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: '발송',
+            cancelButtonText: '취소',
+            allowOutsideClick: false,
+                    
+        }).then((result) => {
+            if (result.isConfirmed) {
+            }
+        });
+}
+
+  function dateInputm(n,m){
+    var date = new Date();
+    var start = new Date(Date.parse(date)-n* 1000 * 60 * 60 * 24);
+    var today = new Date(Date.parse(date)-m* 1000 * 60 * 60 * 24);
+    
+    if(n < 10){
+        start.setMonth(start.getMonth()-n);
+    }
+    var yyyy = start.getFullYear();
+    var mm = start.getMonth()+1;
+    var dd = start.getDate();
+    
+    var t_yyyy = today.getFullYear();
+    var t_mm = today.getMonth()+1;
+    var t_dd = today.getDate();
+    
+    return yyyy+'-'+addzero(mm)+'-'+addzero(dd);
+    //return t_yyyy+'-'+addzero(t_mm)+'-'+addzero(t_dd);
+    
+  }
+
+  function addzero(n){                        // 한자리가 되는 숫자에 "0"을 넣어주는 함수
+      return n < 10 ? "0" + n: n;
+  }
+  
+  function dateInputd(n,m){
+        var date = new Date();
+        var start = new Date(Date.parse(date)-n* 1000 * 60 * 60 * 24);
+        var today = new Date(Date.parse(date)-m* 1000 * 60 * 60 * 24);
+        
+        if(n < 10){
+            start.setMonth(start.getMonth()-n);
+        }
+        var yyyy = start.getFullYear();
+        var mm = start.getMonth()+1;
+        var dd = start.getDate();
+        
+        var t_yyyy = today.getFullYear();
+        var t_mm = today.getMonth()+1;
+        var t_dd = today.getDate();
+        
+        //return yyyy+'-'+addzero(mm)+'-'+addzero(dd);
+        return t_yyyy+'-'+addzero(t_mm)+'-'+addzero(t_dd);
+        
+    }
+
+  function datesearch2(x){
+        var startdt = $('#datepicker3').val();
+        var enddt = $('#datepicker4').val();
+        if(x=='dday'){
+            startdt = chan_val;
+            enddt = chan_val;
+        }else if(x=='yday'){
+            startdt = dateInputd(0,1);
+            enddt = dateInputd(0,1);
+        }else if(x=='dmon'){
+            let lastDate = new Date(dateInputd(0,0).split('-')[0], dateInputm(0,0).split('-')[1], 0);
+            const rentmoneycal = lastDate.getDate()    
+            startdt = dateInputd(0,0).split('-')[0]+'-'+dateInputm(0,0).split('-')[1]+'-01';
+            enddt = dateInputd(0,0).split('-')[0]+'-'+dateInputm(0,0).split('-')[1]+'-'+rentmoneycal;
+        }else if(x=='ymon'){
+            let lastDate = new Date(dateInputm(1,0).split('-')[0], dateInputm(1,0).split('-')[1], 0);
+            const rentmoneycal = lastDate.getDate()    
+            startdt = dateInputm(1,0).split('-')[0]+'-'+dateInputm(1,0).split('-')[1]+'-01';
+            enddt = dateInputm(1,0).split('-')[0]+'-'+dateInputm(1,0).split('-')[1]+'-'+rentmoneycal;
+        }else if(x=='all'){
+            startdt = '1999-01-01';
+            enddt = '2099-01-01';
+        }
+        cms_history_get(startdt,enddt);
+    }
+
+  function table_search(x,id,tr){
+    var data = $(x)[0].value.split(" ");
+    if ($(x)[0].value == "") {
+        $("."+tr).show();
+        return;
+    }
+    $("."+tr).hide();
+    
+    $("."+tr).filter(function (i, v) {
+        var $t = $(this);
+        for (var d = 0; d < data.length; ++d) {
+            if ($t.is(":contains('" + data[d] + "')")||$t.is(":contains('" + data[d].toUpperCase() + "')")||$t.is(":contains('" + data[d].toLowerCase() + "')")) {
+                return true;
+            }
+        }
+        return false;
+    }).show();
+  }
+
+  function table_search_click(x,txt,tr){
+    $(x).addClass('swal_top_click');
+    $('.swal_top_click_item').not($(x)).removeClass('swal_top_click');
+    $('#swal_top_search').val('');
+    var data = txt.split(" ");
+    console.log(txt);
+    $("."+tr).hide();
+    
+    $("."+tr).filter(function (i, v) {
+        var $t = $(this);
+        for (var d = 0; d < data.length; ++d) {
+            if ($t.is(":contains('" + data[d] + "')")||$t.is(":contains('" + data[d].toUpperCase() + "')")||$t.is(":contains('" + data[d].toLowerCase() + "')")) {
+                return true;
+            }
+        }
+        return false;
+    }).show();
+  }
+
+  function cms_history_swal(dates,datee){
+    swal.fire({
+      width: '98%',
+      fontsize: '23px',
+      title: '출금내역확인',
+      icon: 'info',
+      showCancelButton: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: '확인',
+      cancelButtonText: '취소',
+      allowOutsideClick: false,
+      heightAuto:true,
+      html:`<div>
+        <div class="swal_flex">
+          <div class="swal_flex2" style="">
+            <div class="swal_date"><input class="swal_input_date" type="text" id="datepicker3" autocomplete='off' value="">~<input class="swal_input_date" type="text" id="datepicker4" autocomplete='off' value=""></div>
+            <div class="swal_date_button" onclick="cms_history_get($('#datepicker3').val(),$('#datepicker4').val())">검색</div>
+            <div class="swal_date_button" onclick="datesearch2('dmon');">당월</div>
+            <div class="swal_date_button" onclick="datesearch2('ymon');">전월</div>
+            <div class="swal_date_button" onclick="datesearch2('all');">전체</div>
+          </div>
+          <div class="flexcolumns swal_top_txt" style="width: 67%;">
+            <div class="flexs" style="width:100%;">
+              <div style="width:100%; margin-right:20px;" class="flexcolumns">
+                <div>검색:<input type="text" id="swal_top_search" class="swal_top_search" placeholder="수급자성함,인정번호,예금주,계좌번호" onkeyup="table_search(this,'#swal_top_search','cms_data')"></div>
+              </div>
+              <div class="flexcolumns" style="width:100%; padding:2px;">
+                <div class="flexs" style="padding-bottom: 5px;">출금대상자 :&nbsp;<div class="swal_top_txt_children total_end_soon swal_top_click_item" onclick="table_search_click(this,'출금대상','cms_data')"></div>건</div>
+                <div class="flexs"></div>
+              </div>
+            </div>
+            <div class="swal_flex2" style="font-size:13px;">
+              
+              <div class="flexcolumns" style="width:200px; padding:2px;">
+                <div class="flexs" style="padding-bottom: 5px;">출금중 :&nbsp;<div class="swal_top_txt_children total_end_ing swal_top_click_item" onclick="table_search_click(this,'출금중','cms_data')"></div>건</div>
+                <div class="flexs">출금액 :&nbsp;<div class="swal_top_txt_children total_money_ing"></div>원</div>
+              </div>
+            
+              <div class="flexcolumns" style="width:250px; padding:2px;">
+                <div class="flexs" style="padding-bottom: 5px;">출금 :&nbsp;<div class="swal_top_txt_children total_end_len swal_top_click_item" onclick="table_search_click(this,'출금완료','cms_data')"></div>건</div>
+                <div class="flexs">출금완료액 :&nbsp;<div class="swal_top_txt_children total_money"></div>원</div>
+              </div>
+              <div class="flexcolumns" style="width:250px; padding:2px;">
+                <div class="flexs" style="padding-bottom: 5px;">잔액부족 :&nbsp;<div class="swal_top_txt_children2 total_end_fail swal_top_click_item" onclick="table_search_click(this,'잔액부족','cms_data')"></div>건</div>
+                <div class="flexs">미출금액 :&nbsp;<div class="swal_top_txt_children2 total_money_fail"></div>원</div>
+              </div>
+              
+              <div class="flexcolumns" style="width:250px; padding:2px;">
+                <div class="flexs" style="padding-bottom: 5px;">출금요청실패 :&nbsp;<div class="swal_top_txt_children2 total_end_reqfail swal_top_click_item" onclick="table_search_click(this,'출금요청실패','cms_data')"></div>건</div>
+                <div class="flexs">미출금액 :&nbsp;<div class="swal_top_txt_children2 total_money_reqfail"></div>원</div>
+              </div>
+              <div class="flexcolumns" style="width:250px; padding:2px;">
+                <div class="flexs" style="padding-bottom: 5px;">미출금 :&nbsp;<div class="swal_top_txt_children2 total_end_error swal_top_click_item" onclick="table_search_click(this,'미출금','cms_data')"></div>건</div>
+                <div class="flexs" style="padding-bottom: 5px;">출금정지중 :&nbsp;<div class="swal_top_txt_children2 total_end_stop swal_top_click_item" onclick="table_search_click(this,'출금정지','cms_data')"></div>건</div>
+              </div>
+            </div>
+          </div>
+
+          
+        </div>
+        <div class="flex">
+          <table class="swal_cms_table">
+            <thead>
+              <tr class="flex tablemenu">
+                <th>수급자성함</th>
+                <th>인정번호</th>
+                <th>예금주</th>
+                <th>은행명</th>
+                <th>계좌번호</th>
+                <th>출금일</th>
+                <th>금액</th>
+                <th>출금상태</th>
+              </tr>
+            </thead>
+            <tbody class="cms_tr">
+            </tbody>
+          </table>
+        </div>
+        </div>`,
+        didOpen:async ()=>{
+          $("#datepicker3,#datepicker4").datepicker({
+            changeMonth: true,
+            changeYear: true
+          });
+          $("#datepicker3,#datepicker4").datepicker("option", "showAnim", "slide");
+          cms_history_get(dates,datee).then(res=>{
+            
+          });
+          
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+          $('.popup2').css({'z-index':''});
+        }
+    });
+  }
+
+  async function cms_history_get(dates2,datee2){
+    $('#swal_top_search').val('');
+    $('.swal_top_click_item').removeClass('swal_top_click');
+    let cms_tr = ``;
+    let total_money = 0;
+    let total_money_fail = 0;
+    let total_money_ing = 0;
+    let total_money_reqfail = 0;
+    let total_money_soon = 0;
+    let total_money_stop = 0;
+    let total_end_len = 0;
+    let total_end_ing = 0;
+    let total_end_soon = 0;
+    let total_end_fail = 0;
+    let total_end_reqfail = 0;
+    let total_end_stop = 0;
+    let cms_arr = [];
+    let cms_soon_arr = [];
+    let cms_ing_arr = [];
+    let cms_up_arr = [];
+    return axios({
+      method:'post',
+      url:'/cmshistory',
+      data:{
+        company:company,
+        dates:dates2.replace(/-/g,''),
+        datee:datee2.replace(/-/g,'')
+      }
+    }).then(function(res){
+      if(res.data.code==200){
+        $.each(res.data.datafail,function(x){
+          $.each(res.data.data,function(i){
+            if(res.data.data[i].msgno==res.data.datafail[x].msgno){
+              let bankname = '';
+              let status_txt = '';
+              if(res.data.datafail[x].state==2){
+                status_txt = '잔액부족';
+              }else{
+                status_txt = '기타오류';
+              }
+              if(res.data.data[i].bankname=='002')bankname = '산업은행';
+              else if(res.data.data[i].bankname=='003')bankname = '기업은행';
+              else if(res.data.data[i].bankname=='004')bankname = '국민은행';
+              else if(res.data.data[i].bankname=='005')bankname = '외환은행';
+              else if(res.data.data[i].bankname=='007')bankname = '수협';
+              else if(res.data.data[i].bankname=='011')bankname = '농협';
+              else if(res.data.data[i].bankname=='020')bankname = '우리은행';
+              else if(res.data.data[i].bankname=='023')bankname = '제일은행';
+              else if(res.data.data[i].bankname=='027')bankname = '씨티은행';
+              else if(res.data.data[i].bankname=='031')bankname = '대구은행';
+              else if(res.data.data[i].bankname=='032')bankname = '부산은행';
+              else if(res.data.data[i].bankname=='034')bankname = '광주은행';
+              else if(res.data.data[i].bankname=='035')bankname = '제주은행';
+              else if(res.data.data[i].bankname=='037')bankname = '전북은행';
+              else if(res.data.data[i].bankname=='039')bankname = '경남은행';
+              else if(res.data.data[i].bankname=='045')bankname = '새마을금고';
+              else if(res.data.data[i].bankname=='048')bankname = '신협';
+              else if(res.data.data[i].bankname=='071')bankname = '우체국';
+              else if(res.data.data[i].bankname=='081')bankname = '하나은행';
+              else if(res.data.data[i].bankname=='088')bankname = '신한은행';
+              else if(res.data.data[i].bankname=='089')bankname = '케이뱅크';
+              else if(res.data.data[i].bankname=='090')bankname = '카카오뱅크';
+              cms_arr.push({
+                name:res.data.data[i].name,
+                number:res.data.data[i].number,
+                bankadmin:res.data.data[i].bankadmin,
+                bankname:bankname,
+                banknum:res.data.data[i].banknum,
+                date:res.data.datafail[x].date,
+                money:res.data.datafail[x].money,
+                state:"error",
+                txt:status_txt
+              });
+              cms_ing_arr.push({
+                msgno:res.data.data[i].msgno
+              });
+              // cms_tr+=`<tr class="cms_data">
+              // <td>`+res.data.data[i].name+`</td>
+              // <td>`+res.data.data[i].number+`</td>
+              // <td>`+res.data.data[i].bankadmin+`</td>
+              // <td>`+bankname+`</td>
+              // <td>`+res.data.data[i].banknum+`</td>
+              // <td>`+res.data.datafail[x].date+`</td>
+              // <td>`+parseInt(res.data.datafail[x].money).toLocaleString()+`원</td>
+              // <td class="error">`+status_txt+`</td>
+              // </tr>`;
+              total_money_fail+=parseInt(res.data.datafail[x].money);
+              total_end_fail++;
+            }
+          });
+        });
+        $.each(res.data.datastop,function(x){
+          $.each(res.data.data,function(i){
+            if(res.data.data[i].msgno==res.data.datastop[x].msgno){
+              let bankname = '';
+              let status_txt = '';
+              
+              status_txt = '출금정지';
+              
+              if(res.data.data[i].bankname=='002')bankname = '산업은행';
+              else if(res.data.data[i].bankname=='003')bankname = '기업은행';
+              else if(res.data.data[i].bankname=='004')bankname = '국민은행';
+              else if(res.data.data[i].bankname=='005')bankname = '외환은행';
+              else if(res.data.data[i].bankname=='007')bankname = '수협';
+              else if(res.data.data[i].bankname=='011')bankname = '농협';
+              else if(res.data.data[i].bankname=='020')bankname = '우리은행';
+              else if(res.data.data[i].bankname=='023')bankname = '제일은행';
+              else if(res.data.data[i].bankname=='027')bankname = '씨티은행';
+              else if(res.data.data[i].bankname=='031')bankname = '대구은행';
+              else if(res.data.data[i].bankname=='032')bankname = '부산은행';
+              else if(res.data.data[i].bankname=='034')bankname = '광주은행';
+              else if(res.data.data[i].bankname=='035')bankname = '제주은행';
+              else if(res.data.data[i].bankname=='037')bankname = '전북은행';
+              else if(res.data.data[i].bankname=='039')bankname = '경남은행';
+              else if(res.data.data[i].bankname=='045')bankname = '새마을금고';
+              else if(res.data.data[i].bankname=='048')bankname = '신협';
+              else if(res.data.data[i].bankname=='071')bankname = '우체국';
+              else if(res.data.data[i].bankname=='081')bankname = '하나은행';
+              else if(res.data.data[i].bankname=='088')bankname = '신한은행';
+              else if(res.data.data[i].bankname=='089')bankname = '케이뱅크';
+              else if(res.data.data[i].bankname=='090')bankname = '카카오뱅크';
+              cms_arr.push({
+                name:res.data.data[i].name,
+                number:res.data.data[i].number,
+                bankadmin:res.data.data[i].bankadmin,
+                bankname:bankname,
+                banknum:res.data.data[i].banknum,
+                date:'',
+                money:'0',
+                state:"error",
+                txt:status_txt
+              });
+
+              // cms_tr+=`<tr class="cms_data">
+              // <td>`+res.data.data[i].name+`</td>
+              // <td>`+res.data.data[i].number+`</td>
+              // <td>`+res.data.data[i].bankadmin+`</td>
+              // <td>`+bankname+`</td>
+              // <td>`+res.data.data[i].banknum+`</td>
+              // <td>`+res.data.datafail[x].date+`</td>
+              // <td>`+parseInt(res.data.datafail[x].money).toLocaleString()+`원</td>
+              // <td class="error">`+status_txt+`</td>
+              // </tr>`;
+              total_money_stop+=parseInt(0);
+              total_end_stop++;
+            }
+          });
+        });
+        $.each(res.data.datawait,function(x){
+          $.each(res.data.data,function(i){
+            if(res.data.data[i].msgno==res.data.datawait[x].msgno){
+              let bankname = '';
+              if(res.data.data[i].bankname=='002')bankname = '산업은행';
+              else if(res.data.data[i].bankname=='003')bankname = '기업은행';
+              else if(res.data.data[i].bankname=='004')bankname = '국민은행';
+              else if(res.data.data[i].bankname=='005')bankname = '외환은행';
+              else if(res.data.data[i].bankname=='007')bankname = '수협';
+              else if(res.data.data[i].bankname=='011')bankname = '농협';
+              else if(res.data.data[i].bankname=='020')bankname = '우리은행';
+              else if(res.data.data[i].bankname=='023')bankname = '제일은행';
+              else if(res.data.data[i].bankname=='027')bankname = '씨티은행';
+              else if(res.data.data[i].bankname=='031')bankname = '대구은행';
+              else if(res.data.data[i].bankname=='032')bankname = '부산은행';
+              else if(res.data.data[i].bankname=='034')bankname = '광주은행';
+              else if(res.data.data[i].bankname=='035')bankname = '제주은행';
+              else if(res.data.data[i].bankname=='037')bankname = '전북은행';
+              else if(res.data.data[i].bankname=='039')bankname = '경남은행';
+              else if(res.data.data[i].bankname=='045')bankname = '새마을금고';
+              else if(res.data.data[i].bankname=='048')bankname = '신협';
+              else if(res.data.data[i].bankname=='071')bankname = '우체국';
+              else if(res.data.data[i].bankname=='081')bankname = '하나은행';
+              else if(res.data.data[i].bankname=='088')bankname = '신한은행';
+              else if(res.data.data[i].bankname=='089')bankname = '케이뱅크';
+              else if(res.data.data[i].bankname=='090')bankname = '카카오뱅크';
+              cms_arr.push({
+                name:res.data.data[i].name,
+                number:res.data.data[i].number,
+                bankadmin:res.data.data[i].bankadmin,
+                bankname:bankname,
+                banknum:res.data.data[i].banknum,
+                date:res.data.datawait[x].bankdate,
+                money:res.data.datawait[x].money,
+                state:"warning",
+                txt:"출금중"
+              });
+              cms_up_arr.push({
+                msgno:res.data.datawait[x].msgno
+              });
+              
+              // cms_tr+=`<tr class="cms_data">
+              // <td>`+res.data.data[i].name+`</td>
+              // <td>`+res.data.data[i].number+`</td>
+              // <td>`+res.data.data[i].bankadmin+`</td>
+              // <td>`+bankname+`</td>
+              // <td>`+res.data.data[i].banknum+`</td>
+              // <td>`+res.data.datawait[x].bankdate+`</td>
+              // <td>`+parseInt(res.data.datawait[x].money).toLocaleString()+`원</td>
+              // <td class="warning">출금중</td>
+              // </tr>`;
+              total_money_ing+=parseInt(res.data.datawait[x].money);
+              total_end_ing++;
+            }
+          });
+        });
+        $.each(res.data.dataend,function(x){
+          $.each(res.data.data,function(i){
+            if(res.data.data[i].msgno==res.data.dataend[x].msgno){
+              let bankname = '';
+              if(res.data.data[i].bankname=='002')bankname = '산업은행';
+              else if(res.data.data[i].bankname=='003')bankname = '기업은행';
+              else if(res.data.data[i].bankname=='004')bankname = '국민은행';
+              else if(res.data.data[i].bankname=='005')bankname = '외환은행';
+              else if(res.data.data[i].bankname=='007')bankname = '수협';
+              else if(res.data.data[i].bankname=='011')bankname = '농협';
+              else if(res.data.data[i].bankname=='020')bankname = '우리은행';
+              else if(res.data.data[i].bankname=='023')bankname = '제일은행';
+              else if(res.data.data[i].bankname=='027')bankname = '씨티은행';
+              else if(res.data.data[i].bankname=='031')bankname = '대구은행';
+              else if(res.data.data[i].bankname=='032')bankname = '부산은행';
+              else if(res.data.data[i].bankname=='034')bankname = '광주은행';
+              else if(res.data.data[i].bankname=='035')bankname = '제주은행';
+              else if(res.data.data[i].bankname=='037')bankname = '전북은행';
+              else if(res.data.data[i].bankname=='039')bankname = '경남은행';
+              else if(res.data.data[i].bankname=='045')bankname = '새마을금고';
+              else if(res.data.data[i].bankname=='048')bankname = '신협';
+              else if(res.data.data[i].bankname=='071')bankname = '우체국';
+              else if(res.data.data[i].bankname=='081')bankname = '하나은행';
+              else if(res.data.data[i].bankname=='088')bankname = '신한은행';
+              else if(res.data.data[i].bankname=='089')bankname = '케이뱅크';
+              else if(res.data.data[i].bankname=='090')bankname = '카카오뱅크';
+              cms_arr.push({
+                name:res.data.data[i].name,
+                number:res.data.data[i].number,
+                bankadmin:res.data.data[i].bankadmin,
+                bankname:bankname,
+                banknum:res.data.data[i].banknum,
+                date:res.data.dataend[x].date,
+                money:res.data.dataend[x].money,
+                state:"success",
+                txt:"출금완료"
+              });
+              cms_ing_arr.push({
+                msgno:res.data.data[i].msgno
+              });
+              // cms_tr+=`<tr class="cms_data">
+              // <td>`+res.data.data[i].name+`</td>
+              // <td>`+res.data.data[i].number+`</td>
+              // <td>`+res.data.data[i].bankadmin+`</td>
+              // <td>`+bankname+`</td>
+              // <td>`+res.data.data[i].banknum+`</td>
+              // <td>`+res.data.dataend[x].date+`</td>
+              // <td>`+parseInt(res.data.dataend[x].money).toLocaleString()+`원</td>
+              // <td class="success">출금완료</td>
+              // </tr>`;
+              total_money+=parseInt(res.data.dataend[x].money);
+              total_end_len++;
+            }
+          });
+        });
+        $.each(res.data.datareqfail,function(x){
+          $.each(res.data.data,function(i){
+            if(res.data.data[i].msgno==res.data.datareqfail[x].msgno){
+              let bankname = '';
+              if(res.data.data[i].bankname=='002')bankname = '산업은행';
+              else if(res.data.data[i].bankname=='003')bankname = '기업은행';
+              else if(res.data.data[i].bankname=='004')bankname = '국민은행';
+              else if(res.data.data[i].bankname=='005')bankname = '외환은행';
+              else if(res.data.data[i].bankname=='007')bankname = '수협';
+              else if(res.data.data[i].bankname=='011')bankname = '농협';
+              else if(res.data.data[i].bankname=='020')bankname = '우리은행';
+              else if(res.data.data[i].bankname=='023')bankname = '제일은행';
+              else if(res.data.data[i].bankname=='027')bankname = '씨티은행';
+              else if(res.data.data[i].bankname=='031')bankname = '대구은행';
+              else if(res.data.data[i].bankname=='032')bankname = '부산은행';
+              else if(res.data.data[i].bankname=='034')bankname = '광주은행';
+              else if(res.data.data[i].bankname=='035')bankname = '제주은행';
+              else if(res.data.data[i].bankname=='037')bankname = '전북은행';
+              else if(res.data.data[i].bankname=='039')bankname = '경남은행';
+              else if(res.data.data[i].bankname=='045')bankname = '새마을금고';
+              else if(res.data.data[i].bankname=='048')bankname = '신협';
+              else if(res.data.data[i].bankname=='071')bankname = '우체국';
+              else if(res.data.data[i].bankname=='081')bankname = '하나은행';
+              else if(res.data.data[i].bankname=='088')bankname = '신한은행';
+              else if(res.data.data[i].bankname=='089')bankname = '케이뱅크';
+              else if(res.data.data[i].bankname=='090')bankname = '카카오뱅크';
+              cms_arr.push({
+                name:res.data.data[i].name,
+                number:res.data.data[i].number,
+                bankadmin:res.data.data[i].bankadmin,
+                bankname:bankname,
+                banknum:res.data.data[i].banknum,
+                date:res.data.datareqfail[x].date,
+                money:res.data.datareqfail[x].money,
+                state:"error",
+                txt:"출금요청실패"
+              });
+              cms_ing_arr.push({
+                msgno:res.data.data[i].msgno
+              });
+              // cms_tr+=`<tr class="cms_data">
+              // <td>`+res.data.data[i].name+`</td>
+              // <td>`+res.data.data[i].number+`</td>
+              // <td>`+res.data.data[i].bankadmin+`</td>
+              // <td>`+bankname+`</td>
+              // <td>`+res.data.data[i].banknum+`</td>
+              // <td>`+res.data.dataend[x].date+`</td>
+              // <td>`+parseInt(res.data.dataend[x].money).toLocaleString()+`원</td>
+              // <td class="success">출금완료</td>
+              // </tr>`;
+              total_money_reqfail+=parseInt(res.data.datareqfail[x].money);
+              total_end_reqfail++;
+            }
+          });
+        });
+        console.log("res.data.datasoon",res.data.datasoon.length)
+        $.each(res.data.datasoon,function(i){
+          // $.each(res.data.data,function(i){
+          //   if(res.data.data[i].msgno==res.data.datasoon[x].msgno){
+              let bankname = '';
+              if(res.data.datasoon[i].bankname=='002')bankname = '산업은행';
+              else if(res.data.datasoon[i].bankname=='003')bankname = '기업은행';
+              else if(res.data.datasoon[i].bankname=='004')bankname = '국민은행';
+              else if(res.data.datasoon[i].bankname=='005')bankname = '외환은행';
+              else if(res.data.datasoon[i].bankname=='007')bankname = '수협';
+              else if(res.data.datasoon[i].bankname=='011')bankname = '농협';
+              else if(res.data.datasoon[i].bankname=='020')bankname = '우리은행';
+              else if(res.data.datasoon[i].bankname=='023')bankname = '제일은행';
+              else if(res.data.datasoon[i].bankname=='027')bankname = '씨티은행';
+              else if(res.data.datasoon[i].bankname=='031')bankname = '대구은행';
+              else if(res.data.datasoon[i].bankname=='032')bankname = '부산은행';
+              else if(res.data.datasoon[i].bankname=='034')bankname = '광주은행';
+              else if(res.data.datasoon[i].bankname=='035')bankname = '제주은행';
+              else if(res.data.datasoon[i].bankname=='037')bankname = '전북은행';
+              else if(res.data.datasoon[i].bankname=='039')bankname = '경남은행';
+              else if(res.data.datasoon[i].bankname=='045')bankname = '새마을금고';
+              else if(res.data.datasoon[i].bankname=='048')bankname = '신협';
+              else if(res.data.datasoon[i].bankname=='071')bankname = '우체국';
+              else if(res.data.datasoon[i].bankname=='081')bankname = '하나은행';
+              else if(res.data.datasoon[i].bankname=='088')bankname = '신한은행';
+              else if(res.data.datasoon[i].bankname=='089')bankname = '케이뱅크';
+              else if(res.data.datasoon[i].bankname=='090')bankname = '카카오뱅크';
+              cms_arr.push({
+                name:res.data.datasoon[i].name,
+                number:res.data.datasoon[i].number,
+                bankadmin:res.data.datasoon[i].bankadmin,
+                bankname:bankname,
+                banknum:res.data.datasoon[i].banknum,
+                date:'',
+                money:0,
+                state:"info",
+                txt:"출금대상"
+              });
+              cms_soon_arr.push({
+                msgno:res.data.datasoon[i].msgno,
+                name:res.data.datasoon[i].name,
+                number:res.data.datasoon[i].number,
+                bankadmin:res.data.datasoon[i].bankadmin,
+                bankname:bankname,
+                banknum:res.data.datasoon[i].banknum,
+                date:'',
+                money:0,
+                state:"success",
+                txt:"출금대상"
+              });
+              // cms_tr+=`<tr class="cms_data">
+              // <td>`+res.data.data[i].name+`</td>
+              // <td>`+res.data.data[i].number+`</td>
+              // <td>`+res.data.data[i].bankadmin+`</td>
+              // <td>`+bankname+`</td>
+              // <td>`+res.data.data[i].banknum+`</td>
+              // <td>`+res.data.dataend[x].date+`</td>
+              // <td>`+parseInt(res.data.dataend[x].money).toLocaleString()+`원</td>
+              // <td class="success">출금완료</td>
+              // </tr>`;
+              total_money_soon+=parseInt(0);
+              total_end_soon++;
+          //   }
+          // });
+        });
+        console.log(cms_arr);
+        const set1 = new Set(cms_ing_arr);
+        const set2 = new Set(cms_soon_arr);
+        console.log(set1,set2)
+        const result = cms_ing_arr.filter(item => !cms_soon_arr.includes(item));
+        console.log("result",result);
+        const uniqueCmsSoonArr = cms_soon_arr.filter(obj => !cms_ing_arr.some(item => item.msgno === obj.msgno));
+        const uniqueCmsSoonArr2 = cms_ing_arr.filter(obj => !cms_soon_arr.some(item => item.msgno === obj.msgno));
+
+        console.log("uniqueCmsIngArr",uniqueCmsSoonArr)
+        let total_end_error = uniqueCmsSoonArr.length;
+        $.each(uniqueCmsSoonArr,function(i){
+          // $.each(res.data.data,function(i){
+          //   if(res.data.data[i].msgno==res.data.datasoon[x].msgno){
+              let bankname = '';
+              if(uniqueCmsSoonArr[i].bankname=='002')bankname = '산업은행';
+              else if(uniqueCmsSoonArr[i].bankname=='003')bankname = '기업은행';
+              else if(uniqueCmsSoonArr[i].bankname=='004')bankname = '국민은행';
+              else if(uniqueCmsSoonArr[i].bankname=='005')bankname = '외환은행';
+              else if(uniqueCmsSoonArr[i].bankname=='007')bankname = '수협';
+              else if(uniqueCmsSoonArr[i].bankname=='011')bankname = '농협';
+              else if(uniqueCmsSoonArr[i].bankname=='020')bankname = '우리은행';
+              else if(uniqueCmsSoonArr[i].bankname=='023')bankname = '제일은행';
+              else if(uniqueCmsSoonArr[i].bankname=='027')bankname = '씨티은행';
+              else if(uniqueCmsSoonArr[i].bankname=='031')bankname = '대구은행';
+              else if(uniqueCmsSoonArr[i].bankname=='032')bankname = '부산은행';
+              else if(uniqueCmsSoonArr[i].bankname=='034')bankname = '광주은행';
+              else if(uniqueCmsSoonArr[i].bankname=='035')bankname = '제주은행';
+              else if(uniqueCmsSoonArr[i].bankname=='037')bankname = '전북은행';
+              else if(uniqueCmsSoonArr[i].bankname=='039')bankname = '경남은행';
+              else if(uniqueCmsSoonArr[i].bankname=='045')bankname = '새마을금고';
+              else if(uniqueCmsSoonArr[i].bankname=='048')bankname = '신협';
+              else if(uniqueCmsSoonArr[i].bankname=='071')bankname = '우체국';
+              else if(uniqueCmsSoonArr[i].bankname=='081')bankname = '하나은행';
+              else if(uniqueCmsSoonArr[i].bankname=='088')bankname = '신한은행';
+              else if(uniqueCmsSoonArr[i].bankname=='089')bankname = '케이뱅크';
+              else if(uniqueCmsSoonArr[i].bankname=='090')bankname = '카카오뱅크';
+              cms_arr.push({
+                name:uniqueCmsSoonArr[i].name,
+                number:uniqueCmsSoonArr[i].number,
+                bankadmin:uniqueCmsSoonArr[i].bankadmin,
+                bankname:bankname,
+                banknum:uniqueCmsSoonArr[i].banknum,
+                date:'',
+                money:0,
+                state:"error",
+                txt:"미출금"
+              });
+              total_money_soon+=parseInt(0);
+          //   }
+          // });
+        });
+        const sortedArray = cms_arr.sort((a, b) => new Date(b.date.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3')) - new Date(a.date.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3')));
+        console.log(cms_arr);
+        for(let x in cms_arr){
+          // console.log(cms_arr[x]);
+          cms_tr+=`<tr class="cms_data">
+              <td>`+cms_arr[x].name+`</td>
+              <td>`+cms_arr[x].number+`</td>
+              <td>`+cms_arr[x].bankadmin+`</td>
+              <td>`+cms_arr[x].bankname+`</td>
+              <td>`+cms_arr[x].banknum+`</td>
+              <td>`+cms_arr[x].date+`</td>
+              <td>`+parseInt(cms_arr[x].money).toLocaleString()+`원</td>
+              <td class="`+cms_arr[x].state+`">`+cms_arr[x].txt+`</td>
+              </tr>`;
+        }
+        $('.total_money').text(0);
+        $('.total_money_fail').text(0);
+        $('.total_money_ing').text(0);
+        $('.total_money_stop').text(0);
+        $('.total_end_len').text(0);
+        $('.total_end_ing').text(0);
+        $('.total_end_soon').text(0);
+        $('.total_end_fail').text(0);
+        $('.total_end_reqfail').text(0);
+        $('.cms_data').remove();
+        $('.cms_tr').append(cms_tr);
+        $('#datepicker3').val(dates2);
+        $('#datepicker4').val(datee2);
+        $('.total_money').text(total_money.toLocaleString());
+        $('.total_money_fail').text(total_money_fail.toLocaleString());
+        $('.total_money_ing').text(total_money_ing.toLocaleString());
+        $('.total_money_reqfail').text(total_money_reqfail.toLocaleString());
+        $('.total_money_stop').text(total_money_stop.toLocaleString());
+        $('.total_end_len').text(total_end_len);
+        $('.total_end_ing').text(total_end_ing);
+        $('.total_end_soon').text(total_end_soon);
+        $('.total_end_fail').text(total_end_fail);
+        $('.total_end_reqfail').text(total_end_reqfail);
+        $('.total_end_stop').text(total_end_stop);
+        $('.total_end_error').text(total_end_error);
+      }else{
+        swal.fire(
+          '출금내역없음',
+          '',
+          'warning'
+        )
+      }
+      let tr_length = $('.cms_tr tr td').length;
+      let tab_td = $('.cms_tr tr td');
+      $(tab_td).click(function () {
+        $('.popup2').css({'z-index':'99999'});
+        if ($(this).parent().hasClass('tablemenu') != 1) {
+          //window.frames['clientmodify'].location.reload();
+          $('.clientmodify').attr('src', "//localhost:802/clientmodify?username=<%=username%>&chk=program&chk2=cms&number=" + $(this).parent().children('td:eq(1)').text());
+          window.frames['clientmodify'].src = "//localhost:802/clientmodify?username=<%=username%>&chk=program&chk2=cms&number=" + $(this).parent().children('td:eq(1)').text();
+          var targeted_popup_class = $('[data-popup-open2]').attr('data-popup-open2');
+          $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+          //e.preventDefault();
+        }
+      });
+    });
+  }
+
+  function client_fail_history(){
+    Swal.fire({
+      title: 'CMS 등록된 회원 조회요청중입니다...',
+      width: '50%',
+      allowOutsideClick: false,
+      // confirmButtonText: '확인'
+    });
+    Swal.showLoading();
+    axios.get("//localhost:802/CmsMemberStatusChk?company=<%=company%>").then(res=>{
+      Swal.fire({
+        title: 'CMS해지회원조회',
+        width: '50%',
+        html: `
+        <div style="max-height: 500px; overflow-y: auto;">
+    <table id="sortableTable" style="width: 100%; border-collapse: collapse;">
+        <thead style="position: sticky; top: 0; background: white;">
+            <tr style="background-color: #f5f5f5;">
+                <th style="padding: 10px; border: 1px solid #ddd; text-align: center; cursor: pointer;" onclick="sortTable(0)">수급자명</th>
+                <th style="padding: 10px; border: 1px solid #ddd; text-align: center; cursor: pointer;" onclick="sortTable(1)">인정번호</th>
+                <th style="padding: 10px; border: 1px solid #ddd; text-align: center; cursor: pointer;" onclick="sortTable(2)">해지일자</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${res.data.map(item => `
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${item.name}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${item.number}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${item.stopDt}</td>
+                </tr>
+            `).join('')}
+        </tbody>
+    </table>
+</div>
+
+    `,
+    confirmButtonText: '확인',
+    didOpen:()=>{
+      sortTable(2);
+    }
+      })
+    })
+  }
+
+  function sortTable(columnIndex) {
+      const table = document.getElementById("sortableTable");
+      const tbody = table.tBodies[0];
+      const rows = Array.from(tbody.rows);
+      const isAscending = table.getAttribute("data-sort-order") === "asc";
+      
+      rows.sort((a, b) => {
+          const aText = a.cells[columnIndex].textContent.trim();
+          const bText = b.cells[columnIndex].textContent.trim();
+          
+          return isAscending 
+              ? aText.localeCompare(bText, undefined, {numeric: true})
+              : bText.localeCompare(aText, undefined, {numeric: true});
+      });
+      
+      // 정렬된 행을 테이블에 다시 추가
+      rows.forEach(row => tbody.appendChild(row));
+      
+      // 정렬 순서 토글
+      table.setAttribute("data-sort-order", isAscending ? "desc" : "asc");
+  }
+
+  function pay_history(){
+    let now = new Date();
+    let year= now.getFullYear();
+    let mon = (now.getMonth()+1)>9 ? ''+(now.getMonth()+1) : '0'+(now.getMonth()+1);
+    let day = now.getDate()>9 ? ''+now.getDate() : '0'+now.getDate();
+    let dates = year+mon+'01';
+    let dates2 = year+'-'+mon+'-'+'01';
+    let lastDate = new Date(year, mon, 0);
+    let rentmoneycal = lastDate.getDate()>9 ? ''+lastDate.getDate() : '0'+lastDate.getDate();
+    let datee = year+mon+rentmoneycal;
+    let datee2 = year+'-'+mon+'-'+rentmoneycal;
+    cms_history_swal(dates2,datee2);
+  }
+
+</script>
+
+<body>
+  <!--div class="wrapper">
+    <ul class="bg-bubbles">
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+    </ul>
+  </div-->
+  <div class="topline mobile"></div>
+  <div class="pc" style="display:none;">
+    <%- include('mobilemenu') %>
+  </div>
+  <a style="display:none;" class="btn" data-popup-open="popup-1" href="#">Open Popup #1</a>
+  <a style="display:none;" class="btn" data-popup-open2="popup-2" href="#">Open Popup #1</a>
+  <div class="maincontainer">
+    <h1 class="title"><span class="material-icons">account_balance</span>&nbsp;&nbsp;&nbsp;&nbsp;<%= title %>
+    </h1>
+    <form action="" method="get" class="search-form">
+      <input type="text" class="search-bar" name="query" placeholder=" 검색어를 입력하세요.">
+      <input type="submit" class="search-button material-icons" value="search">
+      <input type="submit" class="search-button material-icons" value="cached">
+    </form>
+    <table class="topmenu">
+      <tr>
+        <td class="clientup" style="display:flex; align-items:center;">
+          <!--<span>수급자등록하기</span>&nbsp;&nbsp;&nbsp;-->
+          <input class="date1 datepickerall" type="text" id="datepicker" autocomplete='off' value="2022-01-01">
+          ~
+          <input class="date2 datepickerall" type="text" id="datepicker2" autocomplete='off'>
+          <span onclick="datesearch();">날짜조회</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <!--span class="mobile" onclick="paysend();">가상계좌발송</span>&nbsp;&nbsp;-->
+          <!-- <span class="mobile" onclick="sendmsg();">문자발송</span> -->
+          <div style="display:flex; align-items:center; padding-right:10px; font-size:18px; font-weight:bold;">
+            <div>출금등록완료</div>:<div id="success_count"><%=success_count%></div>명
+          </div>
+          <div style="display:flex; align-items:center; padding-right:10px; font-size:18px; font-weight:bold;">
+            <div>출금등록중</div>:<div id="ing_count"><%=ing_count%></div>명
+          </div>
+        </td>
+        
+        <td>
+          <div onclick="client_fail_history();">CMS해지회원조회</div>
+        </td>
+        <td>
+          <div onclick="pay_history();">출금내역확인</div>
+        </td>
+      </tr>
+    </table>
+    <table class="table table-bordered">
+      <tr class="tablemenu">
+        <td colspan="21">
+          <% if (articles.contents.length !=0) { %>
+            <div class="tablemenutop" style="text-align:center;">
+              <div class="mobile"></div>
+              <ul class="pagination">
+                <li <%if(articles.pageNum==1){%> class="disabled" <%}else{%>class="waves-effect" <%}%> >
+                      <a <%if(articles.pageNum> 1){%> href="//localhost:802/cmspay/<%=articles.pageNum-1%>/<%=username%>/<%=datetarget%>/<%=datetargete%>?nomal=<%=nomal%>" <%}%>>
+                        <i class="material-icons">chevron_left</i>
+                      </a>
+                </li>
+                <% for(var i=articles.pnStart; i<=articles.pnEnd; i++){ %>
+                  <li <%if(i===articles.pageNum){%> class="active"
+                    <%}%>><a class="numhref" style="z-index:0;"
+                        href="//localhost:802/cmspay/<%=i%>/<%=username%>/<%=datetarget%>/<%=datetargete%>?nomal=<%=nomal%>">
+                        <%=i%>
+                      </a>
+                  </li>
+                  <% } %>
+                    <li <%if(articles.pageNum==articles.pnTotal){%> class="disabled" <%}else{%> class="waves-effect"
+                        <%}%>>
+                          <a <%if(articles.pageNum < articles.pnTotal){%> href="//localhost:802/cmspay/<%=articles.pageNum+1%>/<%=username%>/<%=datetarget%>/<%=datetargete%>?nomal=<%=nomal%>" <%}%>class="waves-effect">
+                            <i class="material-icons">chevron_right</i>
+                          </a>
+                    </li>
+              </ul>
+              <% }else{ %>
+                <div class="tablemenutop" style="text-align:center;">
+                  <div></div>
+                  <ul class="pagination">
+
+                  </ul>
+                  <% } %>
+                  <div></div>
+                    <!--div class="topmenuright mobile">
+                      <div class="flex">
+                        <span>증빙전송</span>
+                        <label class="menu1" onclick="optionchk(this);">
+                          <input type="checkbox" checked="checked">
+                          <span class="checkmark"></span>
+                        </label>
+                      </div-->
+                      <!--
+                      <div class="flex">
+                        <span>감경</span>
+                        <label class="menu1" onclick="optionchk(this);">
+                          <input type="checkbox" checked="checked">
+                          <span class="checkmark"></span>
+                        </label>
+                      </div>
+                      <div class="flex">
+                        <span>의료급여</span>
+                        <label class="menu1" onclick="optionchk(this);">
+                          <input type="checkbox" checked="checked">
+                          <span class="checkmark"></span>
+                        </label>
+                      </div>
+                      <div class="flex">
+                        <span>기초</span>
+                        <label class="menu1" onclick="optionchk(this);">
+                          <input type="checkbox" checked="checked">
+                          <span class="checkmark"></span>
+                        </label>
+                      </div>
+                      -->
+                    </div>
+
+                </div>
+        </td>
+      </tr>
+      <tr class="center tablemenu">
+        <td>번호</td>
+        <td>수급자성함</td>
+        <td>인정번호</td>
+        <td>생년월일</td>
+        <td class="mobile">연락처</td>
+        <td class="mobile">예금주</td>
+        <td class="mobile">계좌번호</td>
+        <td class="mobile">은행</td>
+        <td class="mobile">메모</td>
+        <td>증빙상태</td>
+        <td>출금상태</td>
+        <td>등록일</td>
+      </tr>
+      <% var indexstart=1; indexstart=articles.pnEnd; %>
+        <% if (articles.contents.length !=0) { %>
+          <% articles.contents.forEach(function(Article,index){ %>
+            <%
+            let phone = Article.phone.replace(/[^0-9]/g,'');
+            let masked_phone = phone.slice(0, 3) + '****' + phone.slice(7);
+            let masked_bankadmin = Article.bankadmin.slice(0, 1) + '*' + Article.bankadmin.slice(2,Article.bankadmin.length);
+            let masked_banknum = Article.banknum.slice(0, 3) + '***' + Article.banknum.slice(6,Article.banknum.length);
+
+            %>
+            <tr class="active center mainlist">
+              <td><%=(contentSize*page)-(((contentSize)-1)-(index))%></td>
+              <td class="productname"><%=Article.name%></td>
+              <td class="number"><%=Article.number%></td>
+              <td><%=Article.bankregident%></td>
+              <td class="mobile"><%=masked_phone%></td>
+              <td class="mobile"><%=masked_bankadmin%></td>
+              <td class="mobile"><%=masked_banknum%></td>
+              <%
+              var bankname = '은행명오류';
+              if(Article.bankname=='002')bankname = '산업은행';
+              if(Article.bankname=='003')bankname = '기업은행';
+              if(Article.bankname=='004')bankname = '국민은행';
+              if(Article.bankname=='005')bankname = '외환은행';
+              if(Article.bankname=='007')bankname = '수협';
+              if(Article.bankname=='011')bankname = '농협';
+              if(Article.bankname=='020')bankname = '우리은행';
+              if(Article.bankname=='023')bankname = '제일은행';
+              if(Article.bankname=='027')bankname = '씨티은행';
+              if(Article.bankname=='031')bankname = '대구은행';
+              if(Article.bankname=='032')bankname = '부산은행';
+              if(Article.bankname=='034')bankname = '광주은행';
+              if(Article.bankname=='035')bankname = '제주은행';
+              if(Article.bankname=='037')bankname = '전북은행';
+              if(Article.bankname=='039')bankname = '경남은행';
+              if(Article.bankname=='045')bankname = '새마을금고';
+              if(Article.bankname=='048')bankname = '신협';
+              if(Article.bankname=='071')bankname = '우체국';
+              if(Article.bankname=='081')bankname = '하나은행';
+              if(Article.bankname=='088')bankname = '신한은행';
+              if(Article.bankname=='089')bankname = '케이뱅크';
+              if(Article.bankname=='090')bankname = '카카오뱅크';
+              %>
+              <td class="mobile"><%=bankname%></td>
+              <td class="mobile"><%=Article.reqeustmemo%></td>
+              <%
+              var chk = 0;
+              var chkt = '출금실패:계좌번호오류';
+              if(Article.chk==2){chk='info'; chkt="증빙(취소)전송완료"}
+              if(Article.chk==1){chk='success'; chkt="증빙(신규)전송완료"}
+              if(Article.chk==0){chk='danger'; chkt="출금실패:증빙미전송"}
+              %>
+              <td class="cmsstate <%=chk%>"><%=chkt%></td>
+              <%
+              var chk2 = 0;
+              var chkt2 = '출금등록중';
+              if(Article.chk2==1){chk2='success'; chkt2="출금등록완료"}
+              if(Article.chk2==2){chk2='info'; chkt2="해지완료"}
+              if(Article.chk2==0){chk2='danger'; chkt2="예금주명오류"}
+              %>
+              <td class="<%=chk2%>"><%=chkt2%></td>
+              </td>
+              <td><%=Article.date%></td>
+            </tr>
+            <% }); %>
+              <% } else { %>
+                <tr class="tablemenu">
+                  <td colspan="21" style="text-align: center; font-weight: bold; font-size:15px;"><br />등록된 수급자가
+                    없습니다.<br /><br /></td>
+                </tr>
+                <% } %>
+    </table>
+  </div>
+
+  <div class="popup" data-popup="popup-1">
+    <div class="popup-inner">
+      <iframe name="clientup" src="//localhost:802/clientup?username=<%=username%>" frameborder="0"></iframe>
+      <a class="popup-close" data-popup-close="popup-1" href="#">x</a>
+    </div>
+  </div>
+  <div class="popup2" data-popup="popup-2">
+    <div class="popup2-inner">
+      <iframe class='clientmodify' name="clientmodify" src="" frameborder="0"></iframe>
+      <a class="popup2-close" data-popup-close="popup-2" href="#">x</a>
+    </div>
+  </div>
+  <div class="mobile">
+    <%- include('channeltalk') %>
+  </div>
+  <div class="pc">
+    <%- include('mobilefoot') %>
+  </div>
+</body>
+
+</html>

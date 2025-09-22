@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+    <head>
+        <meta http_quiv="content-type" content="text/html; charset=utf-8">
+        <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    </head>
+    <style type="text/css">
+        body{
+            margin: 0;
+            padding: 0;
+            background:#fff;
+        }
+        .mbody{
+            font-weight:bold;
+            /*border:1px solid #000;*/
+            width: 29.7cm;
+            min-height: 21cm;
+            padding: 1.5cm 1.5cm 2cm 1.5cm;
+            page-break-after: always;
+        }
+        .tg  {border-collapse:collapse;border-spacing:0; width:50%;}
+        .tg td{font-family:Arial, sans-serif;word-break:normal;}
+        .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;word-break:normal;}
+        .tg .tg-0lax{text-align:center;}
+        .vertical-line {
+            border: none;
+            border-left: 2px dotted #000;
+            width: 0px;
+            /* margin: 20px 0; */
+            margin: 0px 20px 0px 20px;
+        }
+
+        .supply_table td{
+            border:1px solid rgb(255, 62, 62);
+            color:rgb(255, 62, 62);
+        }
+        .client_table td{
+            border:1px solid rgb(62, 91, 255);
+            color:rgb(62, 91, 255);
+        }
+        .rheader{
+            font-size:13px;
+        }
+        .receipt_tr_dm{
+            font-size:13px;
+        }
+        .mbody_receipt{
+
+        }
+        @media print {
+            .mbody_receipt{
+                break-after: avoid;
+                transform: rotate(90deg); /* 45도 회전 */
+                margin-left:-6cm;
+                margin-top:3.5cm
+            }
+        }
+    </style>
+    <body>
+        <div class="mbody mbody_receipt" style="display:flex;">
+            <table class="tg supply_table">
+            <tbody>
+            <tr style="height:75px;">
+                <td class="tg-0lax" colspan="7">
+                    <div sytle="display:flex; flex-direction:column;">
+                        <div style="display:flex; justify-content: center; align-items:center; font-weight:bold;"><span class="doc_num" style="color:#000;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-size:22px;">영&nbsp;&nbsp;수&nbsp;&nbsp;증</span><span>(공급자용)</span></div>
+                        <div style="display:flex; justify-content: flex-end; align-items:center; font-weight:bold;"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="name" style="font-size:20px; color:#000;"></span>&nbsp;&nbsp;<span>귀하</span></div>
+                    </div>
+                </td>
+            </tr>
+            <tr class="rheader">
+                <td class="tg-0lax" rowspan="4"><div style="display:flex; flex-direction:column; justify-content:space-around;"><span>공</span>&nbsp;&nbsp;<span>급</span>&nbsp;&nbsp;<span>자</span></div></td>
+                <td class="tg-0lax" style="width:120px;">사 업 자 등록번호</td>
+                <td class="tg-0lax companynum2" colspan="5" style="color:#000;">123-56-7890</td>
+            </tr>
+            <tr class="rheader">
+                <td class="tg-0lax">상&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;호</td>
+                <td class="tg-0lax company" colspan="2" style="width:150px; color:#000;"></td>
+                <td class="tg-0lax">성명</td>
+                <td class="tg-0lax ceo" colspan="2" style="color:#000; position:relative;">대표자</td>
+            </tr>
+            <tr class="rheader">
+                <td class="tg-0lax">사 업 장 소 재 지</td>
+                <td class="tg-0lax caddress" colspan="5" style="color:#000;">대한민국 서울특별시</td>
+            </tr>
+            <tr class="rheader">
+                <td class="tg-0lax">업&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;태</td>
+                <td class="tg-0lax" style="color:#000;">도소매</td>
+                <td class="tg-0lax">종목</td>
+                <td class="tg-0lax" colspan="3" style="color:#000;">의료기기</td>
+            </tr>
+            <tr class="rheader">
+                <td class="tg-0lax" colspan="2">작성일자</td>
+                <td class="tg-0lax" colspan="2">금액합계</td>
+                <td class="tg-0lax" colspan="3">비&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;고</td>
+            </tr>
+            <tr class="rheader">
+                <td class="tg-0lax sdate" colspan="2" style="color:#000;">2024-04-25</td>
+                <td class="tg-0lax pdfbuytotal2" colspan="2" style="color:#000;"></td>
+                <td class="tg-0lax" colspan="3" style="color:#000;"><div class="banknum_custum"></div></td>
+            </tr>
+            <tr class="rheader">
+                <td class="tg-0lax" colspan="7" style="color:#000;">위&nbsp;&nbsp;금액을&nbsp;&nbsp;영수(청구)함.</td>
+            </tr>
+            <tr class="receipt_tr_col" style="font-size:13px;">
+                <td class="tg-0lax">월일</td>
+                <td class="tg-0lax">품&nbsp;&nbsp;목</td>
+                <td class="tg-0lax">품&nbsp;&nbsp;명</td>
+                <td class="tg-0lax">구분</td>
+                <td class="tg-0lax">수량</td>
+                <td class="tg-0lax">금액</td>
+                <td class="tg-0lax">본인부담금</td>
+            </tr>
+            <tr>
+                <td class="tg-0lax" colspan="4">합&nbsp;&nbsp;&nbsp;계</td>
+                <td class="tg-0lax bcnt" style="color:#000;"></td>
+                <td class="tg-0lax pdfdantotal2" style="color:#000;"></td>
+                <td class="tg-0lax pdfbuytotal2" style="color:#000;"></td>
+            </tr>
+            <!-- <tr>
+                <td class="tg-0lax" colspan="2">본인부담금</td>
+                <td class="tg-0lax" colspan="5" style="font-size:14px;">판매:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;대여:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;합계:</td>
+            </tr> -->
+            
+            </tbody>
+            </table>
+            <div class="vertical-line"></div>
+            <table class="tg client_table">
+                <tbody>
+                    <tr style="height:75px;">
+                        <td class="tg-0lax" colspan="7">
+                            <div sytle="display:flex; flex-direction:column;">
+                                <div style="display:flex; justify-content: center; align-items:center; font-weight:bold;"><span class="doc_num" style="color:#000;">&nbsp;</span><span style="font-size:22px;">영&nbsp;&nbsp;수&nbsp;&nbsp;증</span><span>(공급받는자용)</span></div>
+                                <div style="display:flex; justify-content: flex-end; align-items:center; font-weight:bold;"><span>&nbsp;</span><span class="name" style="font-size:20px; color:#000;">홍길동</span>&nbsp;&nbsp;<span>귀하</span></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="rheader">
+                        <td class="tg-0lax" rowspan="4"><div style="display:flex; flex-direction:column; justify-content:space-around;"><span>공</span>&nbsp;&nbsp;<span>급</span>&nbsp;&nbsp;<span>자</span></div></td>
+                        <td class="tg-0lax" style="width:120px;">사 업 자 등록번호</td>
+                        <td class="tg-0lax companynum2" colspan="5" style="color:#000;">123-56-7890</td>
+                    </tr>
+                    <tr class="rheader">
+                        <td class="tg-0lax">상&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;호</td>
+                        <td class="tg-0lax company" colspan="2" style="width:150px; color:#000;"></td>
+                        <td class="tg-0lax">성명</td>
+                        <td class="tg-0lax ceo" colspan="2" style="color:#000; position:relative;">대표자</td>
+                    </tr>
+                    <tr class="rheader">
+                        <td class="tg-0lax">사 업 장 소 재 지</td>
+                        <td class="tg-0lax caddress" colspan="5" style="color:#000;">대한민국 서울특별시</td>
+                    </tr>
+                    <tr class="rheader">
+                        <td class="tg-0lax">업&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;태</td>
+                        <td class="tg-0lax" style="color:#000;">도소매</td>
+                        <td class="tg-0lax">종목</td>
+                        <td class="tg-0lax" colspan="3" style="color:#000;">의료기기</td>
+                    </tr>
+                    <tr class="rheader">
+                        <td class="tg-0lax" colspan="2">작성일자</td>
+                        <td class="tg-0lax" colspan="2">금액합계</td>
+                        <td class="tg-0lax" colspan="3">비&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;고</td>
+                    </tr>
+                    <tr class="rheader">
+                        <td class="tg-0lax sdate" colspan="2" style="color:#000;"></td>
+                        <td class="tg-0lax pdfbuytotal2" colspan="2" style="color:#000;"></td>
+                        <td class="tg-0lax" colspan="3" style="color:#000;"><div class="banknum_custum"></div></td>
+                    </tr>
+                    <tr class="rheader">
+                        <td class="tg-0lax" colspan="7" style="color:#000;">위&nbsp;&nbsp;금액을&nbsp;&nbsp;영수(청구)함.</td>
+                    </tr>
+                    <tr class="receipt_tr_col" style="font-size:13px;">
+                        <td class="tg-0lax">월일</td>
+                        <td class="tg-0lax">품&nbsp;&nbsp;목</td>
+                        <td class="tg-0lax">품&nbsp;&nbsp;명</td>
+                        <td class="tg-0lax">구분</td>
+                        <td class="tg-0lax">수량</td>
+                        <td class="tg-0lax">금액</td>
+                        <td class="tg-0lax">본인부담금</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0lax" colspan="4">합&nbsp;&nbsp;&nbsp;계</td>
+                        <td class="tg-0lax bcnt" style="color:#000;"></td>
+                        <td class="tg-0lax pdfdantotal2" style="color:#000;"></td>
+                        <td class="tg-0lax pdfbuytotal2" style="color:#000;"></td>
+                    </tr>
+                    <!-- <tr>
+                        <td class="tg-0lax" colspan="2">본인부담금</td>
+                        <td class="tg-0lax" colspan="5" style="font-size:14px;">판매:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;대여:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;합계:</td>
+                    </tr> -->
+                    
+                    </tbody>
+                    </table>
+        </div>
+    </body>

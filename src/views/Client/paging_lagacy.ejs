@@ -1,0 +1,3058 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+<script src="https://fastly.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script src="https://fastly.jsdelivr.net/npm/less@4"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.5/xlsx.full.min.js"></script>
+<!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
+<script src="https://fastly.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.rawgit.com/eligrey/FileSaver.js/5ed507ef8aa53d8ecfea96d96bc7214cd2476fd2/FileSaver.min.js"></script> 
+<link rel="stylesheet" type="text/css" href="/css/guide.css">
+<script src="/js/ajax_before_send.js"></script>
+<head>
+  <title>
+    <%= title %>
+  </title>
+</head>
+<style>
+  @font-face {
+    font-family: 'Source Sans Pro';
+    font-style: normal;
+    font-weight: 200;
+    src: url(https://fonts.gstatic.com/s/sourcesanspro/v21/6xKydSBYKcSV-LCoeQqfX1RYOo3i94_wlxdr.ttf) format('truetype');
+  }
+
+  @font-face {
+    font-family: 'Source Sans Pro';
+    font-style: normal;
+    font-weight: 300;
+    src: url(https://fonts.gstatic.com/s/sourcesanspro/v21/6xKydSBYKcSV-LCoeQqfX1RYOo3ik4zwlxdr.ttf) format('truetype');
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 300;
+  }
+
+  .filterarr{
+      display:flex;
+      align-items: center;
+      margin-bottom:5px;
+  }
+
+  .filtercls{
+      display:flex;
+      justify-content: center;
+      align-items: center;
+      margin:1px;
+      padding:3px;
+      border:1px solid #000;
+      border-radius: 5px;
+      font-weight: bold;
+  }
+
+  .wrapper {
+    background: #f1f1f1;
+    background: linear-gradient(to top right, #fdfdfd 0%, #ffffff 100%);
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1000px;
+    margin-top: -500px;
+    overflow: hidden;
+    color: white;
+    z-index: -999;
+  }
+
+  @font-face {
+    font-family: 'Material Icons';
+    font-style: normal;
+    font-weight: 400;
+    src: url(path/to/MaterialIcons-Regular.eot);
+    /* For IE6-8 */
+    src:
+      local('Material Icons'),
+      local('MaterialIcons-Regular'),
+  }
+
+  .material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 16px;
+    /* Preferred icon size */
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+    /* Support for all WebKit browsers. */
+    -webkit-font-smoothing: antialiased;
+    /* Support for Safari and Chrome. */
+    text-rendering: optimizeLegibility;
+    /* Support for Firefox. */
+    -moz-osx-font-smoothing: grayscale;
+    /* Support for IE. */
+    font-feature-settings: 'liga';
+  }
+
+  .title {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .title span {
+    font-size: 30px;
+  }
+
+  .search-form {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .search-form input:nth-child(1) {
+    width: 250px;
+    border: 1px solid #000000;
+    background: #ffffff;
+    border-radius: 5px;
+    height: 40px;
+  }
+
+  .search-form input:nth-child(2),
+  .search-form input:nth-child(3) {
+    background: #ffffff;
+    border-radius: 5px;
+    border: 2px solid #000000;
+    width: 60px;
+    margin-left: 5px;
+  }
+
+  .search-form input:nth-child(2):hover,
+  .search-form input:nth-child(3):hover {
+    border: 2px solid #CC414D;
+    background: #dcffff;
+    width: 60px;
+  }
+
+  .maincontainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    position: relative;
+    padding-top: 50px;
+    padding-left: 50px;
+    padding-right: 50px;
+  }
+
+  /*.maincontainer::before{
+        content : "";
+        display: block;
+        position: absolute;
+        background-size: cover;
+        top: 0;
+        left: 0;
+        background-image: url( "/img3" );
+        width: 100%;
+        height: 100%;
+        opacity : 0.1;
+        z-index: -1;
+    }*/
+  .topmenu {
+    width: 100%;
+    font-size: 15px;
+  }
+
+  .topmenu tr td {
+    padding-bottom: 15px;
+  }
+
+  .topmenu tr td:nth-child(1) span{
+    width: 100px;
+    padding: 10px;
+    border: 1px solid #000000;
+    border-radius: 5px;
+    background: #1a2136;
+    font-weight: bold;
+    cursor: pointer;
+    color: #fff;
+    box-shadow: 0 8px 9px -4px rgba(0, 0, 0, 0.3), 0 4px 18px 0 rgba(0, 0, 0, 0.2);
+
+  }
+
+  .topmenu tr td:nth-child(1) span:hover {
+    border: 1px solid #CC414D;
+    background: #fff;
+    color: #000;
+  }
+
+  .topmenu tr td:nth-child(2) span {
+    font-family: 'Noto Serif KR', serif;
+    width: 120px;
+    border: 1px solid #000000;
+    border-radius: 5px;
+    background: #ffffff;
+    font-weight: bold;
+    font-size:16px;
+    text-align: center;
+    height:35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .topmenu tr td:nth-child(2) span:nth-child(2) {
+    border: 1px solid #006426;
+  }
+
+  .topmenu tr td:nth-child(2) span:nth-child(3) {
+    border: 1px solid #0004ee;
+  }
+
+  .topmenu tr td:nth-child(2) span:nth-child(4) {
+    border: 1px solid #006426;
+  }
+
+  .topmenu tr td:nth-child(2) span:nth-child(5) {
+    border: 1px solid #8d0000;
+  }
+
+  .topmenu tr td:nth-child(2) {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-weight: bold;
+  }
+
+  .table {
+    border: 2px solid #000000;
+  }
+
+  .center td {
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .table tr:nth-child(1) {
+    font-size: 20px;
+    background: #1a2136;
+  }
+
+  .table tr:nth-child(2) {
+    font-size: 16px;
+  }
+
+  .pagingnum {
+    border: 1px solid #ffffff;
+    padding: 5px;
+    border-radius: 4px;
+    background: #ffffff;
+  }
+
+  .table tr:nth-child(1),
+  .table tr:nth-child(2) {
+    border: 2px solid #000000;
+    font-weight: bold;
+  }
+
+  .table>tbody>tr>td {
+    padding: 6px;
+  }
+
+  .popup {
+    width: 100%;
+    height: 100%;
+    display: none;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+  }
+
+  /* Inner */
+  .popup-inner {
+    max-width: 900px;
+    height: 880px;
+    width: 100%;
+    /*padding:40px;*/
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 1);
+    border-radius: 8px;
+    background: #fff;
+  }
+
+  /* Close Button */
+  .popup-close {
+    width: 30px;
+    height: 30px;
+    padding-top: 4px;
+    display: inline-block;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    transition: ease 0.25s all;
+    -webkit-transform: translate(50%, -50%);
+    transform: translate(50%, -50%);
+    border-radius: 1000px;
+    background: rgba(0, 0, 0, 0.8);
+    font-family: Arial, Sans-Serif;
+    font-size: 20px;
+    text-align: center;
+    line-height: 100%;
+    color: #fff;
+  }
+
+  .popup-close:hover {
+    -webkit-transform: translate(50%, -50%) rotate(180deg);
+    transform: translate(50%, -50%) rotate(180deg);
+    background: rgba(0, 0, 0, 1);
+    text-decoration: none;
+  }
+
+
+  /* Outer */
+  .popup2 {
+    width: 100%;
+    height: 100%;
+    display: none;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+  }
+
+  /* Inner */
+  .popup2-inner {
+    max-width: 900px;
+    height: 85%;
+    width: 100%;
+    /*padding:40px;*/
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 1);
+    border-radius: 8px;
+    background: #fff;
+  }
+
+  /* Close Button */
+  .popup2-close {
+    width: 30px;
+    height: 30px;
+    padding-top: 4px;
+    display: inline-block;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    transition: ease 0.25s all;
+    -webkit-transform: translate(50%, -50%);
+    transform: translate(50%, -50%);
+    border-radius: 1000px;
+    background: rgba(0, 0, 0, 0.8);
+    font-family: Arial, Sans-Serif;
+    font-size: 20px;
+    text-align: center;
+    line-height: 100%;
+    color: #fff;
+  }
+
+  .popup2-close:hover {
+    -webkit-transform: translate(50%, -50%) rotate(180deg);
+    transform: translate(50%, -50%) rotate(180deg);
+    background: rgba(0, 0, 0, 1);
+    text-decoration: none;
+  }
+
+
+  iframe {
+    width: 100%;
+    height: 100%;
+  }
+
+  .topline {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 32px;
+    background: #122459;
+    z-index: 999;
+  }
+
+  .tablemenutop {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .tablemenutop div,
+  .tablemenutop ul {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .flex {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .flexcolumn {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .flexcolumnstart {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .topmenuright {
+    color: #ffffff;
+  }
+
+  .topmenuright div span {
+    font-size: 16px;
+    font-weight: bold;
+    padding-right: 10px;
+  }
+
+  .menu1 {
+    display: block;
+    position: relative;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 18px;
+
+  }
+
+  /* Hide the browser's default checkbox */
+  .menu1 input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+
+  /* Create a custom checkbox */
+  .checkmark {
+    position: absolute;
+    top: -7px;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+  }
+
+  /* On mouse-over, add a grey background color */
+  .menu1:hover input~.checkmark {
+    background-color: #ccc;
+  }
+
+  /* When the checkbox is checked, add a "red" background */
+  .menu1 input:checked~.checkmark {
+    background-color: #e91b00e8;
+  }
+
+  /* Create the checkmark/indicator (hidden when not checked) */
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+
+  /* Show the checkmark when checked */
+  .menu1 input:checked~.checkmark:after {
+    display: block;
+  }
+
+  /* Style the checkmark/indicator */
+  .menu1 .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 6px;
+    height: 11px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+
+  .datepickerall {
+    font-weight: bold;
+    height: 35px;
+    width: 8%;
+    border-radius: 5px;
+    text-align: center;
+  }
+  
+  @media (min-width: 1000px) and (max-width: 1650px) {
+        .popup-inner{
+          width:70%;
+          height:600px;
+        }
+        .popup2-inner {
+          width: 50%;
+          height: 600px;
+        }
+
+    }
+  @media (max-width: 600px) {
+    body {
+      font-size: 10px;
+    }
+
+    .search-form input:nth-child(1) {
+      width: 140px;
+    }
+
+    .maincontainer {
+      padding-left: 20px;
+      padding-right: 20px;
+      padding-bottom: 100px;
+    }
+    .popup-inner {
+      height: 520px;
+      width: 98%;
+    }
+
+    .popup2-inner {
+      max-width: 353px;
+      height: 525px;
+    }
+
+    .popup-close {
+      right: 20px;
+    }
+
+    .topmenu {
+      font-size: 10px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .datepickerall {
+      width: 20%;
+    }
+
+    .table tr:nth-child(1) {
+      font-size: 16px;
+    }
+
+    .table tr:nth-child(2) {
+      font-size: 10px;
+    }
+
+    .deliverytxtm {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    
+  }
+  
+  .excelbutton{
+    width:150px;
+    height:50px;
+    border:1px solid #000;
+    font-size:18px;
+    font-weight:bold;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+  .excelbutton:hover{
+    border:1px solid #CC414D;
+    background:#122459;
+    color:#fff;
+  }
+
+  .client_paging{
+    cursor:pointer;
+  }
+
+  .swal2-title {
+      font-size: 2.875em;
+  }
+
+  .swal2-content {
+      font-size: 2.0em;
+  }
+
+  .swal2-icon {
+      width: 8em;
+      height: 8em;
+  }
+
+  .swal2-icon .swal2-icon-content {
+      font-size: 5.75em;
+  }
+
+  .swal2-styled.swal2-confirm,
+  .swal2-styled.swal2-cancel {
+      font-size: 3em;
+  }
+
+  .need_table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size:18px;
+    height:500px;
+  }
+
+  .need_table thead {
+    display:block;
+  }
+
+  .need_table thead tr th {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: left;
+    /* width:100px; */
+  }
+
+  .need_table tbody tr td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+  .need_table thead tr th:nth-child(1), .need_table tbody tr td:nth-child(1) {
+    width:50px;
+  }
+  .need_table thead tr th:nth-child(2), .need_table tbody tr td:nth-child(2) {
+    width:100px;
+  }
+
+  .need_table thead tr th:nth-child(3), .need_table tbody tr td:nth-child(3) {
+    width:100px;
+  }
+
+  .need_table thead tr th:nth-child(4), .need_table tbody tr td:nth-child(4) {
+    width:750px;
+  }
+
+  .need_table thead tr th:nth-child(5), .need_table tbody tr td:nth-child(5) {
+    width:150px;
+  }
+
+  .need_table thead tr th:nth-child(6), .need_table tbody tr td:nth-child(6) {
+    width:100px;
+  }
+
+  .need_table thead tr th:nth-child(7), .need_table tbody tr td:nth-child(7) {
+    width:60px;
+  }
+  .need_table thead tr th:nth-child(8), .need_table tbody tr td:nth-child(8) {
+    width:150px;
+  }
+
+  .need_table th {
+    position: sticky;
+    top: 0;
+    background-color: #f2f2f2;
+    text-align: center;
+  }
+
+  .need_table tbody {
+    max-height: 400px;
+    overflow-y: auto;
+    display: block;
+    font-weight:bold;
+  }
+
+  .need_search_area{
+    margin-bottom:15px;
+  }
+
+  .need_search_input{
+    height:40px;
+    width:150px;
+    border-radius: 5px;
+    font-size:17px;
+    font-weight:bold;
+  }
+
+  .need_search_option{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .option_on{
+    background:#333;
+    color:#fff;
+  }
+  
+  .need_search_option_btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width:120px;
+    height:40px;
+    /* background:#122459; */
+    box-shadow: 0 8px 9px -4px rgba(0, 0, 0, 0.3), 0 4px 18px 0 rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+  }
+
+  .need_search_btn{
+    width:100px;
+    height:40px;
+    /* background:#122459; */
+    box-shadow: 0 8px 9px -4px rgba(0, 0, 0, 0.3), 0 4px 18px 0 rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+  }
+
+  .need_search_ctn_area{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    font-weight:bold;
+    font-size:20px;
+  }
+
+  .need_search_btn:hover{
+    opacity:0.8;
+  }
+
+  .need_data:hover{
+    opacity:0.8;
+    background:rgb(212, 212, 212);
+    /* border:2px solid #333; */
+    cursor:pointer;
+  }
+  .client_excel{
+        margin-left: 10px;
+        margin-bottom:5px;
+        background: rgb(48, 110, 72);
+        padding: 3px;
+        color: #fff;
+        font-size: 15px;
+        border-radius: 5px;
+        /*box-shadow: 0 8px 9px -4px rgba(0, 0, 0, 0.3), 0 4px 18px 0 rgba(0, 0, 0, 0.2);*/
+        cursor:pointer;
+    }
+    .print_chk_box{
+      width:20px;
+      height:20px;
+    }
+
+    .client_lookup_excel_swal div{
+      padding:10px;
+      font-size:18px;
+      font-weight:bold;
+      border-radius:5px;
+      margin:10px;
+      box-shadow: 0 8px 9px -4px rgba(0, 0, 0, 0.3), 0 4px 18px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .client_lookup_excel_swal div:hover{
+      cursor:pointer;
+      opacity:0.5;
+    }
+
+    .client_history_table thead tr th{
+       text-align: center;
+       width:170px;
+       font-size:15px;
+    }
+
+    .client_history_table tbody tr td{
+      text-align: center;
+      width:170px;
+      font-size:15px;
+      font-weight:bold;
+    }
+
+    .client_history_table tbody tr{
+      height:30px;
+    }
+
+    .client_history_search_area{
+      font-size:17px;
+      font-weight:bold;
+      padding:20px 0px;
+    }
+
+</style>
+<%- include('alert2') %>
+<% if(firstData=="zoa"){%>
+  <%- include('webtopmenu_w') %>
+<% }else{ %>
+  <%- include('webtopmenu') %>
+<% } %>
+<script>
+  function Mobile() { return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent); }
+</script>
+
+<script>
+  var nomal = '<%=nomal%>';
+  var gamgyung = '<%=gamgyung%>';
+  var medical = '<%=medical%>';
+  var zero = '<%=zero%>';
+
+  socket.on('go_lookup_res',function(data){
+    if(data.name=="errorsessionexcel")Swal.fire("공단로그인창을 실행해주세요","","error");
+  });
+
+  socket.on('exceluse', function(data) {
+    console.log(data);
+    datasplit=data.data;
+    datcnt = data.cnt;
+    if(datasplit=='end'){ Swal.hideLoading(); $('.excelstate').html('수급자 일괄등록완료');}
+    if(datasplit=='n'){ 
+      $('.excelmember').eq(datcnt).children('span').eq(1).text('check_circle'); 
+      $('.excelmember').eq(datcnt).children('span').eq(1).css('color','rgb(55, 138, 55)');
+    }
+    if(datasplit=='y'){ 
+      $('.excelmember').eq(datcnt).children('span').eq(1).text('cancel'); 
+      $('.excelmember').eq(datcnt).children('span').eq(2).text('(중복등록)'); 
+      $('.excelmember').eq(datcnt).children('span').eq(1).css('color','#ff0000');
+    }
+    if(datasplit=='d'){ 
+      $('.excelmember').eq(datcnt).children('span').eq(1).text('cancel'); 
+      $('.excelmember').eq(datcnt).children('span').eq(2).text('(조회불가)'); 
+      $('.excelmember').eq(datcnt).children('span').eq(1).css('color','#ff0000');
+    }
+    //socket.emit('disconnect2', {'name': uid});
+  });
+
+  function orderpagepopup(num){
+    $('.popup2-inner').css({'max-width':'none','width':'95%'});
+    window.frames['clientmodify'].location.reload();
+    $('.clientmodify').attr('src', "//xn--9o7b95g.com/orderup/1/<%=username%>?ai="+num);
+    window.frames['clientmodify'].src = "//xn--9o7b95g.com/orderup/1/<%=username%>?ai="+num;
+    console.log(window.frames['clientmodify'].src);
+    var targeted_popup_class = $('[data-popup-open2]').attr('data-popup-open2');
+    $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+  }
+
+  function datesearch() {
+    location.href = '//xn--9o7b95g.com/page/1/' + uid + '/' + $('.date1').val() + '/' + $('.date2').val();
+  }
+
+  function optionchk(x) {
+    nomal = 'none';
+    gamgyung = 'none';
+    medical = 'none';
+    zero = 'none';
+    var inputchk = [];
+    $.each($('.menu1'), function (i) {
+      if ($('.menu1').eq(i).children('input').prop('checked')) inputchk.push(i);
+    });
+    console.log(inputchk);
+    if (!inputchk.includes(0)) nomal = 'ok'; else nomal = 'none';
+    if (!inputchk.includes(1)) gamgyung = 'ok'; else gamgyung = 'none';
+    if (!inputchk.includes(2)) medical = 'ok'; else medical = 'none';
+    if (!inputchk.includes(3)) zero = 'ok'; else zero = 'none';
+    location.href = '//xn--9o7b95g.com/page/1/' + uid + '/' + $('.date1').val() + '/' + $('.date2').val() + '?nomal=' + nomal + '&gamgyung=' + gamgyung + '&medical=' + medical + '&zero=' + zero;
+  }
+  
+  function download(filename, filepath) {
+      var element = document.createElement('a');
+      element.setAttribute('href', filepath);
+      element.setAttribute('download', filename);
+      document.body.appendChild(element);
+      element.click();
+      //document.body.removeChild(element);
+    }
+  
+  function exceldown(){
+    download('(한큐)수급자일괄등록','/(한큐)수급자일괄등록.xlsx');
+  }
+  
+  function readExcel() {
+    var name = [];
+    var number = [];
+    var sex = [];
+    var address1 = [];
+    var address2 = [];
+    var address1_1 = [];
+    var address2_2 = [];
+    var guardname = [];
+    var guardtarget = [];
+    var phone1 = [];
+    var phone2 = [];
+    var center = [];
+    var manager = [];
+    let input = event.target;
+    let reader = new FileReader();
+    reader.onload = function () {
+      let data = reader.result;
+      let workBook = XLSX.read(data, { type: 'binary' });
+      workBook.SheetNames.forEach(function (sheetName) {
+        console.log('SheetName: ' + sheetName);
+        let rows = XLSX.utils.sheet_to_json(workBook.Sheets[sheetName]);
+        var data2 = rows;
+        $.each(data2, function (i) {
+          if(data2[i]['성함']!='' && data2[i]['성함']!=null && data2[i]['성함']!=undefined){
+            name.push(data2[i]['성함'].replace(/,/g,' '));
+            number.push((data2[i]['인정번호']!=undefined)?String(data2[i]['인정번호']).replace(/,/g,' '):'');
+            sex.push((data2[i]['성별']!=undefined)?String(data2[i]['성별']).replace(/,/g,' '):'');
+            address1.push((data2[i]['주소']!=undefined)?String(data2[i]['주소']).replace(/,/g,' '):'');
+            address2.push((data2[i]['상세주소']!=undefined)?String(data2[i]['상세주소']).replace(/,/g,' '):'');
+            address1_1.push((data2[i]['주소2']!=undefined)?String(data2[i]['주소2']).replace(/,/g,' '):'');
+            address2_2.push((data2[i]['상세주소2']!=undefined)?String(data2[i]['상세주소2']).replace(/,/g,' '):'');
+            guardname.push((data2[i]['보호자성함']!=undefined&&data2[i]['보호자성함']!='')?String(data2[i]['보호자성함']).replace(/,/g,' '):'본인');
+            console.log(data2[i]['관계(본인,자녀,배우자,자부,형제)']);
+            console.log(data2[i]['연락처1']);
+            guardtarget.push((data2[i]['관계(본인,자녀,배우자,자부,형제)']!=undefined)?String(data2[i]['관계(본인,자녀,배우자,자부,형제)']).replace(/,/g,' '):'');
+            phone1.push((data2[i]['연락처1']!=undefined)?String(data2[i]['연락처1']).replace(/[^0-9]/g,''):'');
+            phone2.push((data2[i]['연락처2']!=undefined)?String(data2[i]['연락처2']).replace(/[^0-9]/g,''):'');
+            center.push((data2[i]['센터명']!=undefined)?String(data2[i]['센터명']).replace(/,/g,' '):'');
+            manager.push((data2[i]['담당자']!=undefined)?String(data2[i]['담당자']).replace(/,/g,' '):'');
+          }
+        });
+      });
+      let now = new Date();
+      let year = now.getFullYear();
+      let mon = (now.getMonth() + 1) > 9 ? '' + (now.getMonth() + 1) : '0' + (now.getMonth() + 1);
+      let day = now.getDate() > 9 ? '' + now.getDate() : '0' + now.getDate();
+      let chan_val = year + mon + day;
+      socket.emit('disconnect2',{ 'name':uid});
+      socket.emit('login', {'name': uid});
+      socket.emit('clientexcel',{'id':uid, 'company':"<%=company%>", 'name':name, 'number':number, 'address1':address1, 'address2':address2, 'address1_1':address1_1, 'address2_2':address2_2, 'guardname':guardname, 'guardtarget':guardtarget, 'phone1':phone1, 'phone2':phone2, 'center':center, 'manager':manager, 'date':chan_val, 'companynum':"<%=companynum%>"});
+
+      //socket.emit('clientexcel',{'name':uid, 'msg':name+'|'+number+'|'+sex+'|'+address1+'|'+address2+'|'+guardname+'|'+guardtarget+'|'+phone1+'|'+phone2+'|'+center+'|'+manager});
+      var excelstr = '';
+      $.each(name,function(i){
+        excelstr += '<div class="flex excelmember">'+name[i]+'&nbsp;&nbsp;<span style="font-weight:bold;">'+number[i]+'</span>&nbsp;&nbsp;<span class="material-icons" style="color:rgb(55, 138, 55); font-size:28px;"></span><span class="re"></span></div>';
+      });
+      Swal.fire({
+        width: '550px',
+        fontsize: '23px',
+        didOpen: () => {
+          Swal.showLoading()
+        },
+        title: '',
+        html:
+          '<div style="font-size:27px; font-weight:bold; padding:10px;">총 '+name.length+'명</div>'+
+          '<div class="flexcolumnstart" style="height:300px; overflow-y:scroll;"><div>'+excelstr+'</div></div>' +
+          '<div class="excelstate" style="font-size:25px; font-weight:bold; padding:10px;">수급자일괄등록 진행중...</div>',
+        //icon: 'info',
+        showCancelButton: true,
+        cancelButtonColor: '#d33',
+        confirmButtonText: '확인',
+        cancelButtonText: '취소',
+        allowOutsideClick: false,
+        
+      }).then((result) => {
+          if (result.isConfirmed) {
+          }else{
+            socket.emit('disconnect2', {'name': uid});
+            socket.emit('login', {'name': uid});
+            socket.emit('clientexcelstop', { 'id':uid});
+          }
+      });
+    };
+    reader.readAsBinaryString(input.files[0]);
+    
+  }
+
+  function readExcel2() {
+    Swal.fire({
+        title: '수급자 등록중입니다.',
+        html:'<div class="stitle">수급자 등록중...</div>',
+        showCancelButton: true,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+        allowOutsideClick: false,
+    }).then((result) => {
+        if (result.isConfirmed) {
+        }else{
+            socket.emit('fkill', { 'name':uid, 'msg':''});
+        }
+    });
+    var name = [];
+    var number = [];
+    var sex = [];
+    var address1 = [];
+    var address2 = [];
+    var guardname = [];
+    var guardtarget = [];
+    var phone1 = [];
+    var phone2 = [];
+    var center = [];
+    var manager = [];
+    let input = event.target;
+    let reader = new FileReader();
+    reader.onload = function () {
+      let data = reader.result;
+      let workBook = XLSX.read(data, { type: 'binary' });
+      workBook.SheetNames.forEach(function (sheetName) {
+        console.log('SheetName: ' + sheetName);
+        let rows = XLSX.utils.sheet_to_json(workBook.Sheets[sheetName]);
+        var data2 = rows;
+        $.each(data2, function (i) {
+          if(data2[i]['성함']!='' && data2[i]['성함']!=null){
+            name.push(data2[i]['성함']);
+            number.push(data2[i]['인정번호']);
+            sex.push(data2[i]['성별']);
+            address1.push(data2[i]['주소'].replace(/,/g,' '));
+            address2.push(data2[i]['상세주소'].replace(/,/g,' '));
+            guardname.push(data2[i]['보호자성함']);
+            guardtarget.push(data2[i]['관계(본인,자녀,배우자,자부,형제)']);
+            phone1.push(data2[i]['연락처1']);
+            phone2.push(data2[i]['연락처2']);
+            center.push(data2[i]['센터명']);
+            manager.push(data2[i]['담당자']);
+          }
+        });
+      });
+      var clientcnt = 0;
+      var clientcnt2 = 0;
+      console.log(name.length);
+      $.each(name,function(i){
+        if(phone1[i]!=''&&phone1[i]!=undefined&&phone1[i]!=null){
+          phone1[i]=phone1[i].replace(/-/g,'');
+        }
+        if(phone2[i]!=''&&phone2[i]!=undefined&&phone2[i]!=null){
+          phone2[i]=phone2[i].replace(/-/g,'');
+        }
+        $.ajax({ 
+          url: "/clientexcel2", 
+          data: "uid=" + uid +"&cnt="+i+"&company=<%=company%>&name=" + name[i] + "&number="+number[i]+"&sex="+sex[i]+"&address1="+address1[i]+"&address2="+address2[i]+"&guardtarget="+guardname[i]+"&guardname="+guardtarget[i]+"&phone1="+phone1[i]+"&phone2="+phone2[i]+"&center="+center[i]+"&manager="+manager[i],
+          type: 'POST',
+          dataType: "JSON",
+          async:true,
+          success: function (result) { 
+            if(result.code==200){
+              clientcnt++;
+            }else{
+              clientcnt2++;
+            }
+            if((clientcnt+clientcnt2)>=(name.length-1)){
+              Swal.fire({
+                  width: '550px',
+                  fontsize: '23px',
+                  didOpen: () => {
+                  },
+                  title: '',
+                  html:
+                  '<div style="font-size:27px; font-weight:bold; padding:10px;">수급자 '+name.length+'명 등록요청</div>'+
+                    '<div style="font-size:27px; font-weight:bold; padding:10px;">총 '+clientcnt+'명 등록완료</div>'+
+                    '<div style="font-size:27px; font-weight:bold; padding:10px;">중복등록: '+clientcnt2+'명</div>',
+                  //icon: 'info',
+                  confirmButtonText: '확인',
+                  allowOutsideClick: false,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                      location.reload();
+                    }
+              });
+            }
+            
+          }
+
+          
+        });
+
+      });
+      
+      
+
+      /*
+      socket.emit('disconnect2',{ 'name':uid});
+      socket.emit('login', {'name': uid});
+      socket.emit('clientexcel',{'name':uid, 'msg':name+'|'+number+'|'+sex+'|'+address1+'|'+address2+'|'+guardname+'|'+guardtarget+'|'+phone1+'|'+phone2+'|'+center+'|'+manager});
+      var excelstr = '';
+      $.each(name,function(i){
+        excelstr += '<div class="flex excelmember">'+name[i]+'&nbsp;&nbsp;<span style="font-weight:bold;">'+number[i]+'</span>&nbsp;&nbsp;<span class="material-icons" style="color:rgb(55, 138, 55); font-size:28px;"></span><span class="re"></span></div>';
+      });
+      Swal.fire({
+        width: '550px',
+        fontsize: '23px',
+        didOpen: () => {
+          Swal.showLoading()
+        },
+        title: '',
+        html:
+          '<div style="font-size:27px; font-weight:bold; padding:10px;">총 '+name.length+'명</div>'+
+          '<div class="flexcolumnstart" style="height:300px; overflow-y:scroll;"><div>'+excelstr+'</div></div>' +
+          '<div class="excelstate" style="font-size:25px; font-weight:bold; padding:10px;">수급자일괄등록 진행중...</div>',
+        //icon: 'info',
+        showCancelButton: true,
+        cancelButtonColor: '#d33',
+        confirmButtonText: '확인',
+        cancelButtonText: '취소',
+        allowOutsideClick: false,
+        
+      }).then((result) => {
+          if (result.isConfirmed) {
+          }else{
+            socket.emit('disconnect2', {'name': uid});
+            socket.emit('login', {'name': uid});
+            socket.emit('fkill', { 'name':uid, 'msg':''});
+          }
+      });
+      */
+    }
+    reader.readAsBinaryString(input.files[0]);
+    
+  }
+
+  function readExcel3() {
+    Swal.fire({
+        title: '수급자(비급여) 등록중입니다.',
+        html:'<div class="stitle">수급자 등록중...</div>',
+        showCancelButton: true,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+        allowOutsideClick: false,
+    }).then((result) => {
+        if (result.isConfirmed) {
+        }else{
+            socket.emit('fkill', { 'name':uid, 'msg':''});
+        }
+    });
+    var name = [];
+    var number = [];
+    var sex = [];
+    var address1 = [];
+    var address2 = [];
+    var guardname = [];
+    var guardtarget = [];
+    var phone1 = [];
+    var phone2 = [];
+    var center = [];
+    var manager = [];
+    var product = [];
+    let input = event.target;
+    let reader = new FileReader();
+    reader.onload = function () {
+      let data = reader.result;
+      let workBook = XLSX.read(data, { type: 'binary' });
+      workBook.SheetNames.forEach(function (sheetName) {
+        console.log('SheetName: ' + sheetName);
+        let rows = XLSX.utils.sheet_to_json(workBook.Sheets[sheetName]);
+        var data2 = rows;
+        $.each(data2, function (i) {
+          if(data2[i]['성함']!='' && data2[i]['성함']!=null){
+            name.push(data2[i]['성함']);
+            number.push(data2[i]['고객번호']);
+            address1.push(data2[i]['주소'].replace(/,/g,' '));
+            address2.push(data2[i]['상세주소'].replace(/,/g,' '));
+            phone1.push(data2[i]['연락처1']);
+            phone2.push(data2[i]['연락처2']);
+            center.push(data2[i]['센터명']);
+            manager.push(data2[i]['담당자']);
+            product.push(data2[i]['상품명']);
+          }
+        });
+      });
+      var clientcnt = 0;
+      var clientcnt2 = 0;
+      console.log(name.length);
+      $.each(name,function(i){
+        if(phone1[i]!=''&&phone1[i]!=undefined&&phone1[i]!=null){
+          phone1[i]=phone1[i].replace(/-/g,'');
+        }
+        if(phone2[i]!=''&&phone2[i]!=undefined&&phone2[i]!=null){
+          phone2[i]=phone2[i].replace(/-/g,'');
+        }
+        console.log({
+            "uid": uid,
+            "cnt": i,
+            "company": "<%=company%>",
+            "name": name[i],
+            "number": number[i],
+            "sex": sex[i],
+            "address1": address1[i],
+            "address1detail": address2[i],
+            "guardtarget": guardname[i],
+            "guardname": guardtarget[i],
+            "phone1": phone1[i],
+            "phone2": phone2[i],
+            "center": center[i],
+            "manager": manager[i],
+            "product": product[i]
+          })
+        $.ajax({ 
+          url: "/clientExcel3", 
+          data: {
+            "uid": uid,
+            "cnt": i,
+            "company": "<%=company%>",
+            "name": name[i],
+            "number": number[i],
+            "sex": sex[i],
+            "address1": address1[i],
+            "address1detail": address2[i],
+            "guardtarget": guardname[i],
+            "guardname": guardtarget[i],
+            "phone1": phone1[i],
+            "phone2": phone2[i],
+            "center": center[i],
+            "manager": manager[i],
+            "product": product[i]
+          },
+          type: 'POST',
+          dataType: "JSON",
+          async:true,
+          success: function (result) { 
+            if(result.code==200){
+              clientcnt++;
+            }else{
+              clientcnt2++;
+            }
+            if((clientcnt+clientcnt2)>=(name.length-1)){
+              Swal.fire({
+                  width: '550px',
+                  fontsize: '23px',
+                  didOpen: () => {
+                  },
+                  title: '',
+                  html:
+                  '<div style="font-size:27px; font-weight:bold; padding:10px;">수급자 '+name.length+'명 등록요청</div>'+
+                    '<div style="font-size:27px; font-weight:bold; padding:10px;">총 '+clientcnt+'명 등록완료</div>'+
+                    '<div style="font-size:27px; font-weight:bold; padding:10px;">등록실패: '+clientcnt2+'명</div>',
+                  //icon: 'info',
+                  confirmButtonText: '확인',
+                  allowOutsideClick: false,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                      location.reload();
+                    }
+              });
+            }
+            
+          }
+
+          
+        });
+
+      });
+      
+      
+
+      /*
+      socket.emit('disconnect2',{ 'name':uid});
+      socket.emit('login', {'name': uid});
+      socket.emit('clientexcel',{'name':uid, 'msg':name+'|'+number+'|'+sex+'|'+address1+'|'+address2+'|'+guardname+'|'+guardtarget+'|'+phone1+'|'+phone2+'|'+center+'|'+manager});
+      var excelstr = '';
+      $.each(name,function(i){
+        excelstr += '<div class="flex excelmember">'+name[i]+'&nbsp;&nbsp;<span style="font-weight:bold;">'+number[i]+'</span>&nbsp;&nbsp;<span class="material-icons" style="color:rgb(55, 138, 55); font-size:28px;"></span><span class="re"></span></div>';
+      });
+      Swal.fire({
+        width: '550px',
+        fontsize: '23px',
+        didOpen: () => {
+          Swal.showLoading()
+        },
+        title: '',
+        html:
+          '<div style="font-size:27px; font-weight:bold; padding:10px;">총 '+name.length+'명</div>'+
+          '<div class="flexcolumnstart" style="height:300px; overflow-y:scroll;"><div>'+excelstr+'</div></div>' +
+          '<div class="excelstate" style="font-size:25px; font-weight:bold; padding:10px;">수급자일괄등록 진행중...</div>',
+        //icon: 'info',
+        showCancelButton: true,
+        cancelButtonColor: '#d33',
+        confirmButtonText: '확인',
+        cancelButtonText: '취소',
+        allowOutsideClick: false,
+        
+      }).then((result) => {
+          if (result.isConfirmed) {
+          }else{
+            socket.emit('disconnect2', {'name': uid});
+            socket.emit('login', {'name': uid});
+            socket.emit('fkill', { 'name':uid, 'msg':''});
+          }
+      });
+      */
+    }
+    reader.readAsBinaryString(input.files[0]);
+    
+  }
+
+  function clientexcel() {
+    Swal.fire({
+      width: '750px',
+      fontsize: '23px',
+      title: '수급자일괄등록',
+      html:
+        '<div style="padding-bottom:10px; font-weight:bold; color:#ff0000;">※아래 엑셀파일 다운로드 후 양식에 맞게 저장 후 업로드해주세요※</div>'+
+        `<div class="flexcolumn">
+          <span class="excelbutton flex" onclick="exceldown()">엑셀양식내려받기</span>&nbsp;&nbsp;&nbsp;
+          <label for="inputName" class="excelbutton flex"><span style="font-weight:bold;">엑셀등록(기본정보/수급자 판매/대여이력 포함등록하기)</span><span class="material-icons" style="color:rgb(67, 182, 73)">description</span></label><input id="inputName" style="display:none;" type="file" onchange="readExcel()"></span>
+          <label for="inputName2" class="excelbutton flex"><span style="font-weight:bold;">엑셀등록(기본정보만 등록하기)</span><span class="material-icons" style="color:rgb(67, 182, 73)">description</span></label><input id="inputName2" style="display:none;" type="file" onchange="readExcel2()"></span></div>
+          <label for="inputName3" class="excelbutton flex"><span style="font-weight:bold;">엑셀등록(비급여)</span><span class="material-icons" style="color:rgb(67, 182, 73)">description</span></label><input id="inputName3" style="display:none;" type="file" onchange="readExcel3()"></span></div>`,
+
+      icon: 'info',
+      showCancelButton: false,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#d33',
+      confirmButtonText: '취소',
+      cancelButtonText: '취소',
+      allowOutsideClick: false,
+    });
+  }
+
+  var search_global_obj = '';
+
+  function filterdel(el,filtername){
+    $(el).parent().remove();
+    if(filtername=='센터명'){
+      search_global_obj.centername = '';
+    }else if(filtername=='담당자'){
+      search_global_obj.manager = '';
+    }else if(filtername=='연락처'){
+      search_global_obj.phone = '';
+    }else if(filtername=='보호자성함'){
+      search_global_obj.guardname = '';
+    }else if(filtername=='연락처1'){
+      search_global_obj.phone1 = '';
+    }else if(filtername=='연락처2'){
+      search_global_obj.phone2 = '';
+    }else if(filtername=='주소'){
+      search_global_obj.address = '';
+    }
+    client_lookup(1, search_global_obj);
+  }
+
+  function client_lookup(page, search_obj){
+    let dates = $('#datepicker').val();
+    let datee = $('#datepicker2').val();
+    axios.post('/clientlookup', {
+      dates: dates,
+      datee: datee, 
+      company: '<%=company%>',
+      page: page,
+      search: search_obj
+    })
+    .then(function(response) {
+      const results = response.data;
+      var filterarr = [];
+      $('.filterarr').text('');
+      if(search_obj.centername){
+          filterarr.push({'센터명':search_obj.centername});
+      }
+      if(search_obj.manager){
+        filterarr.push({'담당자':search_obj.manager});
+      }
+      if(search_obj.phone1){
+        filterarr.push({'연락처1':search_obj.phone1});
+      }
+      if(search_obj.phone2){
+        filterarr.push({'연락처2':search_obj.phone2});
+      }
+      if(search_obj.guardname){
+        filterarr.push({'보호자성함':search_obj.guardname});
+      }
+      if(search_obj.address){
+        filterarr.push({'주소':search_obj.address});
+      }
+      for(f of filterarr){
+          $('.filterarr').append('<div class="filtercls"><div class="fitems">'+Object.keys(f)+':'+f[Object.keys(f)]+'</div><div class="material-icons filter_close" style="color:#ff0000; cursor:pointer; font-weight:bold;" onclick="filterdel(this,\''+Object.keys(f)+'\')">close</div></div>');
+      }
+      search_global_obj = results.articles.searchObj || '';
+        console.log(results.code);
+        console.log(search_global_obj)
+        let str = '';
+        let str2 ='';
+        let pstr ='';
+        let pclick1 = '';
+        let pclick2 = '';
+        let pclick3 = '';
+        let pclick4 = '';
+        let pnum = '';
+        let pnumclick = '';
+        if(results.code==200){
+          let otr = results.articles.contents;
+          
+          if(results.articles.pageNum-10<1){
+              pclick1='disabled';
+          }else{
+              pclick1='waves-effect';
+          }
+          if(results.articles.pageNum==1){
+              pclick2='disabled';
+          }else{
+              pclick2='waves-effect';
+          }
+          if(results.articles.pageNum==results.articles.pnTotal){
+              pclick3='disabled';
+          }else{
+              pclick3='waves-effect';
+          }
+          if(results.articles.pageNum+10>results.articles.pnTotal){
+              pclick4='disabled';
+          }else{
+              pclick4='waves-effect';
+          }
+          for(var j=results.articles.pnStart; j<=results.articles.pnEnd; j++){
+              if(j===results.articles.pageNum){
+                  pnumclick = 'active';
+              }else{
+                  pnumclick = '';
+              }
+              pnum += '<li class="'+pnumclick+'"><a class="pnumlock" style="z-index:0;" >'+j+'</a></li>';
+          }
+          pstr =
+              `<td class="client_paging" colspan="22">
+              <div class="tablemenutop" style="text-align:center;">
+              <div class="mobile"></div>
+              <ul class="pagination">
+                  <li class="${pclick1}"><a id="page-first">
+                    <i class="material-icons">keyboard_double_arrow_left</i></a></li>
+                  <li class="${pclick2}"><a id="page-prev">
+                    <i class="material-icons">chevron_left</i></a></li>
+                  ${pnum}
+                  <li class="${pclick3}"><a class="waves-effect" id="page-next">
+                    <i class="material-icons">chevron_right</i></a></li>
+                  <li class="${pclick4}"><a class="waves-effect" id="page-last">
+                    <i class="material-icons">keyboard_double_arrow_right</i></a></li>
+                  </ul><div class="topmenuright mobile"></div>
+              </div>
+              </td>`
+          $('.client_paging').remove();
+          $('.client_paging_tr').append(pstr);
+
+          
+          // 첫 페이지로 이동 (10페이지 전)
+          document.getElementById('page-first').addEventListener('click', function() {
+            if (results.articles.pageNum-10 >= 1) {
+              client_lookup(results.articles.pageNum-10, search_global_obj);
+            }
+          });
+
+          // 이전 페이지
+          document.getElementById('page-prev').addEventListener('click', function() {
+            if (results.articles.pageNum > 1) {
+              client_lookup(results.articles.pageNum-1, search_global_obj);
+            }
+          });
+
+          // 다음 페이지
+          document.getElementById('page-next').addEventListener('click', function() {
+            if (results.articles.pageNum < results.articles.pnTotal) {
+              client_lookup(results.articles.pageNum+1, search_global_obj);
+            }
+          });
+
+          // 마지막 페이지로 이동 (10페이지 후)
+          document.getElementById('page-last').addEventListener('click', function() {
+            if (results.articles.pageNum+10 <= results.articles.pnTotal) {
+              client_lookup(results.articles.pageNum+10, search_global_obj);
+            }
+          });
+          
+          $.each(otr,function(i){
+            let tr_color = "success";
+            if(otr[i].target=="일반"){
+              tr_color = "success";
+            }else if(otr[i].target=="감경"){
+              tr_color = "warning";
+            }else if(otr[i].target=="의료급여"){
+              tr_color = "info";
+            }else if(otr[i].target=="기초"){
+              tr_color = "danger";
+            }
+
+            let request_memo = ((otr[i].reqeustmemo!='null'&&otr[i].reqeustmemo!=null&&otr[i].reqeustmemo!='undefined')?otr[i].reqeustmemo:'');
+            let request_memo_length = 10; //표시할 글자수 정하기
+            console.warn("length",request_memo.length);
+            if( request_memo.length >= request_memo_length ){
+              request_memo = request_memo.substr(0,length)+'...';
+                //지정할 글자수 이후 표시할 텍스트
+            }
+
+            //'<td>'+(("<%=company%>"=='효나라실버케어'||"<%=company%>"=='우리집의료기'||"<%=company%>"=='KEC의료기산업'||"<%=company%>"=='삼봉의료기'||"<%=company%>"=='은혜노인의료기')?otr[i].cnum:(results.articles.contentSize*results.articles.pageNum)-(results.articles.contentSize-1)+i)+'</td>'+
+
+            str += 
+              '<tr class="active center mainlist '+tr_color+'" style="display:none;" data-num="'+otr[i].num+'">'+
+                '<td>'+otr[i].cnum+'</td>'+
+                '<td class="productname">'+otr[i].name+'</td>'+
+                '<td class="number">'+otr[i].number+'</td>'+
+                '<td class="">'+otr[i].regident.slice(0, 5) + '**-**'+'</td>'+
+                
+                '<td class="mobile">'+otr[i].target+'</td>'+
+                '<td class="mobile">'+otr[i].ranker+'</td>'+
+                '<td class="mobile">'+otr[i].sale+'</td>'+
+                '<td class="mobile">'+otr[i].sex+'</td>'+
+                '<td class="mobile">'+otr[i].date1+'</td>'+
+                '<td class="mobile">'+otr[i].date2+'</td>'+
+                '<td class="deliverytxt mobile">'+otr[i].address+'</td>'+
+                '<td class="mobile">'+otr[i].addressdetail+'</td>'+
+                '<td class="mobile">'+otr[i].guardname+'</td>'+
+                '<td class="mobile">'+((otr[i].guardtarget=="null")?"본인":otr[i].guardtarget)+'</td>'+
+                '<td class="mobile">'+((otr[i].phone1)?otr[i].phone1.replace(/[^0-9]/g,'').slice(0, 3) + '****' + otr[i].phone1.replace(/[^0-9]/g,'').slice(7):'')+'</td>'+
+                '<td class="mobile">'+((otr[i].phone2)?otr[i].phone2.replace(/[^0-9]/g,'').slice(0, 3) + '****' + otr[i].phone2.replace(/[^0-9]/g,'').slice(7):'')+'</td>'+
+                '<td class="mobile">'+otr[i].centername+'</td>'+
+                '<td class="">'+((otr[i].manager!='null'&&otr[i].manager!='')?otr[i].manager:'담당자미지정')+'</td>'+
+                '<td class="mobile">'+request_memo+'</td>'+
+                '<td class="mobile"><img style="width:55px;" src="/signfiles/'+otr[i].number+'/<%=company.replace(/#/g,"%23")%>" onerror="this.style.display=\'none\'"></td>'+
+                '<td class="mobile">'+((otr[i].needtable_exists==1)?'<span style="color:red;">O</span>':'X')+'</td>'+
+                '<td class="">'+otr[i].date+'</td>'+
+              '</tr>'
+          });
+          $('.total_cnt').text(results.articles.totalCount);
+          $('.mainlist').remove();
+          $('.client_table').append(str);
+          $('.mainlist').fadeIn();
+          if(Mobile()==true){
+              $('.mobile').css("display","none");
+              $('.pc').css("display","");
+          }else{
+              $('.pc').css("display","none");
+              $('.mobile').css("display","");
+          }
+          setTimeout(function() {
+            $('.pnumlock').on('click',async function(){
+                await client_lookup($(this).text(),search_global_obj);
+                //$(this).parent().addClass("disabled");
+            });
+          },300);
+
+          var tr_length = $('.table tr td').length;
+          var tab_td = $('.table tr td');//tb 테이블의 td들 불러오기
+          
+          $(tab_td).click(async function(){
+              $('.popup2-inner').css({'max-width':'none','max-width':'900px'});
+              if(($(this).parent().hasClass('tablemenu')!=1&&$(this).hasClass('chkbox')!=true&&$(this).hasClass('copyclip')!=true)){
+                  //window.frames['clientmodify'].location.href("https://xn--9o7b95g.com/ordermodify/1/<%=username%>/"+$(this).parent().children('td:eq(3)').text()+"/"+$(this).parent().prev().val());
+                  var targeted_popup_class = $('[data-popup-open2]').attr('data-popup-open2');
+                  $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+                  await $('.clientmodify').attr('src',"//xn--9o7b95g.com/clientmodify?username=<%=username%>&chk=program&number=" + $(this).parent().children('td:eq(2)').text() +"&num=" + $(this).parent().data("num"));
+                  window.frames['clientmodify'].src="//xn--9o7b95g.com/clientmodify?username=<%=username%>&chk=program&number=" + $(this).parent().children('td:eq(2)').text()+"&num=" + $(this).parent().data("num");
+                  //document.getElementById('clientmodify').onload = await function() {
+                      //$('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+                  window.frames['clientmodify'].focus();
+                  //}
+                  
+                  //e.preventDefault();
+              }
+          });
+                  
+          $(tab_td).hover(function(){
+          if($(this).parent().hasClass('tablemenu')!=1)$(this).parent().css({'border':'2px solid #000000',"cursor":"pointer","opacity":"0.5"});
+              }, function() {
+          if($(this).parent().hasClass('tablemenu')!=1)$(this).parent().css({'border':'1px solid #bebebe',"opacity":"1"});
+          });
+        }else{
+          str = '<tr class="active center mainlist" style="">'+
+                '<td colspan=21>검색결과 없음</td>'+
+                '</tr>';
+          $('.client_paging').remove();
+          $('.mainlist').remove();
+          $('.client_table').append(str);
+        }
+      })
+    }
+
+  function detailsearch(){
+      Swal.fire({
+      title: '상세검색',
+      html:
+          '<div class="detailsearch" style="position:relative;">'+
+          '<div class="flex"><span style="width:100px; font-weight:bold;">보호자성함</span><input id="swal-input3" class="swal2-input" name="guardian" value=""></div>' +
+          '<div class="flex"><span style="width:100px; font-weight:bold;">센터명</span><input id="swal-input4" class="swal2-input" name="centername" value=""></div>' +
+          '<div class="flex"><span style="width:100px; font-weight:bold;">담당자</span><input id="swal-input5" class="swal2-input" name="manager" value=""></div>' +
+          '<div id="checkboxList" style="display: none; width:100%; position:relative;">'+
+              '<div id="checkboxList2" style="display:flex; width:100%; flex-wrap:wrap;">'+
+              '</div>'+
+          '</div>'+
+          '<div class="flex" style="position:absolute; background:#fff;"><span style="width:100px; font-weight:bold;" id="manageradd"></span></div>'+
+          '<div class="flex"><span style="width:100px; font-weight:bold;">연락처1</span><input id="swal-input6" class="swal2-input" name="phone1" value=""></div>'+
+          '<div class="flex"><span style="width:100px; font-weight:bold;">연락처2</span><input id="swal-input7" class="swal2-input" name="phone2" value=""></div>'+
+          '<div class="flex"><span style="width:100px; font-weight:bold;">주소</span><input id="swal-input8" class="swal2-input" name="address" value=""></div>'+
+          '</div>',
+      preConfirm: () => {
+        return {
+          guardname: document.getElementById('swal-input3').value,
+          centername: document.getElementById('swal-input4').value,
+          manager: document.getElementById('swal-input5').value,
+          phone1: document.getElementById('swal-input6').value,
+          phone2: document.getElementById('swal-input7').value,
+          address: document.getElementById('swal-input8').value
+        }
+      },
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: '검색',
+      cancelButtonText: '취소',
+      didOpen: () => {
+        document.getElementById('swal-input3').value = search_global_obj.guardname || '';
+        document.getElementById('swal-input4').value = search_global_obj.centername || '';
+        document.getElementById('swal-input5').value = search_global_obj.manager || '';
+        document.getElementById('swal-input6').value = search_global_obj.phone1 || '';
+        document.getElementById('swal-input7').value = search_global_obj.phone2 || '';
+        document.getElementById('swal-input8').value = search_global_obj.address || '';
+          $.each(managerarr,function(i){
+              $('#checkboxList2').append('<label class="citem"><input type="checkbox" value="'+managerarr[i]+'"> '+managerarr[i]+'</label>');
+          });
+
+          const input = document.getElementById('swal-input5');
+          const checkboxList = document.getElementById('checkboxList');
+          const checkboxes = $('#checkboxList2').children('label').children('input');
+          if(manager!=''){
+              console.log(manager);
+              const managerchkarr = manager.replace(/ /g,'').split(',');
+              managerchkarr.pop();
+              $.each(checkboxes,function(i){
+                  console.log('managerchkarr',managerchkarr);
+                  console.log('checkboxes[i].value',checkboxes[i].value);
+                  if (managerchkarr.includes(checkboxes[i].value)) {
+                      checkboxes.eq(i).prop('checked',1);
+                  }
+              });
+              
+          }
+          input.addEventListener('click', function() {
+              checkboxList.style.display = 'block';
+              
+          });
+
+          document.addEventListener('click', function(event) {
+          if (!input.contains(event.target) && !checkboxList.contains(event.target)) {
+              checkboxList.style.display = 'none';
+          }
+          });
+
+          for (let i = 0; i < checkboxes.length; i++) {
+              checkboxes[i].addEventListener('click', function() {
+                  if (this.checked) {
+                      input.value += this.value + ',';
+                  } else {
+                      input.value = input.value.replace(this.value + ',', '');
+                  }
+              });
+          }
+          
+      },
+      }).then((result) => {
+          if (result.isConfirmed) {
+            search_global_obj = {
+              guardname:result.value.guardname,
+              centername:result.value.centername,
+              manager:result.value.manager,
+              phone1:result.value.phone1,
+              phone2:result.value.phone2,
+              address:result.value.address
+            };  
+            client_lookup(1,search_global_obj);
+          }
+      });
+      //$( '.searchdetail' ).toggle( 'slow' );
+  }
+
+  window.addEventListener("drop",function(e){ 
+    e = e || event; 
+    if (e.target.tagName != "INPUT") {  
+        // check which element is our target 
+        e.preventDefault(); 
+    }  
+  },false);
+
+  $(document).ready(function () {
+    $.datepicker.setDefaults({
+      dateFormat: 'yy-mm-dd',
+      prevText: '이전 달',
+      nextText: '다음 달',
+      monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+      monthNamesShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+      dayNames: ['일', '월', '화', '수', '목', '금', '토'],
+      dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
+      dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
+      showMonthAfterYear: true,
+      yearSuffix: '년'
+    });
+    $("#datepicker","#datepicker2").datepicker({
+      changeMonth: true,
+      changeYear: true
+    });
+
+    $("#datepicker,#datepicker2").datepicker("option", "showAnim", "slide");
+
+    $(function () {
+      var tr_length = $('.table tr td').length;
+      console.log(tr_length);
+      var tab_td = $('.table tr td');//tb 테이블의 td들 불러오기
+      for (var i = 0; i < tr_length; i++) {
+        var td2 = tab_td.eq(i).text();
+        if (td2 == "일반") $(".table tr td:eq(" + i + ")").parent().addClass('success');
+        if (td2 == "의료급여") $(".table tr td:eq(" + i + ")").parent().addClass('info');
+        if (td2 == "감경") $(".table tr td:eq(" + i + ")").parent().addClass('warning');
+        if (td2 == "기초") $(".table tr td:eq(" + i + ")").parent().addClass('danger');
+
+      }
+      var tr_length = $('.table tr td').length;
+      var tab_td = $('.table tr td');//tb 테이블의 td들 불러오기
+      console.log($('.table tr').eq(1).text());
+      $(tab_td).click(function () {
+        $('.popup2-inner').css({'max-width':'900px','width':'100%'});
+        if ($(this).parent().hasClass('tablemenu') != 1) {
+          console.log($(this).parent().children('td:eq(2)').text());
+          window.frames['clientmodify'].location.reload();
+          $('.clientmodify').attr('src', "//xn--9o7b95g.com/clientmodify?username=<%=username%>&chk=program&number=" + $(this).parent().children('td:eq(2)').text());
+          window.frames['clientmodify'].src = "//xn--9o7b95g.com/clientmodify?username=<%=username%>&chk=program&number=" + $(this).parent().children('td:eq(2)').text();
+          console.log(window.frames['clientmodify'].src);
+          var targeted_popup_class = $('[data-popup-open2]').attr('data-popup-open2');
+          $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+          //e.preventDefault();
+          $(this).off('load');
+        }
+      });
+      $(tab_td).hover(function () {
+        if ($(this).parent().hasClass('tablemenu') != 1) $(this).parent().css({ 'border': '2px solid #000000', "cursor": "pointer", "opacity": "0.5" });
+      }, function () {
+        if ($(this).parent().hasClass('tablemenu') != 1) $(this).parent().css({ 'border': '1px solid #bebebe', "opacity": "1" });
+      });
+      for (var i = 0; i < tr_length; i++) {
+        var td2 = tab_td.eq(i);
+      }
+    });
+    $(".table").hide();
+    $(".table").fadeIn(500);
+    var pagen = '<%=page%>';
+    console.log(pagen);
+    $(".pagingnum").eq(pagen - 1).css("background", "#000000");
+
+    $(".clientup span").eq(0).click(function () {
+      window.frames['clientup'].location.reload();
+      var targeted_popup_class = $('[data-popup-open]').attr('data-popup-open');
+      $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+      //e.preventDefault();
+    });
+
+
+    $(function () {
+      //----- OPEN
+      $('[data-popup-open]').on('click', function (e) {
+        var targeted_popup_class = jQuery(this).attr('data-popup-open');
+        $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+
+        //e.preventDefault();
+      });
+
+      //----- CLOSE
+      $('[data-popup-close]').on('click', function (e) {
+        var targeted_popup_class = jQuery(this).attr('data-popup-close');
+        $('[data-popup="' + targeted_popup_class + '"]').fadeOut(350);
+
+        //e.preventDefault();
+      });
+    });
+
+    if(Mobile()==true){
+        $('.mobile').css("display","none");
+        $('.pc').css("display","");
+    }else{
+        $('.pc').css("display","none");
+        $('.mobile').css("display","");
+    }
+
+    var now = new Date();
+    var year = now.getFullYear();
+    var mon = (now.getMonth() + 1) > 9 ? '' + (now.getMonth() + 1) : '0' + (now.getMonth() + 1);
+    var day = now.getDate() > 9 ? '' + now.getDate() : '0' + now.getDate();
+    var chan_val = year + '-' + mon + '-' + day;
+    $('.date1').val('<%=datetarget%>');
+    $('.date2').val('<%=datetargete%>');
+    $(".search-form").attr("action", "//xn--9o7b95g.com/page/1/" + uid + "/2022-01-01/" + chan_val);
+
+    if (nomal == 'ok') $('.menu1').eq(0).children('input').prop('checked', false);
+    if (gamgyung == 'ok') $('.menu1').eq(1).children('input').prop('checked', false);
+    if (medical == 'ok') $('.menu1').eq(2).children('input').prop('checked', false);
+    if (zero == 'ok') $('.menu1').last().children('input').prop('checked', false);
+
+    //말줄임
+    const boxTit = Array.from(document.querySelectorAll('.deliverytxt'));
+    const box = [];
+    const textSlice = function (tits, lengths) {
+      tits.forEach((el, idx) => {
+        const tix = el.textContent;
+        const memberPart = tix.slice(0, lengths);
+        const t = memberPart.concat('...');
+        box.push(t);
+
+        tits[idx].innerHTML = box[idx];
+      });
+    };
+    textSlice(boxTit, 15);
+
+    client_lookup(1,'');
+  });
+
+  function enterkey(x) {
+      if (window.event.keyCode == 13) {
+          //orderlookup(1,uid,'2020-01-01',chan_val,$(x).val(),'','','','','','','','');
+          client_lookup(1,{name:$(x).val()});
+      }
+  }
+
+  function need_table_click(x){
+    let tr_length = $('.need_table tbody tr td').length;
+    let tab_td = $('.need_table tbody tr td');//tb 테이블의 td들 불러오기
+    $(tab_td).click(function () {
+      const now_td = $(this);
+      $('.popup2-inner').css({'max-width':'900px','width':'100%'});
+      if (!$(this).parent().hasClass('tablemenu') && !$(this).hasClass('chkbox')) {
+        console.log($(this))
+        //window.frames['clientmodify'].location.reload();
+        $('.clientmodify').attr('src', "//xn--9o7b95g.com/clientmodify?username=<%=username%>&chk=program&number=" + $(this).parent().children('td:eq(3)').text());
+        //window.frames['clientmodify'].src = "//xn--9o7b95g.com/clientmodify?username=<%=username%>&chk=program&number=" + $(this).parent().children('td:eq(2)').text();
+        var targeted_popup_class = $('[data-popup-open2]').attr('data-popup-open2');
+        $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+        $('.clientmodify').load(function(){
+          $(this).off('load');
+          $('.clientmodify').get(0).contentWindow.need_get_data_click($(now_td).parents('tr').attr('data-key'));
+          
+        });
+      }
+    });
+    $(this).off('click');
+  }
+
+  function cs_table_click(){
+    let tr_length = $('.need_table tbody tr td').length;
+    let tab_td = $('.need_table tbody tr td');//tb 테이블의 td들 불러오기
+    $(tab_td).click(function () {
+      const now_td = $(this);
+      $('.popup2-inner').css({'max-width':'1800px','width':'100%'});
+      if (!$(this).parent().hasClass('tablemenu')) {
+        //window.frames['clientmodify'].location.reload();
+        $('.clientmodify').attr('src', "//xn--9o7b95g.com/ordermodify/1/<%=username%>/" + $(this).parent().children('td:eq(2)').text()+"/"+$(this).parents('tr').attr('data-orderkey')+"?relid=<%=username%>");
+        //window.frames['clientmodify'].src = "//xn--9o7b95g.com/clientmodify?username=<%=username%>&chk=program&number=" + $(this).parent().children('td:eq(2)').text();
+        var targeted_popup_class = $('[data-popup-open2]').attr('data-popup-open2');
+        $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+        $('.clientmodify').load(function(){
+          $(this).off('load');
+          $('.clientmodify').contents().find('.reloading').css({'display':'none'});
+          
+        });
+      }
+    });
+    $(this).off('click');
+  }
+
+  var need_data_arr = [];
+
+  async function need_history_get(search){
+    need_data_arr = [];
+    const option_type= $('.option_on').attr('data-key');
+    const tbody = $(".need_table_tbody")[0];
+    tbody.scrollTop=0;
+    let startNum = 0;
+    if(search.length==0){
+      search = '';
+    }
+    return axios({
+      method:'post',
+      url:'/needhistoryget',
+      data:{
+        company:"<%=company%>",
+        search:search,
+        startNum:startNum,
+        endNum:10,
+        optionType:option_type
+      }
+    }).then(res=>{
+      $(".need_table_tbody tr").remove();
+      $('.need_search_cnt').text(0);
+      const data = res.data;
+      let str = '';
+      if(data.code==200){
+        data.data.forEach(function(obj,index){
+          let manager = obj.manager;
+          let type = 'PC';
+          if(obj.type==1){
+            type = "SMS";
+          }
+          str += '<tr class="need_data" data-key="'+obj.num+'"><td class="chkbox"><input type="checkbox" class="print_chk_box"></td><td>'+(index+1)+'</td><td>'+obj.name+'</td><td>'+obj.number+'</td><td>'+obj.resulttext+'</td><td>'+manager+'</td><td>'+type+'</td><td>'+obj.date.split(' ')[0]+'</td></tr>'
+          need_data_arr.push({
+            name:obj.name,
+            number:obj.number,
+            manager:obj.manager,
+            date:obj.date,
+            cm:obj.cm,
+            kg:obj.kg,
+            body:obj.body,
+            mental:obj.mental,
+            family:obj.family,
+            haveproduct:obj.haveproduct,
+            familytarget:obj.familytarget,
+            childrencnt:obj.childrencnt,
+            withlive:obj.withlive,
+            wantproduct:obj.wantproduct,
+            resulttext:obj.resulttext,
+            type:obj.type,
+            regident:obj.regident,
+            address:obj.address,
+            phone:obj.phone1,
+            sex:obj.sex,
+            ranker:obj.ranker,
+          });
+        });
+        $('.need_table_tbody').append(str);
+        $('.need_search_cnt').text(data.searchCnt);
+        need_table_click();
+        tbody.scrollTop=0;
+        
+      }else{
+
+      }
+    });
+  }
+
+  async function need_history_get_scroll(search){
+    const option_type= $('.option_on').attr('data-key');
+    // $('.need_data').remove();
+    let search_cnt = parseInt($('.need_search_cnt').text());
+    let start_num = $('.need_data').length;
+    let end_num = $('.need_data').length+10;
+    if(search_cnt<end_num){
+      if(search_cnt!=0){
+        end_num= 10-(end_num-search_cnt);
+      }
+    }
+    // $('.need_search_cnt').text(0);
+    if(search.length==0){
+      search = '';
+    }
+    if(start_num!=search_cnt){
+      return axios({
+        method:'post',
+        url:'/needhistoryget',
+        data:{
+          company:"<%=company%>",
+          search:search,
+          startNum:start_num,
+          endNum:end_num,
+          optionType:option_type
+        }
+      }).then(res=>{
+        const data = res.data;
+        let str = '';
+        if(data.code==200){
+          data.data.forEach(function(obj,index){
+            let manager = obj.manager;
+            let type = 'PC';
+            if(obj.type==1){
+              type = "SMS";
+            }
+            str += '<tr class="need_data" data-key="'+obj.num+'"><td class="chkbox"><input type="checkbox" class="print_chk_box"></td><td>'+((start_num+1)+index)+'</td><td>'+obj.name+'</td><td>'+obj.number+'</td><td>'+obj.resulttext+'</td><td>'+manager+'</td><td>'+type+'</td><td>'+obj.date.split(' ')[0]+'</td></tr>'
+            need_data_arr.push({
+            name:obj.name,
+            number:obj.number,
+            date:obj.date,
+            manager:obj.manager,
+            cm:obj.cm,
+            kg:obj.kg,
+            body:obj.body,
+            mental:obj.mental,
+            family:obj.family,
+            haveproduct:obj.haveproduct,
+            familytarget:obj.familytarget,
+            childrencnt:obj.childrencnt,
+            withlive:obj.withlive,
+            wantproduct:obj.wantproduct,
+            resulttext:obj.resulttext,
+            type:obj.type,
+            regident:obj.regident,
+            address:obj.address,
+            phone:obj.phone1,
+            sex:obj.sex,
+            ranker:obj.ranker,
+          });
+          });
+          $('.need_table_tbody').append(str);
+          $('.need_search_cnt').text(data.searchCnt);
+          need_table_click();
+        }else{
+
+        }
+      });
+    }
+    
+  }
+
+  function enterkey_need(x) {
+    if (window.event.keyCode == 13) {
+      need_history_get($(x).val());
+    }
+  }
+
+  function enterkey_cs(x) {
+    if (window.event.keyCode == 13) {
+      cs_history_get($(x).val());
+    }
+  }
+
+  function checkScroll() {
+    const tbody = $(".need_table_tbody")[0];
+    if (tbody.scrollTop + tbody.clientHeight >= tbody.scrollHeight) {
+      need_history_get_scroll($('.need_search_input').val());
+    }
+  }
+
+  function option_click(x){
+    $(x).addClass('option_on');
+    $('.need_search_option_btn').not($(x)).removeClass('option_on');
+  }
+
+  async function getBase64Image(name, number, obj) {
+      const uniqueArr = [...new Set(number)];
+      // $('.print_cnt_client').text(uniqueArr.length);
+      // $('.print_cnt_page').text(name.length);
+      $('.need_add_iframe').contents().find('body').html('')
+      //const base64Images = [];
+      //const popbillDom = document.querySelector('.rent_add_dom');
+      //popbillDom.innerHTML = "<html></html>";
+      var iframe = document.querySelector('.need_add_iframe');
+      for (let i = 0; i < name.length; i++) {
+          var iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+          var bodyElement = iframeDocument.querySelector('body');
+
+          // obj[i]를 새로운 div로 감싸고 추가합니다.
+          var divElement = document.createElement('div');
+          divElement.style.background="#fff";
+          divElement.className = 'mbody';
+          divElement.innerHTML = obj[i];
+          bodyElement.appendChild(divElement);
+      }
+      let img_load_cnt = 0;
+      $('.need_add_iframe').contents().find('img').load(async function(){
+          img_load_cnt++;
+          if(img_load_cnt>name.length-1){
+              
+              await window.frames['need_add_iframe'].print();
+              return 0
+          }
+          
+      });
+  }
+  let originalCheckboxes = [];
+  let originalCheckboxes2 = [];
+  function restoreCheckboxes() {
+    const ionContents = document.getElementsByClassName('needfile')[0];
+    let check_span_all = ionContents.contentDocument.querySelectorAll('.family_check_span');
+    check_span_all.forEach(function(obj,index){
+      var checkbox = $("<input>", { type: "checkbox", class:"family_chkbox"});
+      // 변경할 요소와 교체
+      console.log($(this))
+      $(obj).replaceWith(checkbox);
+    });
+    
+    let check_span_all2 = ionContents.contentDocument.querySelectorAll('.with_check_span');
+    check_span_all2.forEach(function(obj,index){
+      var checkbox = $("<input>", { type: "checkbox", class:"with_chkbox"});
+      // 변경할 요소와 교체
+      console.log($(this))
+      $(obj).replaceWith(checkbox);
+    });
+  }
+  
+  function need_history(){
+    need_data_arr = [];
+    Swal.fire({
+      icon: 'info',
+      title: '수급자 욕구사정기록 내역',
+      width:'1430px',
+      html:`
+      <div class="flexcolumn" style="height:600px;">
+        <div class="flex need_search_area">
+          <div class="need_search_option">
+            <div class="need_search_option_btn option_on" onclick="option_click(this);" data-key="0">성함/인정번호</div>
+            &nbsp;&nbsp;&nbsp;
+            <div class="need_search_option_btn" onclick="option_click(this);" data-key="1">작성자</div>
+            &nbsp;&nbsp;&nbsp;
+          </div>
+          <div><input type="text" class="need_search_input" placeholer="성함, 인정번호 검색" onkeyup="enterkey_need(this)"></div>
+          &nbsp;&nbsp;<div><div class="need_search_btn flex" style="width:80px;" onclick="need_history_get($('.need_search_input').val())">검색</div></div>
+          &nbsp;&nbsp;&nbsp;&nbsp;<div class="need_search_ctn_area">검색수&nbsp;:&nbsp;<div class="need_search_cnt">0</div>명</div>
+        </div>
+        <table class="need_table">
+          <thead>
+            <tr class="tablemenu">
+              <th></th>
+              <th>번호</th>
+              <th>성함</th>
+              <th>인정번호</th>
+              <th>총평</th>
+              <th>작성자</th>
+              <th>구분</th>
+              <th>작성일</th>
+            </tr>
+          </thead>
+          <tbody class="need_table_tbody" onscroll="checkScroll()">
+          </tbody>
+        </table>
+      </div>
+      `,
+      allowOutsideClick: false,
+      showCancelButton: true,
+      showConfirmButton: true,
+      cancelButtonColor: '#d33',
+      confirmButtonText: '인쇄',
+      cancelButtonText: '닫기',
+      didOpen: ()=>{
+        $('.need_table thead tr th:nth-child(6), .need_table tbody tr td:nth-child(6)').css({'width':'60px;'});
+
+        need_history_get('');
+        
+      },
+      preConfirm:()=>{
+        originalCheckboxes = [];
+        originalCheckboxes2 = [];
+        const name_arr = [];
+        const number_arr = [];
+        const el_arr = [];
+        const ionContents = document.getElementsByClassName('needfile')[0];
+        console.log(need_data_arr)
+        $('.print_chk_box').each(function(i){
+          if($('.print_chk_box').eq(i).is(":checked")){
+            let name_html_all = ionContents.contentDocument.querySelectorAll('.name');
+            name_html_all.forEach(function(obj,index){
+              console.log(need_data_arr[i].name)
+                obj.innerHTML = need_data_arr[i].name;
+            });
+            let number_html_all = ionContents.contentDocument.querySelectorAll('.number');
+            number_html_all.forEach(function(obj,index){
+                obj.innerHTML = need_data_arr[i].number;
+            });
+            ionContents.contentDocument.querySelector('.need_target').innerHTML=need_data_arr[i].ranker;
+            ionContents.contentDocument.querySelector('.need_date').innerHTML=need_data_arr[i].date;
+            ionContents.contentDocument.querySelector('.need_writer').innerHTML=need_data_arr[i].manager;
+            ionContents.contentDocument.querySelector('.need_height').value=need_data_arr[i].date;
+            const today = new Date(need_data_arr[i].date);
+            const birthDate = new Date(need_data_arr[i].regident);
+
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            ionContents.contentDocument.querySelector('.need_height').innerHTML=need_data_arr[i].cm;
+
+            ionContents.contentDocument.querySelector('.need_sex').innerHTML=need_data_arr[i].sex;
+            ionContents.contentDocument.querySelector('.need_age').innerHTML=age;
+            ionContents.contentDocument.querySelector('.need_regident').innerHTML=need_data_arr[i].regident;
+            ionContents.contentDocument.querySelector('.need_weight').innerHTML=need_data_arr[i].kg;
+            ionContents.contentDocument.querySelector('.need_address').innerHTML=need_data_arr[i].address;
+            ionContents.contentDocument.querySelector('.need_phone').innerHTML=need_data_arr[i].phone;
+            ionContents.contentDocument.querySelector('.need_body').innerHTML=need_data_arr[i].body;
+            ionContents.contentDocument.querySelector('.need_mental').innerHTML=need_data_arr[i].mental;
+            ionContents.contentDocument.querySelector('.need_have_product').innerHTML=need_data_arr[i].haveproduct;
+            console.log(need_data_arr[i].haveproduct)
+            ionContents.contentDocument.querySelector('.need_want_product').innerHTML=need_data_arr[i].wantproduct;
+            ionContents.contentDocument.querySelector('.need_result').innerHTML=need_data_arr[i].resulttext;
+            let family_chkbox_html_all = ionContents.contentDocument.querySelectorAll('.family_chkbox');
+            
+            
+            if(need_data_arr[i].family=='y'){
+              const checkbox = ionContents.contentDocument.querySelectorAll('.family_chkbox')[0];
+              const divElement = document.createElement('span');
+              divElement.textContent = '✔';
+              divElement.className = 'family_check_span';
+              // 대체할 요소와 새로운 요소를 교체
+              checkbox.parentNode.replaceChild(divElement, checkbox);
+            }
+            
+            if(need_data_arr[i].withlive!=''){
+              const checkbox2 = ionContents.contentDocument.querySelectorAll('.with_chkbox')[need_data_arr[i].withlive];
+              const divElement2 = document.createElement('span');
+              divElement2.textContent = '✔';
+              divElement2.className = 'with_check_span';
+              // 대체할 요소와 새로운 요소를 교체
+              checkbox2.parentNode.replaceChild(divElement2, checkbox2);
+            }
+            if(need_data_arr[i].familytarget!=''){
+              ionContents.contentDocument.querySelector('.need_guard_target').innerHTML=need_data_arr[i].familytarget;
+            }else{
+              ionContents.contentDocument.querySelector('.need_guard_target').innerHTML='';
+            }
+            if(need_data_arr[i].childrencnt!=''){
+              ionContents.contentDocument.querySelector('.need_children_cnt').innerHTML=need_data_arr[i].childrencnt;
+            }else{
+              ionContents.contentDocument.querySelector('.need_children_cnt').innerHTML='';
+            }
+
+            const textarea = $('.needfile').contents().find('textarea');
+            if(textarea.length>0){
+                for(var t = 0; t<textarea.length; t++){
+                  textarea.eq(t).css({"height":'30px'});
+                  const height = textarea.eq(t).prop('scrollHeight') + 5;
+                  console.log(height,"height")
+                  textarea.eq(t).css({"height":height+'px'});
+
+                    // let div = $('<div>');
+                    // //let text = $(textarea).eq(0).val().replace(/\n/g, '<br>');
+                    // // textarea의 텍스트 내용을 가져와서 div에 삽입
+                    // div.html(textarea.eq(t).val().replace(/\n/g, '<br>'));
+                    // div.addClass(textarea.attr('class'));
+
+                    // // textarea를 div로 대체
+                    // textarea.eq(t).replaceWith(div);
+                }
+                
+            }
+            let sign = '<span style="position: absolute; right:120px; top:-45px;"><image style="width:60px; -webkit-user-drag: none;" src="/companystamp/<%=company.replace(/#/g,"%23").replace(/ /g,"%20")%>" onerror="this.style.display=\'none\'"></span>'
+            ionContents.contentDocument.querySelector('.pdfsign').innerHTML = sign;
+            name_arr.push(need_data_arr[i].name);
+            number_arr.push(need_data_arr[i].number);
+            el_arr.push(ionContents.contentDocument.querySelector('html').innerHTML);
+            restoreCheckboxes();
+          }
+        });
+        getBase64Image(name_arr,number_arr,el_arr);
+        
+        // window.frames['needfile'].print()
+      }
+      }).then(function(result){
+        if(result.isConfirmed){
+          
+        }else if(result.dismiss == 'cancel'){
+              
+        }
+      });
+  }
+
+  async function client_history_get(year,month){
+    let nextMonthFirstDay = new Date(year, month, 1);  // 월은 0부터 시작하므로, 다음 달을 지정하기 위해 month 그대로 사용
+    // 다음 달 1일에서 하루를 빼서 해당 월의 마지막 날을 계산
+    nextMonthFirstDay.setDate(nextMonthFirstDay.getDate() - 1);
+    let lastDate = nextMonthFirstDay.getDate();
+    return axios({
+      method:'post',
+      url:'/ClientHistoryGet',
+      data:{
+        company:"<%=company%>",
+        date1:year+month+"01",
+        date2:year+month+lastDate.toString().padStart(2, '0')
+      }
+    }).then(res=>{
+      let res_data = res.data;
+      if(res_data.code==200){
+            const data = res_data.data;
+            let str = '';
+            let num = 0;
+            for(obj of data){
+              str += `<tr class="client_history_tr"><td>${num+1}</td><td>${obj.name}</td><td>${obj.number}</td><td>${obj.target}${obj.sale}</td><!--td>${obj.date1}</td--><td>${obj.date2}</td></tr>`;
+              num++;
+            }
+            $('.client_history_tr').remove();
+            $('.client_history_tbody').append(str);
+          }
+    });
+  }
+
+  function table_search(x,id,tr){
+          console.log($(x)[0].value);
+          var data = $(x)[0].value.split(" ");
+          if ($(x)[0].value == "") {
+              $("."+tr).show();
+              return;
+          }
+          $("."+tr).hide();
+          
+          $("."+tr).filter(function (i, v) {
+              var $t = $(this);
+              for (var d = 0; d < data.length; ++d) {
+                  if ($t.is(":contains('" + data[d] + "')")||$t.is(":contains('" + data[d].toUpperCase() + "')")||$t.is(":contains('" + data[d].toLowerCase() + "')")) {
+                      return true;
+                  }
+              }
+              return false;
+          }).show();
+      
+  }
+
+  function client_history(){
+    Swal.fire({
+      title: '적용구간 만료예정자',
+      width:"55%",
+      allowOutsideClick:false,
+      confirmButtonText:"닫기",
+      html:`
+        <div>
+          <div class="client_history_search_area" style="display:flex; justify-content:center; align-items:center;">
+            <div>
+              <select class="client_history_select_year" onchange="client_history_get(this.value,$('.client_history_select_month').val())" class="client_history_select_year">
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+              </select>
+            </div>
+            <div>년</div>
+            <div>
+              <select onchange="client_history_get($('.client_history_select_year').val(),this.value)" class="client_history_select_month">
+                <option value="12">12</option>
+                <option value="11">11</option>
+                <option value="10">10</option>
+                <option value="09">09</option>
+                <option value="08">08</option>
+                <option value="07">07</option>
+                <option value="06">06</option>
+                <option value="05">05</option>
+                <option value="04">04</option>
+                <option value="03">03</option>
+                <option value="02">02</option>
+                <option value="01">01</option>
+              </select>
+            </div>
+            <div>월</div>
+          </div>
+          <div style="font-weight:bold; font-size:15px; margin:10px 0px;">수급자검색&nbsp;:&nbsp;<input type="text" style="height:30px; width:150px;" id="form1" onchange="table_search(this,'#form1','client_history_tr')" placeholder="수급자검색 엔터키"></div>
+          <table style="width:100%;" class="client_history_table">
+            <thead style="display:block;">
+              <tr>
+                <th>번호</th><th>성함</th><th>인정번호</th><th>대상</th><!--th>적용구간시작일</th--><th>적용구간종료일</th>
+              </tr>
+            </thead>
+            <tbody class="client_history_tbody" style="display:block; overflow-y:scroll; height:500px;">
+            </tbody>
+          </table>
+        </div>
+      `,
+      didOpen:()=>{
+        let today = new Date();
+        $('.client_history_select_year').val(today.getFullYear());
+        $('.client_history_select_month').val((today.getMonth() + 1).toString().padStart(2, '0'));
+        client_history_get(today.getFullYear(),(today.getMonth() + 1).toString().padStart(2, '0')).then(res=>{
+          console.log(res)
+          
+        })
+      }
+    }).then(function(result){
+      if(result.isConfirmed){
+        
+      }else if(result.dismiss == 'cancel'){
+            
+      }
+    });
+  }
+
+  function cs_history(){
+    Swal.fire({
+      icon: 'info',
+      title: '수급자 상담 내역',
+      width:'1430px',
+      html:`
+      <div class="flexcolumn" style="height:600px;">
+        <div class="flex need_search_area">
+          <div class="need_search_option">
+            <div class="need_search_option_btn option_on" onclick="option_click(this);" data-key="0">성함/인정번호</div>
+            &nbsp;&nbsp;&nbsp;
+            <div class="need_search_option_btn" onclick="option_click(this);" data-key="1">작성자</div>
+            &nbsp;&nbsp;&nbsp;
+          </div>
+          <div><input type="text" class="need_search_input" placeholer="성함, 인정번호 검색" onkeyup="enterkey_cs(this)"></div>
+          &nbsp;&nbsp;<div><div class="need_search_btn flex" style="width:80px;" onclick="cs_history_get($('.need_search_input').val())">검색</div></div>
+          &nbsp;&nbsp;&nbsp;&nbsp;<div class="need_search_ctn_area">총 상담수&nbsp;:&nbsp;<div class="need_search_cnt">0</div>회</div>
+        </div>
+        <table class="need_table">
+          <thead>
+            <tr class="tablemenu">
+              <th>번호</th>
+              <th>성함</th>
+              <th>인정번호</th>
+              <th>특이사항</th>
+              <th>작성자</th>
+              <th>작성일</th>
+            </tr>
+          </thead>
+          <tbody class="need_table_tbody" onscroll="checkScroll_cs()">
+          </tbody>
+        </table>
+      </div>
+      `,
+      allowOutsideClick: false,
+      showCancelButton: true,
+      showConfirmButton: false,
+      cancelButtonColor: '#d33',
+      confirmButtonText: '확인',
+      cancelButtonText: '닫기',
+      didOpen: ()=>{
+
+        cs_history_get('');
+        
+      }
+      }).then(function(result){
+        if(result.isConfirmed){
+          
+        }else if(result.dismiss == 'cancel'){
+              
+        }
+      });
+  }
+
+  async function cs_history_get_scroll(search){
+    const option_type= $('.option_on').attr('data-key');
+    // $('.need_data').remove();
+    let search_cnt = parseInt($('.need_search_cnt').text());
+    let start_num = $('.need_data').length;
+    let end_num = $('.need_data').length+10;
+    if(search_cnt<end_num){
+      if(search_cnt!=0){
+        end_num= 10-(end_num-search_cnt);
+      }
+    }
+    // $('.need_search_cnt').text(0);
+    if(search.length==0){
+      search = '';
+    }
+    if(start_num!=search_cnt){
+      return axios({
+        method:'post',
+        url:'/cshistoryget',
+        data:{
+          company:"<%=company%>",
+          search:search,
+          startNum:start_num,
+          endNum:end_num,
+          optionType:option_type
+        }
+      }).then(res=>{
+        const data = res.data;
+        let str = '';
+        if(data.code==200){
+          data.data.forEach(function(obj,index){
+            let manager = obj.manager;
+            str += '<tr class="need_data" data-key="'+obj.num+'" data-orderkey="'+obj.orderkey+'"><td>'+((start_num+1)+index)+'</td><td>'+obj.name+'</td><td>'+obj.number+'</td><td>'+obj.text+'</td><td>'+manager+'</td><td>'+obj.date.split(' ')[0]+'</td></tr>'
+          });
+          $('.need_table_tbody').append(str);
+          $('.need_search_cnt').text(data.searchCnt);
+          cs_table_click();
+        }else{
+
+        }
+      });
+    }
+    
+  }
+
+  async function cs_history_get(search){
+    const option_type= $('.option_on').attr('data-key');
+    const tbody = $(".need_table_tbody")[0];
+    tbody.scrollTop=0;
+    let startNum = 0;
+    if(search.length==0){
+      search = '';
+    }
+    return axios({
+      method:'post',
+      url:'/cshistoryget',
+      data:{
+        company:"<%=company%>",
+        search:search,
+        startNum:startNum,
+        endNum:10,
+        optionType:option_type
+      }
+    }).then(res=>{
+      $(".need_table_tbody tr").remove();
+      $('.need_search_cnt').text(0);
+      const data = res.data;
+      let str = '';
+      if(data.code==200){
+        data.data.forEach(function(obj,index){
+          let manager = obj.manager;
+          
+          str += '<tr class="need_data" data-key="'+obj.num+'" data-orderkey="'+obj.orderkey+'"><td>'+(index+1)+'</td><td>'+obj.name+'</td><td>'+obj.number+'</td><td>'+obj.text+'</td><td>'+manager+'</td><td>'+obj.date.split(' ')[0]+'</td></tr>'
+        });
+        $('.need_table_tbody').append(str);
+        $('.need_search_cnt').text(data.searchCnt);
+        $('.need_table').children('thead').children('tr').children('th').eq(5).css({'width':'240px'});
+        $('.need_table').children('tbody').children('tr').children('td').eq(5).css({'width':'240px'});
+        cs_table_click();
+        tbody.scrollTop=0;
+      }else{
+
+      }
+    });
+  }
+
+  function checkScroll_cs() {
+    console.log('scroll')
+    const tbody = $(".need_table_tbody")[0];
+    if (tbody.scrollTop + tbody.clientHeight >= tbody.scrollHeight) {
+      cs_history_get_scroll($('.need_search_input').val());
+    }
+  }
+
+  function s2ab(s) {
+        var buf = new ArrayBuffer(s.length); //convert s to arrayBuffer
+        var view = new Uint8Array(buf);  //create uint8array as viewer
+        for (var i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF; //convert to octet
+        return buf;
+    }
+    function exportExcel(type) {
+
+      let file_name = '수급자 목록';
+      if(type == 'b')file_name = '수급자 급여개시현황';
+      // step 1. workbook 생성
+      var wb = XLSX.utils.book_new();
+
+      // step 2. 시트 만들기 
+      var newWorksheet = excelHandler.getWorksheet();
+      
+      // step 3. workbook에 새로만든 워크시트에 이름을 주고 붙인다.  
+      XLSX.utils.book_append_sheet(wb, newWorksheet, excelHandler.getSheetName());
+      var sheet = wb.Sheets[wb.SheetNames[0]];
+      Object.keys(sheet).forEach(function(s) {
+          if(s.includes('U')) {
+              delete sheet[s].w;
+              sheet[s].z = '0';
+          }
+      });
+      // step 4. 엑셀 파일 만들기 
+      var wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+
+      // step 5. 엑셀 파일 내보내기 
+      saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), excelHandler.getExcelFileName(file_name));
+    }
+
+    var excelHandler = {
+        getExcelFileName: function (file_name) {
+            return '<%=company%> '+file_name+'.xlsx';
+        },
+        getSheetName: function () {
+            return 'Sheet';
+        },
+        getExcelData: function () {
+            return document.getElementById('excelbody');
+        },
+        getWorksheet: function () {
+            return XLSX.utils.table_to_sheet(this.getExcelData());
+        }
+    }
+
+  const client_lookup_excel = {
+    a:(dates,datee)=>{
+      axios({
+        url:"/clientlookupexcel",
+        method:"post",
+        data:{
+          company:"<%=company%>",
+          dates:dates,
+          datee:datee
+        }
+      }).then(res=>{
+        const data = res.data;
+        if(data.code==200){
+          // 로딩 표시 시작
+          Swal.fire({
+            title: '데이터 로딩 중',
+            text: '잠시만 기다려주세요...',
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading();
+            }
+          });
+          
+          let str = `<tr class="exceltr">
+            <td>번호</td>
+            <td>등록일</td>
+            <td>수급자성함</td>
+            <td>인정번호</td>
+            <td>생년월일</td>
+            <td>대상</td>
+            <td>등급</td>
+            <td>본인부담율</td>
+            <td>성별</td>
+            <td>현재적용구간</td>
+            <td>주소1</td>
+            <td>상세주소1</td>
+            <td>주소2</td>
+            <td>상세주소2</td>
+            <td>보호자성함</td>
+            <td>관계</td>
+            <td>연락처1</td>
+            <td>연락처2</td>
+            <td>센터명</td>
+            <td>담당자</td>
+            <td>메모</td>
+            <td>CMS계좌번호</td>
+            <td>은행명</td>
+            <td>예금주</td>
+            <td>출금일</td>
+            <td>서명여부</td>
+            </tr>`;
+          const client_data = data.data;
+          // 모든 이미지 로딩을 추적하기 위한 배열
+          let imagePromises = [];
+          client_data.forEach(function(obj,index){
+            let cnum = obj.cnum;
+            let date = obj.date;
+            let name = obj.name;
+            let number = obj.number;
+            let regident = obj.regident;
+            let target = obj.target;
+            let ranker = obj.ranker;
+            let sale = obj.sale;
+            let gender = obj.sex;
+            let adpdt = obj.date1+'~'+obj.date2;
+            let address = obj.address;
+            let addressdetail = obj.addressdetail;
+            let address2 = obj.address2;
+            let address2detail = obj.address2detail;
+            let guardname = obj.guardname;
+            let guardtarget = obj.guardtarget;
+            let phone1 = obj.phone1;
+            let phone2 = obj.phone2;
+            let centername = obj.centername;
+            let manager = obj.manager=='null'?'':obj.manager;
+            let requestmemo = obj.reqeustmemo=='undefined'?'':obj.reqeustmemo;
+            let banknum = obj.banknum;
+            let bankname = obj.bankname;
+            let bankadmin = obj.bankadmin;
+            let bankdate = obj.bankdate;
+            // 각 이미지에 대한 로딩 Promise 생성
+            let imageId = `sign_img_${index}`;
+              let signPromise = null;
+              
+              if (obj.number) {
+                signPromise = new Promise((resolve) => {
+                  // 이미지를 미리 생성하고 로드 이벤트 처리
+                  const img = new Image();
+                  img.id = imageId;
+                  img.style.maxWidth = '100px';
+                  img.style.maxHeight = '50px';
+                  img.onload = () => {
+                    resolve('O');
+                  };
+                  img.onerror = () => {
+                    resolve('X');
+                  };
+                  img.src = `/signfiles/${obj.number}/<%=company%>`;
+                  // 이미지 캐싱을 방지하기 위한 쿼리 파라미터 추가 (선택사항)
+                  // img.src = `/signfiles/${obj.number}/<%=company%>?_=${Date.now()}`;
+                });
+                imagePromises.push(signPromise);
+              } else {
+                // number가 없는 경우 즉시 해결된 Promise 추가
+                imagePromises.push(Promise.resolve('X'));
+              }
+              
+              // 실제 이미지 대신 임시 플레이스홀더 사용
+              let sign = obj.number ? `<span id="${imageId}_placeholder">로딩중...</span>` : 'X';
+              str+=`
+            <tr class="exceltr">
+              <td>${cnum||''}</td>
+              <td>${date||''}</td>
+              <td>${name||''}</td>
+              <td>${number||''}</td>
+              <td>${regident||''}</td>
+              <td>${target||''}</td>
+              <td>${ranker||''}</td>
+              <td>${sale||''}</td>
+              <td>${gender||''}</td>
+              <td>${adpdt||''}</td>
+              <td>${address||''}</td>
+              <td>${addressdetail||''}</td>
+              <td>${address2||''}</td>
+              <td>${address2detail||''}</td>
+              <td>${guardname||''}</td>
+              <td>${guardtarget||''}</td>
+              <td>${phone1 ? phone1.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3') : ''}</td>
+              <td>${phone2 ? phone2.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3') : ''}</td>
+              <td>${centername||''}</td>
+              <td>${manager||''}</td>
+              <td>${requestmemo||''}</td>
+              <td>${banknum||''}</td>
+              <td>${bankname||''}</td>
+              <td>${bankadmin||''}</td>
+              <td>${bankdate||''}</td>
+              <td id="${imageId}_container">${sign}</td>
+            </tr>`
+          });
+          $('.excelbody').append(str);
+          // 모든 이미지가 로드될 때까지 기다림
+          Promise.all(imagePromises).then((results) => {
+            // 모든 이미지 로딩이 완료되면 플레이스홀더를 결과로 대체
+            results.forEach((result, index) => {
+              const imageId = `sign_img_${index}`;
+              const container = document.getElementById(`${imageId}_container`);
+              const placeholder = document.getElementById(`${imageId}_placeholder`);
+              
+              if (container && placeholder) {
+                if (result === 'O') {
+                  // 이미지 로딩 성공
+                  const img = document.getElementById(imageId);
+                  if (img) {
+                    placeholder.replaceWith(img);
+                  } else {
+                    placeholder.innerHTML = 'O';
+                  }
+                } else {
+                  // 이미지 로딩 실패
+                  placeholder.innerHTML = 'X';
+                }
+              }
+            });
+            
+            // 이미지 로딩이 완료된 후 실행할 함수
+            console.log('모든 이미지 로딩 완료');
+            
+            // 여기에 다음에 실행할 함수를 호출
+            exelchange('a');
+
+          });
+        }else{
+          Swal.fire("선택기간 등록 수급자 없음","조회 날짜를 수정해주세요","warning");
+        }
+      });
+    },
+    b:(dates,datee)=>{
+      axios({
+        url:"/ClientLookUpExcelB",
+        method:"post",
+        data:{
+          company:"<%=company%>",
+          dates:dates,
+          datee:datee
+        }
+      }).then(res=>{
+        const data = res.data;
+        if(data.code==200){
+          const client_log = data.clientlog;
+          const client_log_obj = {};
+          client_log.forEach(function(obj,index){
+            if(client_log_obj.hasOwnProperty(obj.number)){
+              client_log_obj[obj.number].push({
+                rcgtfr:obj.rcgtfr,
+                rcgtto:obj.rcgtto,
+                ranker:obj.ranker,
+                sale:obj.sale
+              });
+            }else{
+              client_log_obj[obj.number] = [{
+                rcgtfr:obj.rcgtfr,
+                rcgtto:obj.rcgtto,
+                ranker:obj.ranker,
+                sale:obj.sale
+              }];
+            }
+          });
+          console.log(client_log_obj)
+          let str = `<tr class="exceltr">
+            <td>수급자번호</td>
+            <td>수급자성함</td>
+            <td>생년월일</td>
+            <td>성별</td>
+            <td>주요질환</td>
+            <td>급여(대여)개시일</td>
+            <td>급여(대여)종료일</td>
+            <td>급여개시인정등급</td>
+            <td>현재인정등급</td>
+            <td>비고</td>
+            <td>장기요양인정번호</td>
+            </tr>`;
+          const client_data = data.data;
+          client_data.forEach(function(obj,index){
+            let result_obj = {
+              name : obj.name,
+              number : obj.number,
+              regident : obj.regident,
+              gender : obj.gender,
+              cnum : obj.cnum,
+              min_orderdate : obj.min_orderdate.split(' ')[0],
+              max_orderdate : obj.max_orderdate.split(' ')[0],
+              min_rentstart : obj.min_rentstart,
+              max_rentend : obj.max_rentend,
+              min_ranker : '',
+              max_ranker : '',
+              type:obj.rentproduct,
+              min_date : '',
+              max_date : '',
+            };
+            if(client_log_obj.hasOwnProperty(result_obj.number)){
+              client_log_obj[result_obj.number].forEach(function(log_obj,log_index){
+                if(result_obj.type!=''){
+                  console.log("log_obj.ranker",log_obj.ranker)
+                  if(parseInt(log_obj.rcgtfr)<=parseInt(result_obj.min_rentstart.replace(/-/g,''))&&parseInt(log_obj.rcgtto)>=parseInt(result_obj.min_rentstart.replace(/-/g,''))){
+                    result_obj.min_ranker = log_obj.ranker;
+                  }
+                  if(parseInt(log_obj.rcgtfr)<=parseInt(result_obj.max_rentend.replace(/-/g,''))&&parseInt(log_obj.rcgtto)>=parseInt(result_obj.max_rentend.replace(/-/g,''))){
+                    result_obj.max_ranker = log_obj.ranker;
+                  }
+                  result_obj.min_date = result_obj.min_rentstart;
+                  result_obj.max_date = result_obj.max_rentend;
+                }else{
+                  if(parseInt(log_obj.rcgtfr)<=parseInt(result_obj.min_orderdate.replace(/-/g,''))&&parseInt(log_obj.rcgtto)>=parseInt(result_obj.min_orderdate.replace(/-/g,''))){
+                    result_obj.min_ranker = log_obj.ranker;
+                  }
+                  if(parseInt(log_obj.rcgtfr)<=parseInt(result_obj.max_orderdate.replace(/-/g,''))&&parseInt(log_obj.rcgtto)>=parseInt(result_obj.max_orderdate.replace(/-/g,''))){
+                    result_obj.max_ranker = log_obj.ranker;
+                  }
+                  result_obj.min_date = result_obj.min_orderdate;
+                  result_obj.max_date = result_obj.max_orderdate;
+                }
+                
+              });
+            }
+            
+            console.log(result_obj);
+            str+=`
+            <tr class="exceltr">
+              <td>${result_obj.cnum||''}</td>
+              <td>${result_obj.name||''}</td>
+              <td>${result_obj.regident||''}</td>
+              <td>${result_obj.gender||''}</td>
+              <td></td>
+              <td>${result_obj.min_date||''}</td>
+              <td>${result_obj.max_date||''}</td>
+              <td>${result_obj.min_ranker||''}</td>
+              <td>${result_obj.max_ranker||''}</td>
+              <td></td>
+              <td>${result_obj.number||''}</td>
+            </tr>`
+          });
+          $('.excelbody').append(str);
+          exelchange('b');
+        }else{
+          Swal.fire("선택기간 등록 수급자 없음","조회 날짜를 수정해주세요","warning");
+        }
+      });
+    }
+  
+    
+  }
+
+  function exelchange(type){
+
+        exportExcel(type);
+        Swal.close();
+        // $('.excelbody').table2excel({
+        //     exclude: ".excludeThisClass",
+        //     name: '주문 및 발주',
+        //     filename: '주문 및 발주', 
+        //     preserveColors: false 
+        // });
+        $('.exceltr').remove();
+    }
+
+  function date_format(obj,dom){
+    let data = obj.replace(/[^0-9]/g,'');
+    let formattedDate = data.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3");
+    $(dom).val(formattedDate);
+    console.log(formattedDate)
+  }
+
+
+  function video_sign_url_get(video_name){
+        $('.hanbang_video').remove();
+        let str = `
+            <video class="hanbang_video ${video_name}" width="1250px" height="800px" controls>
+        `;
+        fetch('/S3GetVideo?directory=ClientVideo&bucketname=hanq&name='+video_name+'&type=webm') // 서버에서 서명된 URL을 가져오는 엔드포인트로 수정해야 합니다.
+        .then(response => response.text())
+        .then(url => {
+            console.log(url)
+            str+=`<source id='Client_video1' class="Client_video1" src="${url}" type="video/webm">`;
+            str+=`
+                </video>
+            `;
+            $('.video_area').append(str);
+        })
+        .catch(error => console.error('Error fetching signed URL:', error));
+    }
+
+    function guide_on_click(obj,video_name){
+        $(obj).addClass("guide_on");
+        $('.guide_swal_button').not($(obj)).removeClass("guide_on");
+        video_sign_url_get(video_name);
+    }
+
+
+    function guide_show(){
+        Swal.fire({
+            width:"75%",
+            icon: 'info',
+            title: '화면 학습 선택',
+            html: `
+            <div class="guide_swal">
+                <!--div class="guide_swal_button guide_on" onclick="guide_on_click(this,'Client_video1')">1.수급자목록설명</div-->
+                <div class="guide_swal_button guide_on" onclick="guide_on_click(this,'Client_video2')">1.수급자등록하기</div>
+                <div class="guide_swal_button" onclick="guide_on_click(this,'Client_video4')">2.수급자일괄등록</div>
+                <div class="guide_swal_button" onclick="guide_on_click(this,'Client_video5')">3.수급자정보수정</div>
+                <div class="guide_swal_button" onclick="guide_on_click(this,'Client_video3')">4.수급자삭제</div>
+                <div class="guide_swal_button" onclick="guide_on_click(this,'Client_video6')">5.욕구사정기록작성</div>
+            </div>
+            <br/>
+            <div class="video_area" style="height:900px;">
+                
+            </div>
+            `,
+            showConfirmButton:false,
+            didOpen:()=>{
+                video_sign_url_get("Client_video2");
+            }
+        });
+    }
+
+    function client_lookup_excel_swal(){
+      Swal.fire({
+            width:"30%",
+            icon: 'info',
+            title: '엑셀변환 선택',
+            html: `
+              <div class="client_lookup_excel_swal flex">
+                <div onclick="client_lookup_excel.a($('#datepicker').val(),$('#datepicker2').val())">수급자목록</div><div onclick="client_lookup_excel.b($('#datepicker').val(),$('#datepicker2').val())">수급자 급여개시현황</div>
+              </div>
+            `,
+            showConfirmButton:false,
+            didOpen:()=>{
+              
+            }
+        }).then(result=>{
+          if(result.isConfirmed){
+            
+          }
+        });
+    }
+</script>
+
+<body>
+  <!-- <div class="topline mobile"></div> -->
+  <div class="pc" style="display:none;">
+    <%- include('mobilemenu') %>
+  </div>
+  <a style="display:none;" class="btn" data-popup-open="popup-1" href="#">Open Popup #1</a>
+  <a style="display:none;" class="btn" data-popup-open2="popup-2" href="#">Open Popup #1</a>
+  <div class="maincontainer">
+    <div class="guide_show" onclick="guide_show()">화면 학습 하기</div>
+    <h1 class="title">
+      <span class="material-icons">supervisor_account</span>&nbsp;&nbsp;&nbsp;&nbsp;<%= title %>
+    </h1>
+    <div method="get" class="search-form">
+      <input type="text" class="search-bar" name="query" placeholder=" 검색어를 입력하세요." onkeyup="enterkey(this)">
+      <input type="button" class="search-button material-icons" value="search" onclick="client_lookup(1,{name:$(this).prev().val(),number:$(this).prev().val()});">
+      <input type="button" class="search-button material-icons search-detail-button" value="manage_search" onclick="detailsearch()">   
+    </div>
+    <div class="filterarr"></div>
+    <table class="topmenu">
+      <tr>
+        <td class="clientup">
+          <span>수급자등록하기</span>&nbsp;&nbsp;&nbsp;
+          <input class="date1 datepickerall" type="text" id="datepicker" autocomplete='off' value="2022-01-01" onchange="date_format(this.value,this)">
+          ~
+          <input class="date2 datepickerall" type="text" id="datepicker2" autocomplete='off' onchange="date_format(this.value,this)">
+          <span onclick="client_lookup(1,$('.search-bar').val());">날짜조회</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <span class="mobile" onclick="clientexcel();">수급자일괄등록(엑셀)</span>
+          <span class="mobile" onclick="need_history();">욕구사정기록내역</span>
+          <span class="mobile" onclick="cs_history();">수급자상담내역</span>
+          <span class="mobile client_excel" style="background:rgb(48, 110, 72); border:1px solid rgb(48, 110, 72);" onclick="client_lookup_excel_swal()"><img src="/img/excelico.png">엑셀변환</span>
+          <span class="mobile" onclick="client_history();">적용구간 미갱신자</span>
+        </td>
+        <td class="mobile">
+          &nbsp;&nbsp;<span>전체: <div class="total_cnt"><%=totalcount %></div>명</span>
+          &nbsp;<span>일반: <%=target1[0]%>명</span>
+          &nbsp;<span>감경: <%=target1[1]%>명</span>
+          &nbsp;<span>의료급여:<%=target1[2]%>명</span>
+          &nbsp;<span>기초: <%=target1[3]%>명</span>
+        </td>
+      </tr>
+    </table>
+    <table class="table table-bordered client_table">
+      <tr class="tablemenu client_paging_tr">
+        <td colspan="21" class="client_paging">
+          
+        </td>
+      </tr>
+      <tr class="center tablemenu">
+        <td>번호</td>
+        <td>수급자성함</td>
+        <td>인정번호</td>
+        <td>생년월일</td>
+        <td class="mobile">대상</td>
+        <td class="mobile">등급</td>
+        <td class="mobile">본인부담율</td>
+        <td class="mobile">성별</td>
+        <td class="mobile">적용구간1</td>
+        <td class="mobile">적용구간2</td>
+        <td class="deliverytxtm mobile" style="width:150px;">주소</td>
+        <td class="mobile" style="width:150px;">상세주소</td>
+        <td class="mobile">보호자성함</td>
+        <td class="mobile">관계</td>
+        <td class="mobile">연락처1</td>
+        <td class="mobile">연락처2</td>
+        <td class="mobile">센터명</td>
+        <td>담당자</td>
+        <td class="mobile">메모</td>
+        <td class="mobile">서명</td>
+        <td class="mobile">욕구사정</td>
+        <td>등록일</td>
+      </tr>
+      
+    </table>
+  </div>
+
+  <div class="popup" data-popup="popup-1">
+    <div class="popup-inner">
+      <iframe name="clientup" src="//xn--9o7b95g.com/clientup?username=<%=username%>" frameborder="0"></iframe>
+      <a class="popup-close" data-popup-close="popup-1" href="#">x</a>
+    </div>
+  </div>
+  <div class="popup2" data-popup="popup-2">
+    <div class="popup2-inner">
+      <iframe class='clientmodify' name="clientmodify" src="" frameborder="0"></iframe>
+      <a class="popup2-close" data-popup-close="popup-2" href="#">x</a>
+    </div>
+  </div>
+  <table id="excelbody" class="excelbody" style="position:fixed; bottom:99999999px;">
+
+  </table>
+  
+    <iframe name="needfile" src="//xn--9o7b95g.com/needfile" frameborder="0" class="needfile" style="position:absolute; top:-4500px;"></iframe>
+    <iframe name="need_add_iframe" src="//xn--9o7b95g.com/needaddiframe" frameborder="0" class="need_add_iframe" style="position:absolute; top:-4500px;"></iframe>
+  <div class="mobile">
+    <%- include('channeltalk') %>
+  </div>
+  <div class="pc">
+    <%- include('mobilefoot') %>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,2765 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css">
+<link rel="stylesheet" type="text/css" href="/css/companymember.css">
+<script src="//code.jquery.com/jquery-latest.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script src="https://fastly.jsdelivr.net/npm/sweetalert2@10"></script>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.5/xlsx.full.min.js"></script>
+<script src="https://fastly.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="/js/ajax_before_send.js"></script>
+<head>
+    <title>
+        <%= title %>
+    </title>
+</head>
+<style>
+    @font-face {
+        font-family: 'Material Icons';
+        font-style: normal;
+        font-weight: 400;
+        src: url(path/to/MaterialIcons-Regular.eot);
+        /* For IE6-8 */
+        src:
+            local('Material Icons'),
+            local('MaterialIcons-Regular'),
+    }
+
+    .btn-primary {
+        box-shadow: 0 8px 9px -4px rgb(59 113 202 / 30%), 0 4px 18px 0 rgb(59 113 202 / 20%);
+    }
+
+    .material-icons {
+        font-family: 'Material Icons';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 16px;
+        /* Preferred icon size */
+        display: inline-block;
+        line-height: 1;
+        text-transform: none;
+        letter-spacing: normal;
+        word-wrap: normal;
+        white-space: nowrap;
+        direction: ltr;
+        /* Support for all WebKit browsers. */
+        -webkit-font-smoothing: antialiased;
+        /* Support for Safari and Chrome. */
+        text-rendering: optimizeLegibility;
+        /* Support for Firefox. */
+        -moz-osx-font-smoothing: grayscale;
+        /* Support for IE. */
+        font-feature-settings: 'liga';
+    }
+
+    .title {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: bold;
+        background: #1a2136;
+        color: #fff;
+        width: 350px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        border-radius: 3px;
+    }
+
+    .title span {
+        font-size: 30px;
+    }
+
+    .search-form {
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .search-form input:nth-child(1) {
+        width: 180px;
+        border: 1px solid #000000;
+        background: #ffffff;
+        border-radius: 5px;
+        height: 40px;
+    }
+
+    .search-form input:nth-child(2) {
+        background: #ffffff;
+        border-radius: 5px;
+        border: 2px solid #000000;
+        width: 60px;
+        margin-left: 5px;
+    }
+
+    .search-form input:nth-child(2):hover {
+        border: 2px solid #2e89ff;
+        background: #dcffff;
+        width: 60px;
+    }
+
+    .maincontainer {
+        display: flex;
+        flex-wrap:wrap;
+        /*flex-direction: column;*/
+        align-items: flex-start;
+        justify-content: space-around;
+        width: 100%;
+        /* width:1920px; */
+        /* height: 950px; */
+        position: relative;
+        padding-left: 50px;
+        padding-right: 50px;
+        border: 2px solid #0e1846;
+    }
+
+    .mainc3 {
+        width: 45%;
+        font-weight: bold;
+        height: 95%;
+    }
+
+    .mainc3-2 {
+        font-size: 15px;
+    }
+
+    /*.maincontainer::before{
+        content : "";
+        display: block;
+        position: absolute;
+        background-size: cover;
+        top: 0;
+        left: 0;
+        background-image: url( "/img3" );
+        width: 100%;
+        height: 100%;
+        opacity : 0.1;
+        z-index: -1;
+    }*/
+    .topmenu {
+        width: 100%;
+        font-size: 15px;
+    }
+
+    .topmenu tr td {
+        padding-bottom: 15px;
+    }
+
+    .topmenu tr td:nth-child(1) span {
+        width: 100px;
+        padding: 10px;
+        border: 1px solid #000000;
+        border-radius: 5px;
+        background: #ffffff;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .topmenu tr td:nth-child(1) span:hover {
+        border: 1px solid #2e89ff;
+        background: #dcffff;
+    }
+
+    .topmenu tr td:nth-child(2) span {
+        width: 100px;
+        border: 1px solid #000000;
+        border-radius: 5px;
+        background: #ffffff;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .topmenu tr td:nth-child(2) span:nth-child(2) {
+        border: 1px solid #006426;
+    }
+
+    .topmenu tr td:nth-child(2) span:nth-child(3) {
+        border: 1px solid #0004ee;
+    }
+
+    .topmenu tr td:nth-child(2) span:nth-child(4) {
+        border: 1px solid #006426;
+    }
+
+    .topmenu tr td:nth-child(2) span:nth-child(5) {
+        border: 1px solid #8d0000;
+    }
+
+    .topmenu tr td:nth-child(2) {
+        display: flex;
+        justify-content: flex-end;
+        font-weight: bold;
+    }
+
+    .center td {
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .pagingnum {
+        border: 1px solid #ffffff;
+        padding: 5px;
+        border-radius: 4px;
+        background: #ffffff;
+    }
+
+    .table tr:nth-child(1),
+    .table tr:nth-child(2) {
+        font-weight: bold;
+    }
+
+    .table>tbody>tr>td {
+        padding: 6px;
+    }
+    /* Outer */
+    .popup {
+        width: 100%;
+        height: 100%;
+        display: none;
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        background: rgba(0, 0, 0, 0.3);
+    }
+
+    /* Inner */
+    .popup-inner {
+        max-width: 400px;
+        height: 300px;
+        width: 100%;
+        /*padding:40px;*/
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 1);
+        border-radius: 8px;
+        background: #fff;
+    }
+
+    /* Close Button */
+    .popup-close {
+        width: 30px;
+        height: 30px;
+        padding-top: 4px;
+        display: inline-block;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        transition: ease 0.25s all;
+        -webkit-transform: translate(50%, -50%);
+        transform: translate(50%, -50%);
+        border-radius: 1000px;
+        background: rgba(0, 0, 0, 0.8);
+        font-family: Arial, Sans-Serif;
+        font-size: 20px;
+        text-align: center;
+        line-height: 100%;
+        color: #fff;
+    }
+
+    .popup-close:hover {
+        -webkit-transform: translate(50%, -50%) rotate(180deg);
+        transform: translate(50%, -50%) rotate(180deg);
+        background: rgba(0, 0, 0, 1);
+        text-decoration: none;
+    }
+
+
+    /* Outer */
+    .popup2 {
+        width: 100%;
+        height: 100%;
+        display: none;
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        background: rgba(0, 0, 0, 0.3);
+    }
+
+    /* Inner */
+    .popup2-inner {
+        max-width: 700px;
+        height: 600px;
+        width: 100%;
+        /*padding:40px;*/
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 1);
+        border-radius: 8px;
+        background: #fff;
+    }
+
+    /* Close Button */
+    .popup2-close {
+        width: 30px;
+        height: 30px;
+        padding-top: 4px;
+        display: inline-block;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        transition: ease 0.25s all;
+        -webkit-transform: translate(50%, -50%);
+        transform: translate(50%, -50%);
+        border-radius: 1000px;
+        background: rgba(0, 0, 0, 0.8);
+        font-family: Arial, Sans-Serif;
+        font-size: 20px;
+        text-align: center;
+        line-height: 100%;
+        color: #fff;
+    }
+
+    .popup2-close:hover {
+        -webkit-transform: translate(50%, -50%) rotate(180deg);
+        transform: translate(50%, -50%) rotate(180deg);
+        background: rgba(0, 0, 0, 1);
+        text-decoration: none;
+    }
+
+
+    iframe {
+        width: 100%;
+        height: 100%;
+    }
+
+    .rankerchk2 {
+        font-size: 20px;
+    }
+    .managertargetselect{
+        height:25px;
+    }
+    .client_info_row{
+        width: 180px;
+        height:30px;
+        font-size:18px;
+        font-weight:bold;
+        margin-bottom:10px;
+    }
+    .client_info_row2{
+        width: 200px;
+        height:30px;
+        font-size:18px;
+        font-weight:bold;
+        margin-bottom:10px;
+    }
+    .client_info_row2 input{
+        border-radius: 5px;
+        height:30px;
+        width:200px;
+    }
+
+    .client_info_row2 select{
+        border-radius: 5px;
+        height:30px;
+        width:200px;
+    }
+
+    @media screen and (max-width: 1500px) {
+        .maincontainer{
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .companystates{
+            width:35%;
+        }
+    }
+</style>
+<script>
+    var socket = io();
+    var uid = '<%=firstData%>';
+    var cranker = '<%=cranker%>';
+    //socket.emit('login', {'name': uid});
+</script>
+<script>
+    $.datepicker.setDefaults({
+        dateFormat: 'yy-mm-dd',
+        prevText: '이전 달',
+        nextText: '다음 달',
+        monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+        monthNamesShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+        dayNames: ['일', '월', '화', '수', '목', '금', '토'],
+        dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
+        dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
+        showMonthAfterYear: true,
+        yearSuffix: '년'
+    });
+    function bankinfo() {
+        $.ajax({
+            url: "/bankinfo",
+            data: "id=" + uid + "&company=<%=rows[0].company%>",
+            type: "POST",
+            dataType: "JSON",
+            success: function (result) {
+                if (result) {
+                    $('.binput').eq(0).val(result.result[0].bankname);
+                    var reg = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi
+                    banknumer = result.result[0].banknumber.replace(reg, '');
+                    let companynum = result.result[0].companynum;
+                    if("<%=rows[0].company%>"=='(수)ADCO')companynum = '3435800835';
+                    else if("<%=rows[0].company%>"=='(수)복지용구의료기3')companynum = '5965500438';
+                    $('.binput').eq(1).val(banknumer);
+                    $('.binput').eq(2).val(result.result[0].bankhost);
+                    $('#sample_address').text(result.result[0].address);
+                    $('.companynum').val(companynum);
+                    $('.companyphone').val(result.result[0].companyphone);
+                    $('.companyfax').val(result.result[0].companyfax);
+                    $('.companypass').val(result.result[0].companypass);
+                    $('.docid').val(result.result[0].docid);
+                    $('.docpw').val(result.result[0].docpw);
+                    $('.thebillid').val(result.result[0].thebillid);
+                    $('.thebillpw').val(result.result[0].thebillpw);
+                    $('.addressdetail').val(result.result[0].addressdetail);
+                }
+            }
+        })
+    }
+    function biztable() {
+        $.ajax({
+            url: "/biztable",
+            data: "id=" + uid + "&company=<%=rows[0].company%>",
+            type: "POST",
+            dataType: "JSON",
+            success: function (result) {
+                if (result.code==200) {
+                    $('.bizinput').eq(0).val(result.result[0].bizid);
+                    var reg = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi
+                    var bizphonenum = result.result[0].bizphonenum.replace(reg, '');
+                    $('.bizinput').eq(1).val(result.result[0].bizpw);
+                    $('.bizinput').eq(2).val(bizphonenum);
+                }else{
+
+                }
+            }
+        })
+    }
+    $(document).ready(function () {
+        $(function () {
+            var tr_length = $('.table tr td').length;
+            var tab_td = $('.table tr td');//tb 테이블의 td들 불러오기
+            for (var i = 0; i < tr_length; i++) {
+                var td2 = tab_td.eq(i).text();
+                if (td2 == "일반") $(".table tr td:eq(" + i + ")").parent().addClass('success');
+                if (td2 == "의료급여") $(".table tr td:eq(" + i + ")").parent().addClass('info');
+                if (td2 == "감경") $(".table tr td:eq(" + i + ")").parent().addClass('warning');
+                if (td2 == "기초") $(".table tr td:eq(" + i + ")").parent().addClass('danger');
+
+            }
+            var tr_length = $('.table tr td').length;
+            var tab_td = $('.table tr td');//tb 테이블의 td들 불러오기
+            /*
+            $(tab_td).click(function(){
+                        if($(this).parent().hasClass('tablemenu')!=1){
+                            console.log($(this).parent().children('td:eq(2)').text());
+                            window.frames['clientmodify'].location.reload();
+                            $('.clientmodify').attr('src',"//13.209.151.51/clientmodify?username=<%=username%>&chk=program&number="+$(this).parent().children('td:eq(2)').text());
+                            window.frames['clientmodify'].src="//13.209.151.51/clientmodify?username=<%=username%>&chk=program&number="+$(this).parent().children('td:eq(2)').text();
+                            console.log(window.frames['clientmodify'].src);
+                            var targeted_popup_class = $('[data-popup-open2]').attr('data-popup-open2');
+                            $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+                            //e.preventDefault();
+                        }
+                    });
+            */
+            $(tab_td).hover(function () {
+                if ($(this).parent().hasClass('tablemenu') != 1) $(this).parent().css({ 'border': '2px solid #000000', "cursor": "pointer", "opacity": "0.5" });
+            }, function () {
+                $(this).parent().css({ 'border': '1px solid #bebebe', "opacity": "1" });
+            });
+            for (var i = 0; i < tr_length; i++) {
+                var td2 = tab_td.eq(i);
+            }
+        });
+        $(".table").hide();
+        $(".table").fadeIn(500);
+        var pagen = '<%=page%>';
+        $(".pagingnum").eq(pagen - 1).css("background", "#000000");
+
+        $(".clientup span").click(function () {
+            window.frames['clientup'].location.reload();
+            var targeted_popup_class = $('[data-popup-open]').attr('data-popup-open');
+            $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+            //e.preventDefault();
+        })
+
+
+        $(function () {
+            //----- OPEN
+            $('[data-popup-open]').on('click', function (e) {
+                var targeted_popup_class = jQuery(this).attr('data-popup-open');
+                $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+
+                //e.preventDefault();
+            });
+
+            //----- CLOSE
+            $('[data-popup-close]').on('click', function (e) {
+                var targeted_popup_class = jQuery(this).attr('data-popup-close');
+                $('[data-popup="' + targeted_popup_class + '"]').fadeOut(350);
+
+                //e.preventDefault();
+            });
+        });
+
+        bankinfo();
+        //biztable();
+    });
+    function cdelete(x, y) {
+        var cname = $(x).parent().children('td').eq(1).text();
+        var cid = $(x).parent().children('td').eq(2).text();
+        var cnum = '';
+        var str1 = '';
+        if (y == 'c') {
+            str1 = '담당자';
+            cid = $(x).parent().children('td').eq(2).text();
+        }
+        if (y == 'w') {
+            str1 = '업체';
+            cid = $(x).parent().children('td').eq(1).text();
+            cnum = $(x).parent().children('td').eq(0).children('input').val();
+        }
+
+        swal.fire({
+            width: '450px',
+            fontsize: '23px',
+            title: str1 + '를 삭제하시겠습니까?',
+            html: cname + '(' + cid + ')' + '<div style="padding-bottom:10px; font-weight:bold; color:#ff0000;"></div>',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: '삭제',
+            cancelButtonText: '취소',
+            allowOutsideClick: false,
+
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "/cdelete",
+                    data: "id=" + cid.replace(/ /g, '') + "&company=<%=rows[0].company%>&target=" + y + '&cnum=' + cnum,
+                    type: "POST",
+                    dataType: "JSON",
+                    success: function (result) {
+                        if (result) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '삭제완료',
+                                allowOutsideClick: false,
+                            }).then((result) => {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    function client_info_submit(name,id,part,type,banknum,phone,email){
+        $.ajax({
+            url:'/client_info_submit',
+            type:'POST',
+            dataType:'JSON',
+            data:'name='+name+'&id='+id+'&part='+part+'&type='+type+'&banknum='+banknum+'&phone='+phone+'&email='+email,
+            success: function (result) {
+                if(result.code==200){
+                    Swal.fire(
+                        '수정완료',
+                        '',
+                        'success'
+                    ).then((result) => {
+                        location.reload();
+                    });
+                    
+                }else{
+                    Swal.fire(
+                        '수정실패',
+                        '재시도 해주세요',
+                        'error'
+                    )
+                }
+                
+            }
+        });
+    }
+    function client_info_alert(name,id,part,type,phone,banknum,email){
+
+        console.log('part',part)
+        Swal.fire({
+            icon: 'info',
+            width:'500px',
+            title: '담당자 정보',
+            html:'</br></br><div>'+
+                '<div class="flex"><div class="client_info_row">담당자명</div><div class="client_info_row2"><input class="client_info_name" type="text" value="'+name+'" readonly/></div></div>'+
+                '<div class="flex"><div class="client_info_row">담당자아이디</div><div class="client_info_row2"><input class="client_info_id" type="text" readonly value="'+id+'"/></div></div>'+
+                '<div class="flex"><div class="client_info_row">부서</div><div class="client_info_row2"><select class="client_info_part"><option value="사원">사원</option><option value="영업">영업</option><option value="대표">대표</option></select></div></div>'+
+                '<div class="flex"><div class="client_info_row">권한</div><div class="client_info_row2"><select class="client_info_type"><option value="">일반</option><option value="admin">관리자</option></select></div></div>'+
+                '<div class="flex"><div class="client_info_row">연락처</div><div class="client_info_row2"><input class="client_info_phone" type="text" value="'+phone+'"/></div></div>'+
+                '<div class="flex"><div class="client_info_row">본인부담금 입금계좌</div><div class="client_info_row2"><input class="client_info_banknum" type="text" value="'+banknum+'" placeholder="은행명 계좌번호"/></div></div>'+
+                '<div class="flex"><div class="client_info_row">이메일</div><div class="client_info_row2"><input class="client_info_email" type="text" value="'+email+'" placeholder="이메일"/></div></div>'+
+                '</div>',
+            allowOutsideClick: false,
+            showCancelButton:true,
+            confirmButtonText:'수정',
+            cancelButtonText:'취소',
+            cancelButtonColor:'#d33',
+            didOpen:()=>{
+                $('.client_info_part').val(part).prop('selected',1);
+                $('.client_info_type').val(type).prop('selected',1);
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+            //console.log($('.client_info_name').val(),$('.client_info_id').val(),$('.client_info_part').val(),$('.client_info_type').val(),$('.client_info_phone').val(),$('.client_info_banknum').val());
+                client_info_submit($('.client_info_name').val(),$('.client_info_id').val(),$('.client_info_part').val(),$('.client_info_type').val(),$('.client_info_banknum').val(),$('.client_info_phone').val(),$('.client_info_email').val())
+            }
+        });
+    }
+</script>
+
+<body>
+    <a style="display:none;" class="btn" data-popup-open="popup-1" href="#">Open Popup #1</a>
+    <a style="display:none;" class="btn" data-popup-open2="popup-2" href="#">Open Popup #1</a>
+    <div class="maincontainer">
+        <div class="mainc1 flexcolumn">
+            <h1 class="title"><span class="material-icons">supervisor_account</span>&nbsp;&nbsp;&nbsp;&nbsp;<%= title %>
+            </h1>
+            <form action="<%=username%>" method="get" class="search-form">
+                <input type="text" class="search-bar" name="query" placeholder=" 검색어를 입력하세요.">
+                <input type="submit" class="search-button material-icons" value="search">
+            </form>
+            <table class="topmenu">
+                <tr>
+                    <td class="clientup admin"><span>담당자 계정 추가</span></td>
+                    <td style="display:none;">조회된 수급자:&nbsp;&nbsp;<span>
+                            <%=articles.totalCount %>명
+                        </span>&nbsp;<span>일반: 명</span>&nbsp;<span>감경: 명</span>&nbsp;<span>의료급여: 명</span>&nbsp;<span>기초:
+                            명</span></td>
+                </tr>
+            </table>
+            <table class="table table-bordered">
+                <tr class="tablemenu">
+                    <td colspan="20">
+                        <% if (articles.contents.length !=0) { %>
+                            <div class="" style="text-align:center; font-size:14px;">
+                                <ul class="pagination">
+                                    <!--li <%if(articles.pageNum==1){%> class="disabled" <%}else{%>class="waves-effect"
+                                            <%}%> >
+                                                <a <%if(articles.pageNum> 1){%> href="https://xn--9o7b95g.com/companymember/
+                                                    <%=articles.pageNum-1%>/<%=username%>" <%}%>>
+                                                                <i class="material-icons">chevron_left</i>
+                                                </a>
+                                    </li-->
+                                    <% for(var i=articles.pnStart; i<=articles.pnEnd; i++){ %>
+                                        <li <%if(i===articles.pageNum){%> class="active"
+                                            <%}%>><a style="z-index:0;"
+                                                    href="https://xn--9o7b95g.com/companymember/<%=i%>/<%=username%>">
+                                                    <%=i%>
+                                                </a>
+                                        </li>
+                                        <% } %>
+                                            <!--li <%if(articles.pageNum==articles.pnTotal){%> class="disabled" <%}else{%>
+                                                    class="waves-effect" <%}%>>
+                                                        <a <%if(articles.pageNum < articles.pnTotal){%>
+                                                            href="https://xn--9o7b95g.com/companymember/<%=articles.pageNum+1%>/
+                                                                <%=username%>" <%}%> class="waves-effect">
+                                                                        <i class="material-icons">chevron_right</i>
+                                                        </a>
+                                            </li-->
+                                </ul>
+                            </div>
+                            <% } %>
+                    </td>
+                </tr>
+                <tr class="center tablemenu">
+                    <td>번호</td>
+                    <td>담당자명</td>
+                    <td>담당자아이디</td>
+                    <td>부서</td>
+                    <td>권한</td>
+                </tr>
+                <% if (articles.contents.length !=0) { var cidx=1;%>
+                    <% articles.contents.forEach(function(Article,index){ %>
+                        <% if(!Article.managerid.includes('(')) { %>
+                        <tr class="active center mainlist">
+                            <td>
+                                <%=(contentSize*page)-(((contentSize)-1)-(index))%>
+                            </td>
+                            <td class="productname"  <%if(cranker=='admin' ){%>onclick="client_info_alert('<%=Article.name%>','<%=Article.managerid%>','<%=Article.target%>','<%=Article.ranker%>','<%=Article.phone%>','<%=Article.banknum%>','<%=Article.email%>')"<%}%>>
+                                <%=Article.name%>
+                            </td>
+                            <td class="managerid"  <%if(cranker=='admin' ){%>onclick="client_info_alert('<%=Article.name%>','<%=Article.managerid%>','<%=Article.target%>','<%=Article.ranker%>','<%=Article.phone%>','<%=Article.banknum%>','<%=Article.email%>')"<%}%>>
+                                <%=Article.managerid%>
+                            </td>
+                            <td class="managertarget"  <%if(cranker=='admin' ){%>onclick="client_info_alert('<%=Article.name%>','<%=Article.managerid%>','<%=Article.target%>','<%=Article.ranker%>','<%=Article.phone%>','<%=Article.banknum%>','<%=Article.email%>')"<%}%>>
+                                <%=Article.target%>
+                                <% 
+                                let targettxt1 = 'selected';
+                                let targettxt2 = '';
+                                let targettxt3 = '';
+                                if(Article.target=='사원'){
+                                    targettxt1 = 'selected';
+                                    targettxt2 = '';
+                                    targettxt3 = '';
+                                }else if(Article.target=='영업'){
+                                    targettxt1 = '';
+                                    targettxt2 = 'selected';
+                                    targettxt3 = '';
+                                }else{
+                                    targettxt1 = '';
+                                    targettxt2 = '';
+                                    targettxt3 = 'selected';
+                                }
+                                %>
+                                <!-- <select class="managertargetselect" onchange="managerselectchange(this,'<%=Article.managerid%>');" disabled>
+                                    <option value="사원" <%if(targettxt1=='selected'){%>selected<%}else{%><%}%>>사원</option>
+                                    <option value="영업" <%if(targettxt2=='selected'){%>selected<%}else{%><%}%>>영업</option>
+                                    <option value="대표" <%if(targettxt3=='selected'){%>selected<%}else{%><%}%>>대표</option>
+                                </select> -->
+                            </td>
+                            <% var rankerchk='person' ; if(Article.ranker=='admin' ){ var rankerchk='manage_accounts' ;
+                                }%>
+                                <td  <%if(cranker=='admin' ){%>onclick="client_info_alert('<%=Article.name%>','<%=Article.managerid%>','<%=Article.target%>','<%=Article.ranker%>','<%=Article.phone%>','<%=Article.banknum%>','<%=Article.email%>')"<%}%>>
+                                    <span class="material-icons rankerchk2">
+                                        <%=rankerchk%>
+                                    </span>
+                                </td>
+                                <% if(Article.id!=firstData){%>
+                                    <td class="danger admin" onclick="cdelete(this,'c')">
+                                        삭제
+                                    </td>
+                                    <%}else{%>
+                                        <td>
+                                            <span class="material-icons rankerchk">-</span>
+                                        </td>
+                                        <%}%>
+
+                        </tr>
+                        <% cidx++;}}); %>
+                            <% } else { %>
+                                <tr class="tablemenu">
+                                    <td colspan="20" style="text-align: center; font-weight: bold; font-size:15px;">
+                                        <br />등록된 담당자가 없습니다.<br /><br />
+                                    </td>
+                                </tr>
+                                <% } %>
+            </table>
+            <div class="mainc1 flexcolumn">
+                <h1 class="title"><span class="material-icons"></span>&nbsp;&nbsp;&nbsp;&nbsp;프로그램이용 계약서</h1>
+                <div class="docs_container">
+                    <div style="font-size:20px; font-weight:bold; cursor:pointer; text-decoration:underline;" onclick="docs_open()">계약서확인 링크접속</div>
+                </div>
+            </div>
+        </div>
+        <style>
+            .companystates {
+                width: 20%;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: center;
+                margin-left: 30px;
+            }
+
+            .companystates div:nth-child(2),
+            .companystates div:nth-child(3),
+            .companystates div:nth-child(4),
+            .companystates div:nth-child(5) {
+                padding-top: 10px;
+                font-size: 14px;
+                font-weight: bold;
+            }
+
+            .flex {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .stamp img {
+                width: 100px;
+            }
+
+            .binput {
+                width: 150px;
+                text-align: center;
+            }
+
+            .bizinput {
+                width: 150px;
+                text-align: center;
+            }
+
+            .btxt {
+                width: 100px;
+                text-align: center;
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+            }
+
+            .bankinfo {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .flexcolumn {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .flexcolumb {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .flexcolumns {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: flex-start;
+            }
+
+            .flexcolumne {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: flex-end;
+            }
+
+            .flexs {
+                width: 100%;
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+            }
+
+            .flexa {
+                width: 100%;
+                display: flex;
+                justify-content: space-around;
+                align-items: flex-start;
+            }
+        </style>
+        <script>
+
+            function managerselectchange(x,mid){
+                $.ajax({
+                    url: "/managerselectchange",
+                    data: "id=" + mid + "&type=" + $(x).val() + '&company=<%=rows[0].company%>',
+                    type: 'POST',
+                    dataType: "JSON",
+                    success: function (result) {
+                        if (result) {
+                            console.log('ok')
+                        }
+                    }
+                });
+            }
+
+            function bankchange() {
+                axios({
+                    method:'post',
+                    url:'/bankchange',
+                    data:{
+                        id:uid,
+                        company:"<%=rows[0].company%>",
+                        bankname:$('.binput').eq(0).val() ,
+                        banknumber:$('.binput').eq(1).val() ,
+                        bankhost:$('.binput').eq(2).val(),
+                        companynum:$('.companynum').val(),
+                        companyphone:$('.companyphone').val(),
+                        companyfax:$('.companyfax').val(),
+                        companypass:$('.companypass').val(),
+                        addressdetail:$('.addressdetail').val()
+                    }
+                }).then(res=>{
+                    const data = res.data;
+                    if (data) {
+                        var reg = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi
+                        let banknumer = $('.binput').eq(1).val().replace(reg, '');
+                        $('.binput').eq(1).val(banknumer);
+                    }
+                })
+                // $.ajax({
+                //     url: "/bankchange",
+                //     data: "id=" + uid 
+                //     + "&company=<%=rows[0].company%>" 
+                //     + "&bankname=" + $('.binput').eq(0).val() 
+                //     + "&banknumber=" + $('.binput').eq(1).val() 
+                //     + "&bankhost=" + $('.binput').eq(2).val() 
+                //     + "&companynum=" + $('.companynum').val()
+                //     + "&companyphone=" + $('.companyphone').val()
+                //     + "&companyfax=" + $('.companyfax').val()
+                //     + "&companypass=" + $('.companypass').val()
+                //     + "&addressdetail="+$('.addressdetail').val(),
+                //     type: 'POST',
+                //     dataType: "JSON",
+                //     success: function (result) {
+                //         if (result) {
+                //             var reg = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi
+                //             banknumer = $('.binput').eq(1).val().replace(reg, '');
+                //             $('.binput').eq(1).val(banknumer);
+                //         }
+                //     }
+                // });
+            }
+
+            function bizchange() {
+                $.ajax({
+                    url: "/bizchange",
+                    data: "id=" + uid + "&company=<%=rows[0].company%>" + "&bizid=" + $('.bizinput').eq(0).val() + "&bizpw=" + $('.bizinput').eq(1).val() + "&bizphonenum=" + $('.bizinput').eq(2).val(),
+                    type: 'POST',
+                    dataType: "JSON",
+                    success: function (result) {
+
+                        if (result) {
+                            var reg = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi
+                            var bizphonenum = $('.bizinput').eq(2).val().replace(reg, '');
+                            $('.bizinput').eq(2).val(bizphonenum);
+                        }
+                    }
+                });
+            }
+
+            function companyaddr() {
+                $.ajax({
+                    url: "/companyaddr",
+                    data: "id=" + uid + "&company=<%=rows[0].company%>" + "&addr=" + $('#sample_address').text(),
+                    type: 'POST',
+                    dataType: "JSON",
+                    success: function (result) {
+                        if (result) {
+                        }
+                    }
+                });
+            }
+
+            function doc24() {
+                $.ajax({
+                    url: "/doc24",
+                    data: "id=" + uid + "&company=<%=rows[0].company%>" + "&docid=" + $('.docid').val()+ "&docpw=" + $('.docpw').val(),
+                    type: 'POST',
+                    dataType: "JSON",
+                    success: function (result) {
+                        if (result) {
+                            $('.docid').val(result.result[0].docid);
+                            $('.docpw').val(result.result[0].docpw);
+                        }
+                    }
+                });
+            }
+
+            function thebill() {
+                $.ajax({
+                    url: "/thebill",
+                    data: "id=" + uid + "&company=<%=rows[0].company%>" + "&thebillid=" + $('.thebillid').val()+ "&thebillpw=" + encodeURIComponent($('.thebillpw').val()),
+                    type: 'POST',
+                    dataType: "JSON",
+                    success: function (result) {
+                        if (result) {
+                            $('.thebillid').val(result.result[0].thebillid);
+                            $('.thebillpw').val(result.result[0].thebillpw);
+                        }
+                    }
+                });
+            }
+        </script>
+        <div class="companystates">
+            <h1 class="title"><span class="material-icons">domain_add</span>&nbsp;&nbsp;&nbsp;&nbsp;회사 정보</h1>
+            <div class="flexcolumns">
+                <div class="flexs">
+                    <div>회사명</div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="" style="font-size:22px; font-weight:bold;">
+                        <%=rows[0].company%>
+                    </span>
+                </div>
+                <div class="flexs">
+                    <div>대표자</div>&nbsp;&nbsp;&nbsp;&nbsp;<span class=""
+                        style="font-size:22px; font-weight:bold;">
+                        <%=companyceo[0].companyceo%>
+                    </span>
+                </div>
+                <div class="flexs">
+                    <div class="flexcolumns">
+                        사업장 주소
+                        <input class="material-icons btn btn-primary" type="button"
+                            onclick="sample_execDaumPostcode()" value="주소 검색 saved_search">
+                    </div>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="flexcolumne" style="font-size:22px; font-weight:bold;">
+                        <span id="sample_address" class="flex"
+                            style="width:280px; font-size:14px; height:30px; justify-content:flex-start;"></span>
+                        <input style="display:none;" class="addressnum" type="text" id="sample_postcode"
+                            placeholder="우편번호" value="">
+                        <input style="" class="addressdetail" type="text" id="sample_detailAddress" placeholder="상세주소" value="" onchange="bankchange();">
+                        <input style="display:none;" type="text" id="sample_extraAddress" placeholder="참고항목">
+                    </span>
+                </div>
+                <div class="flexs">
+                    <div style="width:100px;">공인인증서</br>암호</div>
+                    <span class="" style="font-size:22px; font-weight:bold;">
+                        <input class="companypass" style="width:250px;" type="password" onchange="bankchange();">
+                    </span>
+                </div>
+                <div class="flexs">
+                    <div style="width:100px;">사업자</br>등록번호</div>
+                    <span class="" style="font-size:22px; font-weight:bold;">
+                        <input class="companynum" style="width:250px;" type="text" onchange="bankchange();">
+                    </span>
+                </div>
+                <div class="flexs">
+                    <div style="width:100px;">기관</br>전화번호</div>
+                    <span class="" style="font-size:22px; font-weight:bold;">
+                        <input class="companyphone" style="width:250px;" type="text" onchange="bankchange();">
+                    </span>
+                </div>
+                <div class="flexs" style="padding-top:10px;">
+                    <div style="width:100px;">기관</br>팩스번호</div>
+                    <span class="" style="font-size:22px; font-weight:bold;">
+                        <input class="companyfax" style="width:250px;" type="text" onchange="bankchange();">
+                    </span>
+                </div>
+            </div>
+            <br />
+            <br />
+            <div class="flex">
+                <div style="font-size:18px; font-weight: bold;">직인등록하기</div>&nbsp;
+                <form action="/uploadFile" enctype="multipart/form-data" method="post"
+                    style="display: flex; justify-content:center; align-items:center; width:50%;">
+                    <label class="btn btn-primary" for="attachment">파일선택</label>
+                    <input type="hidden" name="filename1" value="<%=rows[0].company%>" id="<%=rows[0].company%>">
+                    <input style="width:50%; display:none;" type="file" name="attachment" id="attachment"
+                        value="이미지 선택">
+                    <button type="submit" class="btn btn-primary">저장하기</button>
+                </form>
+            </div>
+            <br />
+            <div class="stamp flex companystamp">
+                <img src="/companystamp/<%=rows[0].company.replace(/ /g,'%20')%>">
+            </div>
+            <br /><br />
+            <div class="" style="display:flex; flex-direction:column; justify-content:center; align-items:center;">
+                <div style="font-size:18px; font-weight: bold;"><span class="material-icons"
+                        style="font-size:20px;">payments</span>&nbsp;&nbsp;&nbsp;본인부담금 입금 계좌</div>
+                <div class="bankinfo"><span class="btxt">은행</span><input class="binput" type="text"
+                        onchange="bankchange();"></div>
+                <div class="bankinfo"><span class="btxt">계좌번호</span><input class="binput" type="text"
+                        onchange="bankchange();"></div>
+                <div class="bankinfo"><span class="btxt">예금주</span><input class="binput" type="text"
+                        onchange="bankchange();"></div>
+            </div>
+            <br />
+            <br />
+            <!-- <div class="" style="display:flex; flex-direction:column; justify-content:center; align-items:center;">
+                <div style="font-size:18px; font-weight: bold;"><span class="material-icons"
+                        style="font-size:20px;">email</span>&nbsp;&nbsp;&nbsp;비즈뿌리오 계정</div>
+                <div class="bankinfo"><span class="btxt">아이디</span><input class="bizinput" type="text"
+                        onchange="bizchange();"></div>
+                <div class="bankinfo"><span class="btxt">비밀번호</span><input class="bizinput" type="password"
+                        onchange="bizchange();"></div>
+                <div class="bankinfo"><span class="btxt">등록발신번호</span><input class="bizinput" type="text"
+                        onchange="bizchange();"></div>
+            </div> -->
+            <br />
+            <br />
+        </div>
+        <style>
+            .upbutton {
+                padding: 5px;
+                border: 1px solid #000;
+                border-radius: 5px;
+                font-size: 15px;
+                font-weight: bold;
+                margin-bottom: 10px;
+                cursor: pointer;
+            }
+
+            .upbutton:hover {
+                border: 1px solid #2e89ff;
+                background: #dcffff;
+            }
+
+            /*input 은 숨겨주기*/
+            input#chk_top,
+            input#chk_top2,
+            input#chk_top3,
+            input#chk_top4 {
+                display: none;
+            }
+
+            /*input 바로 다음의 label*/
+            input#chk_top+label,
+            input#chk_top2+label,
+            input#chk_top3+label,
+            input#chk_top4+label {
+                cursor: pointer;
+            }
+
+            /*input 바로 다음의 label:before 에 체크하기 전 CSS 설정*/
+            input#chk_top+label:before,
+            input#chk_top2+label:before,
+            input#chk_top3+label:before,
+            input#chk_top4+label:before{
+                content: "";
+                display: inline-block;
+                width: 20px;
+                height: 20px;
+                line-height: 20px;
+                border: 1px solid #cbcbcb;
+                vertical-align: middle;
+                /*체크 전과 체크 후 높이 차이 때문에 설정*/
+            }
+
+            /*checked된 input 바로 다음의 label:before 에 체크 후 CSS 설정*/
+            input#chk_top:checked+label:before,
+            input#chk_top2:checked+label:before,
+            input#chk_top3:checked+label:before,
+            input#chk_top4:checked+label:before {
+                content: "\f00c";
+                /*폰트어썸 유니코드*/
+                font-family: "Font Awesome 5 free";
+                /*폰트어썸 아이콘 사용*/
+                font-weight: 900;
+                /*폰트어썸 설정*/
+                color: #fff;
+                background-color: #000;
+                border-color: #000;
+                font-size: 13px;
+                text-align: center;
+            }
+
+            .timepicker {
+                width: 100px;
+            }
+
+            .scrolltbody {
+                display: block;
+                width: 100%;
+                border-collapse: collapse;
+                border: 2px solid #000;
+            }
+
+            .scrolltbody th {
+                border: 1px solid #000;
+                font-size: 20px;
+                font-weight: bold;
+                text-align: center;
+            }
+
+            .scrolltbody td {
+                border: 1px solid #000;
+                border-top: 0;
+            }
+
+            .scrolltbody tbody {
+                display: block;
+                height: 500px;
+                overflow: auto;
+            }
+
+            .rentali {
+                font-weight: bold;
+                width: 130px;
+            }
+
+            .rentaltr {
+                font-size: 15px;
+                font-weight: bold;
+            }
+            .flexcloumns{
+                display:flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: flex-start;
+            }
+            .conbtn:hover{
+                color:#000;
+            }
+            .rental_info_compaynumber{
+                font-size:18px;
+                font-weight:bold;
+                text-align: center;
+            }
+            .rental_companynumber{
+                text-align: center;
+            }
+            .rental_info_stamp{
+                font-size:18px;
+                font-weight:bold;
+                text-align: center;
+            }
+        </style>
+        <div class="flexcolumb mainc3">
+            <div class="flexa">
+                <div>
+                    <h1 class="title"><span class="material-icons">escalator_warning</span>&nbsp;&nbsp;&nbsp;&nbsp;대대여
+                        업체 관리
+                    </h1>
+                    <div class="flex"><span class="upbutton" onclick="rentalup();">대대여 업체 등록</span></div>
+                    <div>
+                        <table class="table table-bordered rentaltable">
+                            <tr class="center tablemenu">
+                                <td>번호</td>
+                                <td>업체</td>
+                            </tr>
+                            <% if (articles2.length !=0) { %>
+                                <% articles2.forEach(function(Article,index){ %>
+                                    <tr class="active center mainlist">
+                                        <td>
+                                            <%=index+1%>
+                                        </td>
+                                        <td class="productname">
+                                            <%=Article.rentalcompany%>
+                                        </td>
+                                    </tr>
+                                    <% }); %>
+                                        <% } else { %>
+                                            <tr class="tablemenu">
+                                                <td colspan="20"
+                                                    style="text-align: center; font-weight: bold; font-size:15px;">
+                                                    <br />등록된 업체가 없습니다.<br /><br />
+                                                </td>
+                                            </tr>
+                                            <% } %>
+                        </table>
+                        <!-- <span>*대대여등록된 업체는 삭제가 불가합니다.</span> -->
+                    </div>
+                    <h1 class="title"><span class="material-icons">escalator_warning</span>&nbsp;&nbsp;&nbsp;&nbsp;소독
+                        업체 관리
+                    </h1>
+                    <div class="flex"><span class="upbutton" onclick="cleanup();">소독 업체 등록</span></div>
+                    <div>
+                        <table class="table table-bordered cleantable">
+                            <tr class="center tablemenu">
+                                <td>번호</td>
+                                <td>업체</td>
+                            </tr>
+                            <% if (cleancompany.length !=0) { %>
+                                <% cleancompany.forEach(function(Article,index){ %>
+                                    <tr class="active center mainlist">
+                                        <td>
+                                            <%=index+1%>
+                                        </td>
+                                        <td class="productname">
+                                            <%=Article.cleancompany%>
+                                        </td>
+                                    </tr>
+                                    <% }); %>
+                                        <% } else { %>
+                                            <tr class="tablemenu">
+                                                <td colspan="20"
+                                                    style="text-align: center; font-weight: bold; font-size:15px;">
+                                                    <br />등록된 업체가 없습니다.<br /><br />
+                                                </td>
+                                            </tr>
+                                            <% } %>
+                        </table>
+                        <!-- <span>*대대여등록된 업체는 삭제가 불가합니다.</span> -->
+                    </div>
+                </div>
+                <div>
+                    <h1 class="title"><span class="material-icons">real_estate_agent</span>&nbsp;&nbsp;&nbsp;&nbsp;도매 업체
+                        관리
+                    </h1>
+                    <div class="flex"><span class="upbutton" onclick="wholeup();">도매 업체 등록</span></div>
+                    <div>
+                        <table class="table table-bordered wholesale">
+                            <!--tr class="tablemenu">
+                                <td colspan="20">
+                                    <% if (articles.contents.length !=0) { %>
+                                        <div class="" style="text-align:center; font-size:14px;">
+                                            <ul class="pagination">
+                                                <li <%if(articles.pageNum==1){%> class="disabled" <%}else{%>class="waves-effect"
+                                                        <%}%> >
+                                                            <a <%if(articles.pageNum> 1){%> href="//13.209.151.51/companymember/
+                                                                <%=articles.pageNum-1%>/<%=username%>" <%}%>>
+                                                                            <i class="material-icons">chevron_left</i>
+                                                            </a>
+                                                </li>
+                                                <% for(var i=articles.pnStart; i<=articles.pnEnd; i++){ %>
+                                                    <li <%if(i===articles.pageNum){%> class="active"
+                                                        <%}%>><a style="z-index:0;"
+                                                                href="//13.209.151.51/companymember/<%=i%>/<%=username%>">
+                                                                <%=i%>
+                                                            </a>
+                                                    </li>
+                                                    <% } %>
+                                                        <li <%if(articles.pageNum==articles.pnTotal){%> class="disabled"
+                                                            <%}else{%>
+                                                                class="waves-effect" <%}%>>
+                                                                    <a <%if(articles.pageNum < articles.pnTotal){%>
+                                                                        href="//13.209.151.51/companymember/
+                                                                        <%=articles.pageNum+1%>/
+                                                                            <%=username%>" <%}%> class="waves-effect">
+                                                                                    <i class="material-icons">chevron_right</i>
+                                                                    </a>
+                                                        </li>
+                                            </ul>
+                                        </div>
+                                        <% } %>
+                                </td>
+                            </tr-->
+                            <tr class="center tablemenu">
+                                <td>번호</td>
+                                <td>업체</td>
+                            </tr>
+                            <% if (wholesale.length !=0) { %>
+                                <% wholesale.forEach(function(Article,index){ %>
+                                    <tr class="active center mainlist">
+                                        <td>
+                                            <input type="hidden" value="w<%=Article.num%>">
+                                            <%=index+1%>
+                                        </td>
+                                        <td class="productname">
+                                            <%=Article.name%>
+                                        </td>
+                                        <% if(Article.id!=firstData){%>
+                                            <td class="danger admin" onclick="cdelete(this,'w')">
+                                                삭제
+                                            </td>
+                                            <%}%>
+                                    </tr>
+                                    <% }); %>
+                                        <% } else { %>
+                                            <tr class="tablemenu">
+                                                <td colspan="20"
+                                                    style="text-align: center; font-weight: bold; font-size:15px;">
+                                                    <br />등록된 업체가 없습니다.<br /><br />
+                                                </td>
+                                            </tr>
+                                            <% } %>
+                        </table>
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="mainc3-2 flexa">
+                <div>
+                    <h1 class="title"><span class="material-icons">settings</span>&nbsp;&nbsp;&nbsp;&nbsp;프로그램 설정</h1>
+                    <div class="flexcloumns">
+                        <!-- <br/>
+                        <div>
+                            <div class="flex">
+                                <div class="chk_box">
+                                    <input type="checkbox" id="chk_top" onchange="hanqoption(this,0)" />
+                                    <label for="chk_top"></label>
+                                </div>
+                                &nbsp;&nbsp;&nbsp;
+                                <div>등급변경 수급자 자동조회 갱신</div>
+                            </div>
+                            <div class="flex">
+                                <span class="material-icons">schedule</span>
+                                <span>&nbsp;&nbsp;시간설정:&nbsp;&nbsp;</span>
+                                <input class="timepicker" type="text" placeholder="미설정" disabled oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                            </div>
+                        </div>
+                        <br />
+                        <div>
+                            <div class="flex">
+                                <div class="chk_box">
+                                    <input type="checkbox" id="chk_top2" onchange="hanqoption(this,1)" />
+                                    <label for="chk_top2"></label>
+                                </div>
+                                &nbsp;&nbsp;&nbsp;
+                                <div>입소이용의뢰서 승인 자동조회</div>
+                            </div>
+                            <div class="flex">
+                                <span class="material-icons">schedule</span>
+                                <span>&nbsp;&nbsp;시간설정:&nbsp;&nbsp;</span>
+                                <input class="timepicker" type="text" placeholder="미설정" disabled
+                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                            </div>
+                        </div> -->
+                        <br/>
+                        <div>
+                            <div class="flex">
+                                <div class="chk_box">
+                                    <input type="checkbox" id="chk_top3" onchange="hanqoption(this,2)" />
+                                    <label for="chk_top3"></label>
+                                </div>
+                                &nbsp;&nbsp;&nbsp;
+                                <div>계약시 번호없음</div>
+                            </div>
+                        </div>
+                        <br/>
+                        <div>
+                            <div class="flex">
+                                <div class="chk_box">
+                                    <input type="checkbox" id="chk_top4" onchange="hanqoption(this,3)" />
+                                    <label for="chk_top4"></label>
+                                </div>
+                                &nbsp;&nbsp;&nbsp;
+                                <div>공단창 동시 조회</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="title"><span class="material-icons">supervised_user_circle</span>&nbsp;&nbsp;&nbsp;&nbsp;공유업체관리</h1>
+                    <div class="flexcloumn">
+                        <div class="flex"><span class="upbutton" onclick="shareup();">공유업체등록/요청</span></div>
+                        <div>
+                            <table class="table table-bordered sharetable">
+                                <tr class="center tablemenu">
+                                    <td>상태</td>
+                                    <td>업체</td>
+                                </tr>
+                                
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="flexa">
+                <div>
+                    <h1 class="title"><span class="material-icons">account_balance</span>&nbsp;&nbsp;&nbsp;&nbsp;더빌CMS 계정</h1>
+                    <div class="flexcloumn">
+                        <br/>
+                        <div class="flex">
+                            <div style="width:100px;">아이디:</div><div><input type="text" class="thebillid" style="width:150px; height:30px;" onchange="thebill()"></div>
+                        </div>
+                        <br/>
+                        <div class="flex">
+                            <div style="width:100px;">APIKEY:</div><div><input type="password" class="thebillpw" style="width:150px; height:30px;" onchange="thebill()"></div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="title"><span class="material-icons">description</span>&nbsp;&nbsp;&nbsp;&nbsp;문서24 계정</h1>
+                    <div class="flexcloumn">
+                        <br/>
+                        <div class="flex">
+                            <div style="width:100px;">아이디:</div><div><input type="text" class="docid" style="width:150px; height:30px;" onchange="doc24()"></div>
+                        </div>
+                        <br/>
+                        <div class="flex">
+                            <div style="width:100px;">비밀번호:</div><div><input type="password" class="docpw" style="width:150px; height:30px;" onchange="doc24()"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function download(filename, filepath) {
+            var element = document.createElement('a');
+            element.setAttribute('href', filepath);
+            element.setAttribute('download', filename);
+            document.body.appendChild(element);
+            element.click();
+            //document.body.removeChild(element);
+        }
+        function exceldown() {
+            download('(한큐)도매업체', '/도매업체.xlsx');
+        }
+        function readExcel(wt) {
+            var code = [];
+            var code2 = [];
+            var money = [];
+            var money2 = [];
+            let input = event.target;
+            let reader = new FileReader();
+            reader.onload = function () {
+                let data = reader.result;
+                let workBook = XLSX.read(data, { type: 'binary' });
+                workBook.SheetNames.forEach(function (sheetName) {
+                    let rows = XLSX.utils.sheet_to_json(workBook.Sheets[sheetName]);
+                    var data2 = rows;
+                    console.log(data2);
+                    $.each(data2, function (i) {
+                        const regExp = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|(|)]/g;
+                        if (!regExp.test(data2[i]['품목코드'])) {
+                            code.push(data2[i]['품목코드']);
+                            money.push(data2[i]['단가']);
+                            $.ajax({
+                                url: '/wholeexcel',
+                                data: "code=" + data2[i]['품목코드'] + "&money=" + data2[i]['단가'] + "&col=" + wt,
+                                type: 'POST',
+                                dataType: "JSON",
+                                success: function (result) {
+                                    if (result) {
+                                        var data2 = result.data2;
+                                        $('.wholetr').remove();
+                                        var str = '';
+                                        var cnt = 0;
+                                        if (data2.length > 0) {
+                                            $.each(data2, function (i) {
+                                                var trc = 'danger';
+                                                if (data2[i][wt] != '' && data2[i][wt] != 'undefined' && data2[i][wt] != undefined) {
+                                                    trc = 'success';
+                                                    cnt++
+                                                }
+                                                var wmoney = data2[i][wt];
+                                                if (wmoney == undefined || wmoney == '') wmoney = '미입력';
+                                                str += '<tr class="wholetr ' + trc + '"><td width="230px">' + data2[i].name2 + '</td><td width="150px">' + data2[i].code + '</td><td width="150px"><input type="text" value="' + wmoney + '"></td></tr>';
+                                            });
+                                            $('.wholesaletable').append(str);
+                                        }
+
+                                    }
+
+                                }
+                            });
+                        } else {
+                            code2.push(data2[i]['품목코드']);
+                            money2.push(data2[i]['단가']);
+                        }
+
+                    });
+                });
+                console.log(code);
+                console.log(money);
+                console.log(code2);
+            };
+
+            reader.readAsBinaryString(input.files[0]);
+
+        }
+        function hanqoption(x, y) {
+            if (!$(x).is(':checked')&&(y==0||y==1)) {
+                $(".timepicker").eq(y).attr("disabled", true);
+                $(".timepicker").eq(y).val('');
+                $('.timpicker').index($(x))
+                hanqoption2($(".timepicker").eq(y), y);
+            } else if(y==0||y==1){
+                $(".timepicker").eq(y).removeAttr("disabled");
+            } else if(y==2){
+                var phonechk = 0;
+                if($(x).is(':checked'))phonechk = 1;
+                $.ajax({
+                    url: "/hanqsetting",
+                    data: "company=<%=rows[0].company%>&val1=" + phonechk + "&option=" + y + "&id=<%=firstData%>",
+                    type: 'POST',
+                    dataType: "JSON",
+                    success: function (result) {
+                    }
+                });
+            } else if(y==3){
+                var lookupchk = 0;
+                if($(x).is(':checked'))lookupchk = 1;
+                $.ajax({
+                    url: "/hanqsetting",
+                    data: "company=<%=rows[0].company%>&val1=" + lookupchk + "&option=" + y + "&id=<%=firstData%>",
+                    type: 'POST',
+                    dataType: "JSON",
+                    success: function (result) {
+                    }
+                });
+            }
+        }
+        function hanqoption2(x, y) {
+            $.ajax({
+                url: "/hanqsetting",
+                data: "company=<%=rows[0].company%>&val1=" + $(x).val() + "&option=" + y + "&id=<%=firstData%>",
+                type: 'POST',
+                dataType: "JSON",
+                success: function (result) {
+                }
+            });
+        }
+        async function rentalup() {
+            const { value: formValues } = await Swal.fire({
+                title: '대대여 업체 등록',
+                html:
+                    '<input id="swal-input1" class="swal2-input" placeholder="업체명 입력">'+
+                    '<input id="swal-input2" class="swal2-input" placeholder="업체 사업자등록번호 입력">',
+                focusConfirm: false,
+                preConfirm: () => {
+                    return [
+                        document.getElementById('swal-input1').value,
+                        document.getElementById('swal-input2').value
+                    ]
+                }
+            })
+            if (formValues) {
+                if (formValues[0] != '') {
+                    $.ajax({
+                        url: "/rentalup",
+                        data: "company=<%=rows[0].company%>&rentalcompany=" + formValues[0]+"&companynumber=" + formValues[1],
+                        type: 'POST',
+                        dataType: "JSON",
+                        success: function (result) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '등록완료',
+                                allowOutsideClick: false,
+                            }).then((result) => {
+                                location.reload();
+                            });
+
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '업체명을 입력해주세요',
+                        allowOutsideClick: false,
+                    });
+                }
+            }
+        }
+
+        async function cleanup() {
+            const { value: formValues } = await Swal.fire({
+                title: '소독 업체 등록',
+                html:
+                    '<input id="swal-input1" class="swal2-input" placeholder="업체명 입력">'+
+                    '<input id="swal-input2" class="swal2-input" placeholder="업체 사업자등록번호 입력">',
+                focusConfirm: false,
+                preConfirm: () => {
+                    return [
+                        document.getElementById('swal-input1').value,
+                        document.getElementById('swal-input2').value
+                    ]
+                }
+            })
+            if (formValues) {
+                if (formValues[0] != '') {
+                    $.ajax({
+                        url: "/cleanup",
+                        data: "company=<%=rows[0].company%>&cleancompany=" + formValues[0] +"&companynumber=" + formValues[1],
+                        type: 'POST',
+                        dataType: "JSON",
+                        success: function (result) {
+                            if(result.code==200){
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: '등록완료',
+                                    allowOutsideClick: false,
+                                }).then((result) => {
+                                    location.reload();
+                                });
+                            }
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '업체명을 입력해주세요',
+                        allowOutsideClick: false,
+                    });
+                }
+            }
+        }
+
+        async function shareup() {
+            const { value: formValues } = await Swal.fire({
+                title: '공유 업체 등록/요청',
+                html:
+                    '<input id="swal-input1" class="swal2-input" placeholder="업체명 또는 기관기호 입력">',
+                focusConfirm: false,
+                preConfirm: () => {
+                    return [
+                        document.getElementById('swal-input1').value
+                    ]
+                }
+            })
+            if (formValues) {
+                if (formValues[0] != '') {
+                    $.ajax({
+                        url: "/shareup",
+                        data: "company=<%=rows[0].company%>&sharecompany=" + formValues[0],
+                        type: 'POST',
+                        dataType: "JSON",
+                        success: function (result) {
+                            if(result.code==200){
+                                Swal.fire({
+                                icon: 'success',
+                                title: '요청완료',
+                                allowOutsideClick: false,
+                                }).then((result) => {
+                                    location.reload();
+                                });
+                            }else{
+                                Swal.fire({
+                                icon: 'error',
+                                title: '한큐 미등록 업체입니다.',
+                                allowOutsideClick: false,
+                                }).then((result) => {
+                                    location.reload();
+                                });
+                            }
+                            
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '업체명을 입력해주세요',
+                        allowOutsideClick: false,
+                    });
+                }
+            }
+
+        }
+
+        async function wholeup() {
+            const { value: formValues } = await Swal.fire({
+                title: '도매 업체 등록',
+                html:
+                    '<input id="swal-input1" class="swal2-input" placeholder="업체명 입력">',
+                focusConfirm: false,
+                preConfirm: () => {
+                    return [
+                        document.getElementById('swal-input1').value
+                    ]
+                }
+            })
+            if (formValues) {
+                if (formValues[0] != '') {
+                    $.ajax({
+                        url: "/wholeup",
+                        data: "company=<%=rows[0].company%>&wholecompany=" + formValues[0],
+                        type: 'POST',
+                        dataType: "JSON",
+                        success: function (result) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '등록완료',
+                                allowOutsideClick: false,
+                            }).then((result) => {
+                                location.reload();
+                            });
+
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '업체명을 입력해주세요',
+                        allowOutsideClick: false,
+                    });
+                }
+            }
+            /*
+            $.ajax({
+                url: "/rentalup",
+                data: "company=<%=rows[0].company%>&rentalcompany="+rentalcompany,
+                type: 'POST',
+                dataType: "JSON",
+                success: function (result) {
+                    alert(result.msg);
+                    location.reload();
+                }
+            });
+            */
+        }
+        function rentalbcoded(x, y) {
+            var dnum = $(x).prev('input').val();
+            $.ajax({
+                url: '/rentalbcoded',
+                type: 'post',
+                data: 'company=<%=rows[0].company%>&dnum=' + dnum + '&rental=' + y,
+                dataType: "JSON",
+                success: function (result) {
+                    var data = result.result;
+                    var str = '';
+                    var cnt = 0;
+                    if (data.length > 0) {
+                        $('.addtxt').html('');
+                        $.each(data, function (i) {
+                            cnt++;
+                            if (data[i].edate.includes('00:')) {
+                                var edate = data[i].edate.split('00:')[0];
+                            } else {
+                                var edate = data[i].edate
+                            }
+                            if (data[i].sdate.includes('00:')) {
+                                var sdate = data[i].sdate.split('00:')[0];
+                            } else {
+                                var sdate = data[i].sdate
+                            }
+                            var trc = 'danger';
+                            if (edate == 'None' || edate == '') {
+                                edate = '';
+                                trc = 'success';
+                            }
+                            str += '<tr class="rentaltr ' + trc + '"><td width="230px">' + data[i].bcode + '</td><td width="150px">' + sdate + '</td><td width="150px">' + edate + '</td><td width="50px"><input type="hidden" value="' + data[i].num + '"><div class="btn-danger" style="cursor:pointer;" onclick="rentalbcoded(this,\'' + y + '\');">삭제</div></td></tr>';
+                        });
+                    }
+                    $('.rentaltr').remove();
+                    $('.scrolltbody tbody').append(str);
+                }
+            });
+        }
+        function rentalbcodeadd(x) {
+            if ($('.rentali').eq(0).val() == '' || $('.rentali').eq(1).val() == '') {
+                $('.addtxt').html('<span style="color:#ff0000;">미입력</span>');
+            } else {
+                $.ajax({
+                    url: '/rentalbcodeadd',
+                    type: 'post',
+                    data: 'company=<%=rows[0].company%>&bcode=' + $('.rentali').eq(0).val() + '&sdate=' + $('.rentali').eq(1).val() + '&rental=' + x,
+                    dataType: "JSON",
+                    success: function (result) {
+                        var data = result.result;
+                        var str = '';
+                        var cnt = 0;
+                        if (data.length > 0) {
+                            $('.addtxt').html('');
+                            $.each(data, function (i) {
+                                cnt++;
+                                if (data[i].edate.includes('00:')) {
+                                    var edate = data[i].edate.split('00:')[0];
+                                } else {
+                                    var edate = data[i].edate
+                                }
+                                if (data[i].sdate.includes('00:')) {
+                                    var sdate = data[i].sdate.split('00:')[0];
+                                } else {
+                                    var sdate = data[i].sdate
+                                }
+                                var trc = 'danger';
+                                if (edate == 'None' || edate == '') {
+                                    edate = '';
+                                    trc = 'success';
+                                }
+                                str += '<tr class="rentaltr ' + trc + '"><td width="230px">' + data[i].bcode + '</td><td width="150px">' + sdate + '</td><td width="150px">' + edate + '</td><td width="50px"><input type="hidden" value="' + data[i].num + '"><div class="btn-danger" style="cursor:pointer;" onclick="rentalbcoded(this,\'' + x + '\');">삭제</div></td></tr>';
+                            });
+                        }
+                        $('.rentaltr').remove();
+                        $('.scrolltbody tbody').append(str);
+                    }
+                });
+            }
+        }
+
+        function wholeselect(x) {
+            $.ajax({
+                url: "/wholeselect",
+                data: "name=" + x,
+                type: 'POST',
+                dataType: "JSON",
+                success: function (result) {
+                }
+            });
+        }
+
+        function sharedelete(x){
+            swal.fire({
+            width: '450px',
+            fontsize: '23px',
+            title: '업체:['+$(x).prev().text() + ']<br/><br/>공유 삭제하시겠습니까?',
+            //html: cname + '(' + cid + ')' + '<div style="padding-bottom:10px; font-weight:bold; color:#ff0000;"></div>',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: '삭제',
+            cancelButtonText: '취소',
+            allowOutsideClick: false,
+
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url:"/sharedelete",
+                    data: "companyshare="+$(x).prev().text()+'&company=<%=rows[0].company%>',
+                    type: "POST",
+                    dataType: "JSON",
+                    success: function(result){
+                        if(result.code==200){
+                            Swal.fire({
+                                icon: 'success',
+                                title: '삭제완료',
+                                allowOutsideClick: false,
+                            }).then((result) => {
+                                socket.emit('disconnect2', {'name': uid});
+                                socket.emit('login', {'name': uid});
+                                socket.emit('sharedelete',{'name':uid,'company':'<%=rows[0].company%>','companyshare':$(x).prev().text()});
+                                location.reload();
+                            });
+                        }else{
+                            Swal.fire({
+                                icon: 'error',
+                                title: '프로그램 오류발생',
+                                allowOutsideClick: false,
+                            }).then((result) => {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            
+            }
+        });
+        }
+
+        function sharerdelete(x){
+            swal.fire({
+            width: '450px',
+            fontsize: '23px',
+            title: '요청 업체:['+$(x).prev().text() + ']<br/><br/>공유요청 취소하시겠습니까?',
+            //html: cname + '(' + cid + ')' + '<div style="padding-bottom:10px; font-weight:bold; color:#ff0000;"></div>',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: '확인',
+            cancelButtonText: '취소',
+            allowOutsideClick: false,
+
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url:"/sharerdelete",
+                    data: "companyshare="+$(x).prev().text()+'&company=<%=rows[0].company%>',
+                    type: "POST",
+                    dataType: "JSON",
+                    success: function(result){
+                        if(result.code==200){
+                            Swal.fire({
+                                icon: 'success',
+                                title: '취소완료',
+                                allowOutsideClick: false,
+                            }).then((result) => {
+                                location.reload();
+                            });
+                        }else{
+                            Swal.fire({
+                                icon: 'error',
+                                title: '프로그램 오류발생',
+                                allowOutsideClick: false,
+                            }).then((result) => {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            
+            }
+        });
+        }
+
+        function shareok(x){
+            swal.fire({
+            width: '450px',
+            fontsize: '23px',
+            title: $(x).prev().text() + ' 요청 승인하시겠습니까?',
+            //html: cname + '(' + cid + ')' + '<div style="padding-bottom:10px; font-weight:bold; color:#ff0000;"></div>',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: '승인',
+            cancelButtonText: '취소',
+            allowOutsideClick: false,
+
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url:"/shareok",
+                    data: "companyshare="+$(x).prev().text()+'&company=<%=rows[0].company%>',
+                    type: "POST",
+                    dataType: "JSON",
+                    success: function(result){
+                        if(result.code==200){
+                            Swal.fire({
+                                icon: 'success',
+                                title: '승인완료',
+                                allowOutsideClick: false,
+                            }).then((result) => {
+                                socket.emit('disconnect2', {'name': uid});
+                                socket.emit('login', {'name': uid});
+                                socket.emit('shareok',{'name':uid,'company':'<%=rows[0].company%>','companyshare':$(x).prev().text()});
+                                location.reload();
+                            });
+                        }else{
+                            Swal.fire({
+                                icon: 'error',
+                                title: '프로그램 오류발생',
+                                allowOutsideClick: false,
+                            }).then((result) => {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            
+            }
+        });
+        }
+      
+        async function companyshare(){
+            var sharestr = '';
+            const returnajax = $.ajax({
+                url:"/companyshare",
+                data:"company=<%=rows[0].company%>",
+                type:"POST",
+                dataType:"JSON",
+                success:function(result){
+                    if(result.code==200){
+                        if(result.data[0].companyarr!=''){
+                            if(result.data[0].companyarr.includes(',')){
+                                var carrsplit = result.data[0].companyarr.split(',');
+                                var x = 1;
+                                $.each(carrsplit,function(i){
+                                    axios.post("/companyshare2",{
+                                    num:carrsplit[i]
+                                    }).then(res=>{
+                                        const data = res.data;
+                                        sharestr = '<tr class="active center mainlist">'+
+                                            '<td class="success">승인</td>'+
+                                        '<td class="productname">'+data.data[0].company+'</td>'+
+                                        '<td class="danger admin conbtn" style="cursor:pointer" onclick="sharedelete(this,\'w\')">삭제</td>'+
+                                        '</tr>';
+                                        $('.sharetable').append(sharestr);
+                                        x++;
+                                        $('.conbtn').hover(function(){
+                                            $(this).removeClass('danger');
+                                            $(this).addClass('info');
+                                        }, function(){
+                                            $(this).addClass('danger');
+                                            $(this).removeClass('info');
+                                        });
+                                    });
+                                });
+                                
+                            }else{
+                                axios.post("/companyshare2",{
+                                    num:result.data[0].companyarr
+                                }).then(res=>{
+                                    const data = res.data;
+                                    sharestr = '<tr class="active center mainlist">'+
+                                        '<td class="success">승인</td>'+
+                                    '<td class="productname">'+data.data[0].company+'</td>'+
+                                    '<td class="danger admin conbtn" style="cursor:pointer" onclick="sharedelete(this,\'w\')">삭제</td>'+
+                                    '</tr>';
+                                    $('.sharetable').append(sharestr);
+                                    $('.conbtn').hover(function(){
+                                        $(this).removeClass('danger');
+                                        $(this).addClass('info');
+                                    }, function(){
+                                        $(this).addClass('danger');
+                                        $(this).removeClass('info');
+                                    });
+                                });
+                            }
+                        }
+                        if(result.data[0].companyreq!=''){
+                            if(result.data[0].companyreq.includes(',')){
+                                var carrsplit = result.data[0].companyreq.split(',');
+                                var x = 1;
+                                $.each(carrsplit,function(i){
+                                    axios.post("/companyshare2",{
+                                    num:carrsplit[i]
+                                    }).then(res=>{
+                                        const data = res.data;
+                                        sharestr = '<tr class="active center mainlist">'+
+                                        '<td class="warning">요청</td>'+
+                                        '<td class="productname">'+data.data[0].company+'</td>'+
+                                        '<td class="danger admin conbtn" style="cursor:pointer" onclick="sharerdelete(this,\'w\')">요청취소</td>'+
+                                        '</tr>';
+                                        $('.sharetable').append(sharestr);
+                                        x++;
+                                        $('.conbtn').hover(function(){
+                                            $(this).removeClass('danger');
+                                            $(this).addClass('info');
+                                        }, function(){
+                                            $(this).addClass('danger');
+                                            $(this).removeClass('info');
+                                        });
+                                    });
+                                });
+                                
+                            }else{
+                                axios.post("/companyshare2",{
+                                    num:result.data[0].companyreq
+                                }).then(res=>{
+                                    const data = res.data;
+                                    sharestr = '<tr class="active center mainlist">'+
+                                    '<td class="warning">요청</td>'+
+                                    '<td class="productname">'+data.data[0].company+'</td>'+
+                                    '<td class="danger admin conbtn" style="cursor:pointer" onclick="sharerdelete(this,\'w\')">요청취소</td>'+
+                                    '</tr>';
+                                    $('.sharetable').append(sharestr);
+                                    $('.conbtn').hover(function(){
+                                        $(this).removeClass('danger');
+                                        $(this).addClass('info');
+                                    }, function(){
+                                        $(this).addClass('danger');
+                                        $(this).removeClass('info');
+                                    });
+                                });
+                            }
+                        }
+                        if(result.data[0].companyres!=''){
+                            if(result.data[0].companyres.includes(',')){
+                                var carrsplit = result.data[0].companyres.split(',');
+                                var x = 1;
+                                $.each(carrsplit,function(i){
+                                    axios.post("/companyshare2",{
+                                    num:carrsplit[i]
+                                    }).then(res=>{
+                                        const data = res.data;
+                                        sharestr = '<tr class="active center mainlist">'+
+                                            '<td class="warning">요청</td>'+
+                                        '<td class="productname">'+data.data[0].company+'</td>'+
+                                        '<td class="success admin conbtn" style="cursor:pointer" onclick="shareok(this)">승인하기</td>'+
+                                        '</tr>';
+                                        $('.sharetable').append(sharestr);
+                                        x++;
+                                        $('.conbtn').hover(function(){
+                                            $(this).addClass('info');
+                                            $(this).removeClass('success');
+                                            
+                                        }, function(){
+                                            $(this).addClass('success');
+                                            $(this).removeClass('info');
+                                        });
+                                    });
+                                });
+                                
+                            }else{
+                                axios.post("/companyshare2",{
+                                    num:result.data[0].companyres
+                                }).then(res=>{
+                                    const data = res.data;
+                                    sharestr = '<tr class="active center mainlist">'+
+                                        '<td class="warning">요청</td>'+
+                                    '<td class="productname">'+data.data[0].company+'</td>'+
+                                    '<td class="success admin conbtn" style="cursor:pointer" onclick="shareok(this)">승인하기</td>'+
+                                    '</tr>';
+                                    $('.sharetable').append(sharestr);
+                                    $('.conbtn').hover(function(){
+                                        $(this).addClass('info');
+                                        $(this).removeClass('success');
+                                        
+                                    }, function(){
+                                        $(this).addClass('success');
+                                        $(this).removeClass('info');
+                                    });
+                                });
+                            }
+                        }
+                        
+                    }else{
+                        sharestr += '<tr class="tablemenu">'+
+                            '<td colspan="20" style="text-align: center; font-weight: bold; font-size:15px;">'+
+                            '<br />등록된 업체가 없습니다.<br /><br />'+
+                            '</td>'+
+                            '</tr>';
+                        $('.sharetable').append(sharestr);
+                    }
+                    
+                }
+            });
+            return returnajax;
+        }
+
+        $(document).ready(function () {
+            
+            companyshare();
+            if (cranker == 'admin') {
+                
+                $('.rankerchk').text('-');
+                $('.admin').show();
+            } else {
+                $('.rankerchk').parent().hide();
+                $('.admin').hide();
+            }
+            $('.timepicker').timepicker({
+                timeFormat: 'HH:mm',
+                interval: 30,
+                startTime: '00:00',
+                dynamic: false,
+                dropdown: true,
+                scrollbar: true,
+                change: function (time) {
+                    // the input field
+                    var element = $(this), text;
+                    // get access to this Timepicker instance
+                    var timepicker = element.timepicker();
+                    var tindex = ($('.timepicker').index($(this)));
+                    hanqoption2($(this), tindex);
+                }
+            });
+            //var tr_length = $('.rentaltable tr td').length;
+            var tab_td = $('.rentaltable tr td');//tb 테이블의 td들 불러오기
+            $(tab_td).click(function () {
+                var title = $(this).parent().children('td').eq(1).text();
+                if (($(this).parent().hasClass('tablemenu') != 1 && $(this).hasClass('chkbox') != true)) {
+                    Swal.fire({
+                        icon:'info',
+                        title: '<div class="flex">'+title.replace(/ |\n/g,'') + '&nbsp;&nbsp;업체정보</div>',
+                        width: '650px',
+                        showCancelButton: true,
+                        confirmButtonText: '최종저장',
+                        //confirmButtonColor: '#d33',
+                        cancelButtonText: '취소',
+                        didOpen: () => {
+                            axios({
+                                method:'post',
+                                url:'/rental_info',
+                                data:{
+                                    company:"<%=rows[0].company%>",
+                                    rental:title.replace(/ |\n/g,'')
+                                }
+                            }).then(res=>{
+                                const data = res.data;
+                                if(data.code==200){
+                                    $('.rental_companynumber').val(data.data[0].companynumber);
+                                    $('.rental_clean_manager').val(data.data[0].cleanmanager);
+                                }
+                            });
+                        },
+                        html:`
+                        <div class="flexcolumn">
+                            <div class="flex rental_info_compaynumber"><div>사업자등록번호</div>&nbsp;&nbsp;<div><input type="text" class="rental_companynumber" style="height:30px;"></div></div>
+                            <br/>
+                            <div class="flex rental_info_compaynumber"><div>소독작업원 성명</div>&nbsp;&nbsp;<div><input type="text" class="rental_clean_manager" style="height:30px;"></div></div>
+
+                            <br/>
+                            <div class="flexcolumn rental_info_stamp">
+                                <div>직인등록</div>
+                                <div>
+                                    <form action="/rentaluploadFile" enctype="multipart/form-data" method="post" style="display: flex; justify-content:center; align-items:center;">
+                                        <label class="btn btn-primary" for="attachment2">파일선택</label>
+                                        <input type="hidden" name="filename1" value="`+title.replace(/ |\n/g,'')+`" id="`+title.replace(/ |\n/g,'')+`">
+                                        <input type="hidden" name="filename2" value="<%=rows[0].company%>" id="<%=rows[0].company%>">
+                                        <input style="width:50%; display:none;" type="file" name="attachment2" id="attachment2" value="이미지 선택">
+                                        <button type="submit" class="btn btn-primary">직인저장</button>
+                                    </form>
+                                </div>
+                                <div class="stamp flex">
+                                    <img src="/rentalcompanystamp/<%=rows[0].company%>/`+title.replace(/ |\n/g,'')+`" onerror="this.style.display='none'">
+                                </div>
+                            </div>
+                        </div>
+                        `
+                    }).then(function (result){
+                        if (result.isConfirmed) {
+                            axios({
+                                method:'post',
+                                url:'/rental_info_save',
+                                data:{
+                                    company:"<%=rows[0].company%>",
+                                    rental:title.replace(/ |\n/g,''),
+                                    companynumber:$('.rental_companynumber').val(),
+                                    cleanmanager:$('.rental_clean_manager').val(),
+                                }
+                            }).then(res=>{
+                                const data = res.data;
+                                if(data.code==200){
+                                    Swal.fire(
+                                        '저장완료',
+                                        '',
+                                        'success'
+                                    )
+                                }else{
+                                    Swal.fire(
+                                        '저장실패',
+                                        '',
+                                        'error'
+                                    )
+                                }
+                            })
+                        }else{
+                        }
+                    });
+                    // $.ajax({
+                    //     url: '/rentalbcode2',
+                    //     type: 'post',
+                    //     data: 'company=<%=rows[0].company%>&rental=' + title.replace(/ /g, ''),
+                    //     dataType: "JSON",
+                    //     success: function (result) {
+                    //         var data = result.result;
+                    //         var str = '';
+                    //         var cnt = 0;
+                    //         if (data.length > 0) {
+                    //             $.each(data, function (i) {
+                    //                 cnt++;
+                    //                 if (data[i].edate.includes('00:')) {
+                    //                     var edate = data[i].edate.split('00:')[0];
+                    //                 } else {
+                    //                     var edate = data[i].edate
+                    //                 }
+                    //                 if (data[i].sdate.includes('00:')) {
+                    //                     var sdate = data[i].sdate.split('00:')[0];
+                    //                 } else {
+                    //                     var sdate = data[i].sdate
+                    //                 }
+                    //                 var trc = 'danger';
+                    //                 if (edate == 'None' || edate == '') {
+                    //                     edate = '';
+                    //                     trc = 'success';
+                    //                 }
+                    //                 str += '<tr class="rentaltr ' + trc + '"><td width="230px">' + data[i].bcode + '</td><td width="150px">' + sdate + '</td><td width="150px">' + edate + '</td><td width="50px"><input type="hidden" value="' + data[i].num + '"><div class="btn-danger" style="cursor:pointer;" onclick="rentalbcoded(this,\'' + title.replace(/\n| /g, '') + '\');">삭제</div></td></tr>';
+                    //             });
+                    //         }
+                    //         Swal.fire({
+                    //             title: title + '바코드 이관 목록',
+                    //             width: '650px',
+                    //             //showCancelButton: true,
+                    //             confirmButtonText: '취소',
+                    //             confirmButtonColor: '#d33',
+                    //             //cancelButtonText: '취소',
+                    //             didOpen: () => {
+                    //                 $("#datepicker").datepicker({
+                    //                     changeMonth: true,
+                    //                     changeYear: true
+                    //                 });
+                    //                 $("#datepicker").datepicker("option", "showAnim", "slide");
+                    //                 $("#form2").keyup(function () {
+                    //                     var data = this.value.split(" ");
+                    //                     if (this.value == "") {
+                    //                         $(".rentaltr").show();
+                    //                         return;
+                    //                     }
+                    //                     $(".rentaltr").hide();
+                                        
+                    //                     $(".rentaltr").filter(function (i, v) {
+                    //                         var $t = $(this);
+                    //                         for (var d = 0; d < data.length; ++d) {
+                    //                             if ($t.is(":contains('" + data[d] + "')")) {
+                    //                                 return true;
+                    //                             }
+                    //                         }
+                    //                         return false;
+                    //                     }).show();
+                    //                 });
+                    //             },
+                    //             html: '<div style="font-size:20px; font-weight:bold;">총 : ' + cnt + '개</div><div class="form-outline flex" style="width:45%; margin-bottom:10px; font-weight:bold; font-size:15px;"><span style="width:100%;">바코드검색 : </span><input type="search" id="form2" class="form-control" style="height:30px;"/><label class="form-label" for="form2"></label></div><table class="scrolltbody table table-bordered table-hover h-25">' +
+                    //                 '<thead><tr class="tablemenu"><th width="250px">바코드</th><th width="155px">출고일</th><th width="155px">해지일</th><th width="70px">삭제</th></tr></thead><tbody class="h-25">' +
+                    //                 str +
+                    //                 '</tbody></table>' +
+                    //                 '<div style="font-size:17px; font-weight:bold;"><div>바코드:<input class="rentali" type="text"></div><div>출고일:<input id="datepicker" class="rentali date1" type="text"></div><br/><div class="btn" style="background:#000; color:#fff;" onclick="rentalbcodeadd(\'' + title.replace(/\n| /g, '') + '\');">추가하기</div><div class="addtxt"></div></div>'
+                    //         });
+
+
+                    //     }
+                    // })
+
+
+                }
+            });
+
+            var tab_td = $('.cleantable tr td');//tb 테이블의 td들 불러오기
+            $(tab_td).click(function () {
+                var title = $(this).parent().children('td').eq(1).text();
+                if (($(this).parent().hasClass('tablemenu') != 1 && $(this).hasClass('chkbox') != true)) {
+                    Swal.fire({
+                        icon:'info',
+                        title: '<div class="flex">'+title.replace(/ |\n/g,'') + '&nbsp;&nbsp;업체정보</div>',
+                        width: '650px',
+                        showCancelButton: true,
+                        confirmButtonText: '최종저장',
+                        //confirmButtonColor: '#d33',
+                        cancelButtonText: '취소',
+                        didOpen: () => {
+                            axios({
+                                method:'post',
+                                url:'/clean_info',
+                                data:{
+                                    company:"<%=rows[0].company%>",
+                                    clean:title.replace(/ |\n/g,'')
+                                }
+                            }).then(res=>{
+                                const data = res.data;
+                                if(data.code==200){
+                                    $('.clean_companynumber').val(data.data[0].companynumber);
+                                    $('.clean_manager').val(data.data[0].cleanmanager);
+                                }
+                            });
+                        },
+                        html:`
+                        <div class="flexcolumn">
+                            <div class="flex rental_info_compaynumber"><div>사업자등록번호</div>&nbsp;&nbsp;<div><input type="text" class="clean_companynumber" style="height:30px;"></div></div>
+                            <br/>
+                            <div class="flex rental_info_compaynumber"><div>소독작업원 성명</div>&nbsp;&nbsp;<div><input type="text" class="clean_manager" style="height:30px;"></div></div>
+
+                            <br/>
+                            <div class="flexcolumn rental_info_stamp">
+                                <div>직인등록</div>
+                                <div>
+                                    <form action="/cleanuploadFile" enctype="multipart/form-data" method="post" style="display: flex; justify-content:center; align-items:center;">
+                                        <label class="btn btn-primary" for="attachment2">파일선택</label>
+                                        <input type="hidden" name="filename1" value="`+title.replace(/ |\n/g,'')+`" id="`+title.replace(/ |\n/g,'')+`">
+                                        <input type="hidden" name="filename2" value="<%=rows[0].company%>" id="<%=rows[0].company%>">
+                                        <input style="width:50%; display:none;" type="file" name="attachment2" id="attachment2" value="이미지 선택">
+                                        <button type="submit" class="btn btn-primary">직인저장</button>
+                                    </form>
+                                </div>
+                                <div class="stamp flex">
+                                    <img src="/cleancompanystamp/<%=rows[0].company%>/`+title.replace(/ |\n/g,'')+`" onerror="this.style.display='none'">
+                                </div>
+                            </div>
+                        </div>
+                        `
+                    }).then(function (result){
+                        if (result.isConfirmed) {
+                            axios({
+                                method:'post',
+                                url:'/clean_info_save',
+                                data:{
+                                    company:"<%=rows[0].company%>",
+                                    clean:title.replace(/ |\n/g,''),
+                                    companynumber:$('.clean_companynumber').val(),
+                                    cleanmanager:$('.clean_manager').val()
+                                }
+                            }).then(res=>{
+                                const data = res.data;
+                                if(data.code==200){
+                                    Swal.fire(
+                                        '저장완료',
+                                        '',
+                                        'success'
+                                    )
+                                }else{
+                                    Swal.fire(
+                                        '저장실패',
+                                        '',
+                                        'error'
+                                    )
+                                }
+                            })
+                        }else{
+                        }
+                    });
+                }
+            });
+
+
+            var tab_td2 = $('.wholesale tr td');//tb 테이블의 td들 불러오기
+            $(tab_td2).click(function () {
+                var title = $(this).parent().children('td').eq(1).text();
+                var wt = $(this).parent().children('td').eq(0).children('input').val();
+                if (($(this).hasClass('admin') != 1 && $(this).parent().hasClass('tablemenu') != 1 && $(this).hasClass('chkbox') != true)) {
+                    let supply_key = 0;
+                    if(title.includes('이로움')){
+                        supply_key = 0;
+                    }else if(title.includes('가가온')){
+                        supply_key = 1;
+                    }
+                    $.ajax({
+                        url: '/wholesale',
+                        type: 'post',
+                        data: 'company=<%=rows[0].company%>&supply_key='+supply_key,
+                        dataType: "JSON",
+                        success: function (result) {
+                            Swal.fire({
+                                title: '로그인 정보 입력',
+                                html: `
+                                    <div style="margin-bottom: 15px;">
+                                        <label for="swal-input-id" style="display: block; text-align: left; margin-bottom: 5px; font-weight: bold;">아이디</label>
+                                        <input id="swal-input-id" class="swal2-input wholesale_id" placeholder="아이디를 입력하세요">
+                                    </div>
+                                    <div style="position: relative;">
+                                        <label for="swal-input-password" style="display: block; text-align: left; margin-bottom: 5px; font-weight: bold;">비밀번호</label>
+                                        <input id="swal-input-password" type="password" class="swal2-input wholesale_password" placeholder="비밀번호를 입력하세요">
+                                        <span id="toggle-password" style="position: absolute; right: 10px; top: 38px; cursor: pointer;">
+                                            <i class="material-icons" id="visibility-icon">visibility_off</i>
+                                        </span>
+                                    </div>
+                                `,
+                                focusConfirm: false,
+                                showCancelButton: true,
+                                confirmButtonText: '저장',
+                                cancelButtonText: '취소',
+                                didOpen: () => {
+                                    const togglePassword = document.getElementById('toggle-password');
+                                    const passwordInput = document.getElementById('swal-input-password');
+                                    const visibilityIcon = document.getElementById('visibility-icon');
+                                    
+                                    togglePassword.addEventListener('click', function() {
+                                        if (passwordInput.type === 'password') {
+                                            passwordInput.type = 'text';
+                                            visibilityIcon.textContent = 'visibility';
+                                        } else {
+                                            passwordInput.type = 'password';
+                                            visibilityIcon.textContent = 'visibility_off';
+                                        }
+                                    });
+
+                                    axios({
+                                        method:'get',
+                                        url:'/wholesaleAccGet',
+                                        params:{
+                                            company:"<%=rows[0].company%>",
+                                            supply_key:supply_key
+                                        }
+                                    }).then(res=>{
+                                        const data = res.data;
+                                        console.log(data,"<%=rows[0].company%>");
+                                        if(data.data.length>0){
+                                            $('.wholesale_id').val(data.data[0].id);
+                                            $('.wholesale_password').val(data.data[0].pw);
+                                        }
+                                    });
+                                },
+                                preConfirm: () => {
+                                    const id = document.getElementById('swal-input-id').value;
+                                    const password = document.getElementById('swal-input-password').value;
+                                    
+                                    if (!id || !password) {
+                                        Swal.showValidationMessage('아이디와 비밀번호를 모두 입력해주세요');
+                                        return false;
+                                    }
+                                    
+                                    return { id: id, password: password };
+                                }
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    // 로그인 정보 처리 로직
+                                    axios({
+                                        method:'post',
+                                        url:'/wholesaleSave',
+                                        data:{
+                                            company:"<%=rows[0].company%>",
+                                            id:$('.wholesale_id').val(),
+                                            password:$('.wholesale_password').val(),
+                                            supply_key:supply_key
+                                        }
+                                    }).then(res=>{
+                                        const data = res.data;
+                                        if(data.code==200){
+                                            Swal.fire('저장완료', '', 'success');
+                                        }
+                                    })
+                                }
+                            });
+
+
+                            // var data = result.data;
+                            // var data2 = result.data2;
+                            // var str = '';
+                            // var cnt = 0;
+                            // var poption = '<option>전체</option><option>전동침대</option><option>수동휠체어</option><option>경사로</option><option>이동욕조</option><option>이동변기</option><option>목욕의자</option><option>성인용보행기</option><option>욕창예방방석</option><option>지팡이</option><option>간이변기</option><option>자세변환용구</option><option>욕창예방 매트리스</option><option>안전손잡이</option><option>요실금팬티</option><option>미끄럼 방지용품</option>';
+
+                            // if (data2.length > 0) {
+                            //     $.each(data2, function (i) {
+                            //         var trc = 'danger';
+                            //         if (data2[i][wt] != '' && data2[i][wt] != 'undefined' && data2[i][wt] != undefined) {
+                            //             trc = 'success';
+                            //             cnt++
+                            //         }
+                            //         var wmoney = data2[i][wt];
+                            //         if (wmoney == undefined || wmoney == '') wmoney = '미입력';
+                            //         str += '<tr class="wholetr ' + trc + '"><td width="230px">' + data2[i].name + '</td><td width="230px">' + data2[i].name2 + '</td><td width="150px">' + data2[i].code + '</td><td width="150px"><input type="text" value="' + wmoney + '"></td></tr>';
+                            //     });
+                            // }
+                            // Swal.fire({
+                            //     title: title + '품목 단가',
+                            //     width: '650px',
+                            //     //showCancelButton: true,
+                            //     confirmButtonText: '취소',
+                            //     confirmButtonColor: '#d33',
+                            //     //cancelButtonText: '취소',
+                            //     didOpen: () => {
+                            //         $("#form1").keyup(function () {
+                            //             var data = this.value.split(" ");
+                            //             if (this.value == "") {
+                            //                 $(".wholetr").show();
+                            //                 return;
+                            //             }
+                            //             $(".wholetr").hide();
+                                        
+                            //             $(".wholetr").filter(function (i, v) {
+                            //                 var $t = $(this);
+                            //                 for (var d = 0; d < data.length; ++d) {
+                            //                     if ($t.is(":contains('" + data[d] + "')")||$t.is(":contains('" + data[d].toUpperCase() + "')")||$t.is(":contains('" + data[d].toLowerCase() + "')")) {
+                            //                         return true;
+                            //                     }
+                            //                 }
+                            //                 return false;
+                            //             }).show();
+                            //         });
+                            //         $(".wholeselect").change(function () {
+                                        
+                            //             var data = this.value.split(" ");
+                            //             if (this.value == "") {
+                            //                 $(".wholetr").show();
+                            //                 return;
+                            //             }
+                            //             $(".wholetr").hide();
+                            //             if(this.value=='전체')$(".wholetr").show();
+                            //             $(".wholetr").filter(function (i, v) {
+                            //                 var $t = $(this);
+                            //                 console.log(data[0]);
+                            //                 for (var d = 0; d < data.length; ++d) {
+                            //                     if ($t.is(":contains('" + data[d] + "')")||$t.is(":contains('" + data[d].toUpperCase() + "')")||$t.is(":contains('" + data[d].toLowerCase() + "')")) {
+                            //                         return true;
+                            //                     }
+                            //                 }
+                            //                 return false;
+                            //             }).show();
+                            //         });
+                            //     },
+                            //     html: '<div style="font-size:20px; font-weight:bold;">입력품목 총 :' + cnt + '개</div><div class="flex"><div><select class="wholeselect">' + poption + '</select></div><div class="input-group flex wholesearch"><div class="form-outline"><input type="search" id="form1" class="form-control" /><label class="form-label" for="form1"></label></div><button type="button" class="btn btn-primary"><i class="fas fa-search"></i></button></div></div><table class="scrolltbody table table-bordered table-hover h-25 wholesaletable">' +
+                            //         '<thead><tr class="tablemenu"><th width="250px">품목명</th><th width="155px">품목코드</th><th width="155px">단가</th></tr></thead><tbody class="h-25">' +
+                            //         str +
+                            //         '</tbody></table>' +
+                            //         '<div class="flexcolumn"><div class="btn wbtn" onclick="exceldown()">엑셀양식저장</div><br/><label for="inputName" class="btn wbtn"><span>엑셀등록</span><span class="material-icons" style="color:rgb(67, 182, 73)">description</span></label><input id="inputName" style="display:none;" type="file" onchange="readExcel(\'' + wt + '\')"></span></div>'
+                            // });
+
+
+                        }
+                    })
+
+
+                }
+            });
+            
+            
+            $.ajax({
+                url: '/hanqsettings',
+                data: "company=<%=rows[0].company%>&id=<%=firstData%>",
+                type: 'POST',
+                dataType: "JSON",
+                success: function (result) {
+                    if (result) {
+                        if (result.data[0].option1 != '') {
+                            $('#chk_top').prop('checked', true);
+                            $(".timepicker").eq(0).removeAttr("disabled");
+                            $(".timepicker").eq(0).val(result.data[0].option1);
+                        }
+                        if (result.data[0].option2 != 0) {
+                            // $('#chk_top2').prop('checked', true);
+                            // $(".timepicker").eq(1).removeAttr("disabled");
+                            // $(".timepicker").eq(1).val(result.data[0].option2);
+                            $('#chk_top4').prop('checked', true);
+                        }
+                        if (result.data[0].option3 != 0) {
+                            $('#chk_top3').prop('checked', true);
+                        }
+                    }
+                }
+            });
+            let companyencode = encodeURIComponent("<%=rows[0].company%>");
+            $('.companystamp').attr('src',"/companystamp/중앙의료기%20");
+        });
+
+
+    </script>
+    <div class="popup" data-popup="popup-1">
+        <div class="popup-inner">
+            <iframe name="clientup" src="//xn--9o7b95g.com/companymemberup?username=<%=username%>"
+                frameborder="0"></iframe>
+            <a class="popup-close" data-popup-close="popup-1" href="#">x</a>
+        </div>
+    </div>
+    <div class="popup2" data-popup="popup-2">
+        <div class="popup2-inner">
+            <iframe class='clientmodify' name="clientmodify" src="" frameborder="0"></iframe>
+            <a class="popup2-close" data-popup-close="popup-2" href="#">x</a>
+        </div>
+    </div>
+    <div id="layer" style="display:none;position:fixed;overflow:hidden;z-index:1;-webkit-overflow-scrolling:touch;">
+        <img src="//t1.daumcdn.net/postcode/resource/images/close.png" id="btnCloseLayer"
+            style="cursor:pointer;position:absolute;right:-3px;top:-3px;z-index:1" onclick="closeDaumPostcode()"
+            alt="닫기 버튼">
+    </div>
+</body>
+<script>
+    // 우편번호 찾기 화면을 넣을 element
+    var element_layer = document.getElementById('layer');
+
+    function closeDaumPostcode() {
+        // iframe을 넣은 element를 안보이게 한다.
+        element_layer.style.display = 'none';
+    }
+
+    function sample_execDaumPostcode() {
+        new daum.Postcode({
+            oncomplete: function (data) {
+                // 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+                // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                var addr = ''; // 주소 변수
+                var extraAddr = ''; // 참고항목 변수
+
+                //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                    addr = data.roadAddress;
+                } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                    addr = data.jibunAddress;
+                }
+
+                // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+                if (data.userSelectedType === 'R') {
+                    // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+                    // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+                    if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
+                        extraAddr += data.bname;
+                    }
+                    // 건물명이 있고, 공동주택일 경우 추가한다.
+                    if (data.buildingName !== '' && data.apartment === 'Y') {
+                        extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                    }
+                    // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+                    if (extraAddr !== '') {
+                        extraAddr = ' (' + extraAddr + ')';
+                    }
+                    // 조합된 참고항목을 해당 필드에 넣는다.
+                    document.getElementById("sample_extraAddress").value = extraAddr;
+
+                } else {
+                    document.getElementById("sample_extraAddress").value = '';
+                }
+
+                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                document.getElementById('sample_postcode').value = data.zonecode;
+                document.getElementById("sample_address").innerHTML = addr;
+                // 커서를 상세주소 필드로 이동한다.
+                document.getElementById("sample_detailAddress").focus();
+                companyaddr();
+                // iframe을 넣은 element를 안보이게 한다.
+                // (autoClose:false 기능을 이용한다면, 아래 코드를 제거해야 화면에서 사라지지 않는다.)
+                element_layer.style.display = 'none';
+            },
+            width: '100%',
+            height: '100%',
+            maxSuggestItems: 5
+        }).embed(element_layer);
+
+        // iframe을 넣은 element를 보이게 한다.
+        element_layer.style.display = 'block';
+
+        // iframe을 넣은 element의 위치를 화면의 가운데로 이동시킨다.
+        initLayerPosition();
+    }
+
+    // 브라우저의 크기 변경에 따라 레이어를 가운데로 이동시키고자 하실때에는
+    // resize이벤트나, orientationchange이벤트를 이용하여 값이 변경될때마다 아래 함수를 실행 시켜 주시거나,
+    // 직접 element_layer의 top,left값을 수정해 주시면 됩니다.
+    function initLayerPosition() {
+        var width = 300; //우편번호서비스가 들어갈 element의 width
+        var height = 400; //우편번호서비스가 들어갈 element의 height
+        var borderWidth = 5; //샘플에서 사용하는 border의 두께
+
+        // 위에서 선언한 값들을 실제 element에 넣는다.
+        element_layer.style.width = width + 'px';
+        element_layer.style.height = height + 'px';
+        element_layer.style.border = borderWidth + 'px solid';
+        // 실행되는 순간의 화면 너비와 높이 값을 가져와서 중앙에 뜰 수 있도록 위치를 계산한다.
+        element_layer.style.left = (((window.innerWidth || document.documentElement.clientWidth) - width) / 2 - borderWidth) + 'px';
+        element_layer.style.top = (((window.innerHeight || document.documentElement.clientHeight) - height) / 2 - borderWidth) + 'px';
+    }
+</script>
+
+</html>

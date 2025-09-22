@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+    <head>
+        <meta http_quiv="content-type" content="text/html; charset=utf-8">
+    </head>
+    <style type="text/css">
+      .f10{
+        font-size: 10px;
+      }
+        .flexe {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+        .br {
+            border-right: 1px solid #000;
+        }
+        .bl {
+            border-left: 1px solid #000;
+        }
+        .bd {
+            border-bottom: 1px solid #000;
+        }
+        .bt {
+            border-top: 1px solid #000;
+        }
+
+        .tg {
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+        .tg td {
+            border-color: black;
+            border-style: solid;
+            border-width: 1px;
+            font-family: Arial, sans-serif;
+            padding: 2px 1px;
+            word-break: normal;
+        }
+        .tg th {
+            border-color: black;
+            border-style: solid;
+            border-width: 1px;
+            font-family: Arial, sans-serif;
+            font-weight: normal;
+            overflow: hidden;
+            padding: 8px 5px;
+            word-break: normal;
+        }
+        .tg .tg-lboi {
+            text-align: left;
+            vertical-align: middle;
+        }
+        .tg .tg-123x {
+            font-size: 100%;
+            text-align: left;
+            vertical-align: middle;
+        }
+        .tg .tg-9wq8 {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .tg .tg-baqh {
+            text-align: center;
+            vertical-align: top;
+        }
+        .tg .tg-0pky {
+            text-align: left;
+            vertical-align: top;
+        }
+        .tg .tg-0lax {
+            text-align: left;
+            vertical-align: top;
+        }
+        .tg .tg-lqy6 {
+            text-align: right;
+            vertical-align: top;
+        }
+        .tg .tg-c3ow {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .buyrent_txt_area textarea {
+            resize: none;
+            border: none;
+            width: 100%;
+        }
+        .pdfstr_custum {
+            resize: none;
+            border: none;
+            font-size: 15px;
+            font-weight: bold;
+            width: 75px;
+            text-align: center;
+            height: 20px;
+            overflow: hidden;
+        }
+    </style>
+    <body>
+        <table class="tg f14" style="width: 100%;">
+            <tbody>
+                <tr class="client_num_area" style="display:none;">
+                    <td style="border:none;">NO.<span class="client_num"></span></td>
+                </tr>
+                <tr>
+                    <th class="tg-c3ow f20" colspan="8" style="font-weight:bold">복지용구 공급 계약서</th>
+                </tr>
+                <tr>
+                    <td class="tg-9wq8" rowspan="5">(갑)<br></td>
+                    <td class="tg-9wq8 br">수 급 자</td>
+                    <td class="tg-c3ow name w200" colspan="2"></td>
+                    <td class="tg-9wq8" rowspan="5">(을)</td>
+                    <td class="tg-lboi" rowspan="3" style="width: 265px;"><div style="display:flex; align-items: center; justify-content: flex-start;">장기요양기관기호&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="qr_custum" class="qr_custum" style="display:none;"></span></div></td>
+                    <td class="tg-lboi cnum" colspan="2" rowspan="3"></td>
+                </tr>
+                <tr>
+                    <td class="tg-9wq8">대상자 구분</td>
+                    <td class="tg-c3ow target" colspan="2"></td>
+                </tr>
+                <tr>
+                    <td class="tg-9wq8">장기요양등급</td>
+                    <td class="tg-c3ow ranker" colspan="2"></td>
+                </tr>
+                <tr>
+                    <td class="tg-9wq8">생년월일</td>
+                    <td class="tg-9wq8 resident" colspan="2"></td>
+                    <td class="tg-lboi" rowspan="2">사업자 명칭: <span class="companyName"></span><div class="company_phone_custum" style="display:none;"><br/>사업소 연락처: <span class="company_phone_custum_span"></span></div></td>
+                    <td class="tg-lboi" rowspan="2">대표자:</td>
+                    <td class="tg-lboi ceoName" rowspan="2"></td>
+                </tr>
+                <tr>
+                    <td class="tg-9wq8">장기요양인정관리번호</td>
+                    <td class="tg-9wq8 number" colspan="2"></td>
+                </tr>
+                <tr>
+                    <td class="f10 cond_origin font_fix" colspan="8" style="text-align: left;">
+                        1. 노인장기요양보험법의 제규정에 따라 수급자(이하"갑")와 장기요양기관(이하"을") 쌍방은 다음 같이 복지용구 공급계약을 체결한다.</br>
+                        2. "을"이 "갑"에게 공급하는 목적물은 보건복지가족부장관이 고시한 복지용구로 제한한다.</br>
+                        3. 복지용구 구입ㆍ대여 가격은 보건복지부장관이 정하는 고시가격으로 한다. 다만, 고시가격이 변동된 때에는 그에 따른다.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="tg f14" style="width: 100%;">
+            <tbody class="table_tbody">
+                <tr class="gungang_custum" style="display:none;">
+                    <!-- <td class="tg-baqh" colspan="2"></td> -->
+                    <td class="tg-baqh" colspan="9">계약(등록)일 : <span class="pdfday"></span></td>
+                    <!-- <td class="tg-baqh" colspan="4"></td> -->
+                </tr>
+                <tr>
+                    <td class="tg-lboi" colspan="9">[&nbsp;&nbsp;&nbsp;&nbsp;]&nbsp;&nbsp;구매품목</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="tg f13 doc2_table_buy" style="width: 100%;">
+            <tbody class="table_tbody">
+                <tr class="pdfadd doc2_table_buy_tr_header">
+                    <td class="tg-c3ow">품목</td>
+                    <td class="tg-c3ow">제품명</td>
+                    <td class="tg-c3ow">제품코드</td>
+                    <td class="tg-c3ow">바코드</td>
+                    <td class="tg-c3ow">단가</td>
+                    <td class="tg-c3ow">개수</td>
+                    <td class="tg-c3ow">적용금액</td>
+                    <td class="tg-c3ow">본인부담금(<span class="target2"></span>)</td>
+                    <td class="tg-c3ow">판매계약일</td>
+                </tr>
+                <tr class="doc2_table_buy_tr_total">
+                    <td class="tg-c3ow" colspan="5" style="font-size:15px;">판매 적용금액 합계 : <span class="BuydanTotal"></span>원</td>
+                    <td class="tg-c3ow" colspan="1"><span class="pdfbuycnt"></span></td>
+                    <td class="tg-c3ow" colspan="4" style="font-size:15px;">판매 본인부담금 합계 : <span class="BuyMyTotal"></span>원</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="tg f13 doc2_table_rent">
+            <tbody>
+                
+                <tr>
+                    <td class="tg-lboi" colspan="9">[&nbsp;&nbsp;&nbsp;&nbsp;]&nbsp;&nbsp;대여품목</td>
+                </tr>
+                <tr class="pdfadd2 doc2_table_rent_tr_header">
+                    <td class="tg-c3ow">품목</td>
+                    <td class="tg-c3ow">제품명</td>
+                    <td class="tg-c3ow">제품코드</td>
+                    <td class="tg-c3ow">바코드</td>
+                    <td class="tg-c3ow" colspan="3">대여기간</td>
+                    <td class="tg-c3ow">적용금액</td>
+                    <td class="tg-c3ow">본인부담금(<span class="target2"></span>)</td>
+                </tr>
+                <tr class="dummy h40 doc2_table_rent_tr_dummy">
+                    <td class="tg-c3ow"></td>
+                    <td class="tg-c3ow"></td>
+                    <td class="tg-c3ow"></td>
+                    <td class="tg-c3ow"></td>
+                    <td class="tg-c3ow"></td>
+                    <td class="tg-c3ow"></td>
+                    <td class="tg-c3ow"></td>
+                    <td class="tg-c3ow"></td>
+                    <td class="tg-c3ow"></td>
+                </tr>
+                <tr class="doc2_table_rent_tr_total">
+                    <td class="tg-c3ow" colspan="5" style="font-size:15px;">대여 적용금액 합계 : <span class="RentdanTotal"></span>원</td>
+                    <td class="tg-c3ow" colspan="1"></td>
+                    <td class="tg-c3ow" colspan="4" style="font-size:15px;">대여 본인부담금 합계 : <span class="RentMyTotal"></span>원</td>
+                </tr>
+                <tr class="doc2_table_rent_tr_footer">
+                    <td class="tg-c3ow" colspan="9">[<input type="checkbox" class="buyrent_txt_chkbox" style="width:20px; height:20px;">] 기타 협약사항</td>
+                </tr>
+                <tr class="buyrent_txt_area" style="display:none;">
+                    <td colspan="9"><textarea class="buyrent_txtarea" style="width:100%;"></textarea></td>
+                </tr>
+                <tr>
+                    <td class="tg-c3ow">[ 주소 ]</td>
+                    <td class="tg-c3ow address" colspan="8" style="text-align: left;"></td>
+                </tr>
+                <tr>
+                    <td class="tg-baqh">[ 연락처 ]</td>
+                    <td class="tg-baqh phone1" colspan="4" style="text-align: left;"></td>
+                    <td class="tg-baqh" colspan="2">[ 연락처2 ]</td>
+                    <td class="tg-baqh phone2" colspan="2"></td>
+                </tr>
+                <tr>
+                    <td class="tg-baqh f10 cond_custum3 font_fix" colspan="9" style="text-align: left; position:relative; display:none;">
+                        <span class="buyrent_line_4">4. "을"은 물품 등의 하자ㆍ채무불이행 등으로 인한 소비자의 피해에 대하여는 소비자기본법의 '소비자분쟁해결기준'에 따라 수리ㆍ교환ㆍ환급 또는 배상을 하거나, 계약의 해제ㆍ해지 및 이행 등을 하여야 한다.</span> </br>
+                        <span class="buyrent_terms_4">5. 요양원 입소시 반납품목:전동침대,수동침대,욕창예방매트리스,이동욕조 등 대여제품을 반납한다. 병원, 요양병원 입원시 반납품목:전동침대,이동욕조 제품을 반납한다.(휠체어, 욕창매트리스는 사용 가능함)</span></br>
+                        6. "갑"은 타법령에 의해 복지용구와 동일한 품목을 지급받은 경우, 당해 품목에 대하여 급여가 제한될 수 있다. </br>
+                        <span class="buyrent_line_7">7. "갑"은 대여제품이 불필요하게 되면 계약 종료일 이전이라도 본 계약을 해지할 수 있다. </span></br>
+                        8. 계약자("갑")의 의무</br>
+                        가. "을"의 동의 없이는 대여제품의 사양 변경, 가공 또는 개조를 할 수 없다. </br>
+                        나. "갑"은 본 계약에 의한 권리의 전부 또는 일부를 제3자에게 양도하거나 전대할 수 없다.</br>
+                        <span class="buyrent_terms_7_3">다. 대여기간 중 거주지를 옮기거나, 입원/입소 또는 사망 등으로 이용상황의 변경이 생겼을 때에는 즉시 "을"에게 통지를 하여야 한다.</span></br>
+                        9. 본 계약과 관련하여 쌍방의 이행에 따른 분쟁이 발생한 경우에는 "갑"과 "을"은 상호 원만히 협의하여</br>
+                        해결하고자 노력하여야 하며, 부득이 해결되지 않을 경우 사법절차에 따라 해결한다.</br>
+                        <div style="position: absolute; bottom:10px;; right:20px; display:none;" id="qr_custum2" class="qr_custum2"></div>
+                    </td>
+                    <td class="tg-baqh f10 cond_custum2 font_fix" colspan="9" style="text-align: left; position:relative; display:none;">
+                        1. "을"은 물품 등의 하자ㆍ채무불이행 등으로 인한 소비자의 피해에 대하여는 소비자기본법의 '소비자분쟁해결기준'에 따라 수리ㆍ교환ㆍ환급 또는 배상을 하거나, 계약의 해제ㆍ해지 및 이행 등을 하여야 한다.</br>
+                        2. "을"은 "갑"이 노인요양시설(*)에 입소 중이거나, 의료기관에 입원하고 있는 경우 복지용구 급여가 제한될 수 있음을 고지하여야 하며, 만약 "갑"이 시설에 있는 사실을 숨기고 복지용구를 제공받으면 그 책임은 "갑"이 부담한다. (*) 노인요양시설 : 장기요양기관 및 타법령에 의한 사회복지시설(사회복지사업법의 규정에 의한 신고를 하지 아니하고 설치, 운영되는 시설 포함)</br>
+                        3. "갑"은 타법령에 의해 복지용구와 동일한 품목을 지급받은 경우, 당해 품목에 대하여 급여가 제한될 수 있다.</br>
+                        4."계약자("갑")의 의무</br>
+                        가. "을"의 동의 없이는 대여제품의 사양 변경, 가공 또는 개조를 할 수 없다.</br>
+                        나. "갑"은 본 계약에 의한 권리의 전부 또는 일부를 제3자에게 양도하거나 전대할 수 없다.</br>
+                        다. 대여기간 중 거주지를 옮기거나, 입원/입소 또는 사망 등으로 이용상황의 변경이 생겼을 때에는 즉시 "을"에게 통지를 하여야 한다.</br>
+                        5. 본 계약과 관련하여 쌍방의 이행에 따른 분쟁이 발생한 경우에는 "갑"과 "을"은 상호 원만히 협의하여 해결하고자 노력하여야 하며, 부득이 해결되지 않을 경우 사법절차에 따라 해결한다</br>
+                  </tr>
+                  <tr>
+                    <td class="tg-baqh f10 cond_custum3 font_fix" colspan="9" style="text-align: left; position:relative; display:none;" >
+                      <span class="buyrent_line_4">4. “을”은 물품 등의 하자ㆍ채무불이행 등으로 인한 소비자의 피해에 대하여는 소비자기본법의 ‘소비자분쟁해결기준’에 따라 수리ㆍ교환ㆍ환급 또는 배상을 하거나, 계약의 해제ㆍ해지 및 이행 등을 하여야 한다.</span> </br>
+                      <span class="buyrent_terms_4">5. 요양원 입소시 반납품목:전동침대,수동침대,욕창예방매트리스,이동욕조 등 대여제품을 반납한다. 병원, 요양병원 입원시 반납품목:전동침대,이동욕조 제품을 반납한다.(휠체어, 욕창매트리스는 사용 가능함)</span></br>
+                      6. “갑”은 타법령에 의해 복지용구와 동일한 품목을 지급받은 경우, 당해 품목에 대하여 급여가 제한될 수 있다. </br>
+                      <span class="buyrent_line_7">7. “갑”은 대여제품이 불필요하게 되면 계약 종료일 이전이라도 본 계약을 해지할 수 있다. </span></br>
+                      8. 계약자(“갑”)의 의무</br>
+                      가. “을”의 동의 없이는 대여제품의 사양 변경, 가공 또는 개조를 할 수 없다. </br>
+                      나. “갑”은 본 계약에 의한 권리의 전부 또는 일부를 제3자에게 양도하거나 전대할 수 없다.</br>
+                      <span class="buyrent_terms_7_3">다. 대여기간 중 거주지를 옮기거나, 입원/입소 또는 사망 등으로 이용상황의 변경이 생겼을 때에는 즉시 “을”에게 통지를 하여야 한다.</span></br>
+                      9. 본 계약과 관련하여 쌍방의 이행에 따른 분쟁이 발생한 경우에는 “갑”과 “을”은 상호 원만히 협의하여</br>
+                      해결하고자 노력하여야 하며, 부득이 해결되지 않을 경우 사법절차에 따라 해결한다.</br>
+                      <div style="position: absolute; bottom:10px;; right:20px; display:none;" id="qr_custum2" class="qr_custum2"></div>
+
+                  </td>
+                    <td class="tg-baqh f10 cond_custum2 font_fix" colspan="9" style="text-align: left; position:relative; display:none;">
+                      1. “을”은 물품 등의 하자ㆍ채무불이행 등으로 인한 소비자의 피해에 대하여는 소비자기본법의 ‘소비자분쟁해결기준’에 따라 수리ㆍ교환ㆍ환급 또는 배상을 하거나, 계약의 해제ㆍ해지 및 이행 등을 하여야 한다.</br>
+                      2. “을”은 “갑”이 노인요양시설(*)에 입소 중이거나, 의료기관에 입원하고 있는 경우 복지용구 급여가 제한될 수 있음을 고지하여야 하며, 만약 “갑”이 시설에 있는 사실을 숨기고 복지용구를 제공받으면 그 책임은 “갑”이 부담한다. (*) 노인요양시설 : 장기요양기관 및 타법령에 의한 사회복지시설(사회복지사업법의 규정에 의한 신고를 하지 아니하고 설치, 운영되는 시설 포함)</br>
+                      3. “갑”은 타법령에 의해 복지용구와 동일한 품목을 지급받은 경우, 당해 품목에 대하여 급여가 제한될 수 있다.</br>
+                      4."계약자(“갑”)의 의무</br>
+                      가. “을”의 동의 없이는 대여제품의 사양 변경, 가공 또는 개조를 할 수 없다.</br>
+                      나. “갑”은 본 계약에 의한 권리의 전부 또는 일부를 제3자에게 양도하거나 전대할 수 없다.</br>
+                      다. 대여기간 중 거주지를 옮기거나, 입원/입소 또는 사망 등으로 이용상황의 변경이 생겼을 때에는 즉시 “을”에게 통지를 하여야 한다.</br>
+                      5. 본 계약과 관련하여 쌍방의 이행에 따른 분쟁이 발생한 경우에는 “갑”과 “을”은 상호 원만히 협의하여 해결하고자 노력하여야 하며, 부득이 해결되지 않을 경우 사법절차에 따라 해결한다</br>
+                      6. 복지용구의 경우 공단 수가에 포장,배송,설치,계약 외 수반되는  서비스 비용을 포함함에 따라, 제품의 하자,파손,불량의 경우를 제외한 단순변심에 의한 반품이나 교환이 불가합니다.</br>
+                      7. 복지용구를 구매함에 있어 복지용구 제공업체는 판매,배송,설치 까지의 서비스를 하며, 제품의 유지, 보수, 수리, 철거, 이전설치에 대해서는 별도의 서비스로 청구 된다.</br>
+                      * 본 계약에 대하여 계약당사자는 이의 없음을 확인하고 각자 서명, 날인 후 계약자 쌍방이 본 계약서를 각 1통씩 보관한다.</br>
+                    </td>
+                    <td class="tg-baqh f10 cond_custum font_fix" colspan="9" style="text-align: left; position:relative; display:none;">
+                      1.노인장기요양법의 제규정에 따라 수급자(이하"갑")와 장기요양기관(이하"을") 쌍방은 다음과 같이
+                      복지용구 공급계약을 체결 한다.</br>
+                      2."을"이 "갑"에게 공급하는 목적물은 보건복지가족부장관이 고시한 복지용구로 제한한다.</br>
+                      3. 복지용구 구입 ,대여 가격은 보건복지부장관이 정하는 고시가격으로 한다 .다만, 고시가격이 변동된
+                      때에는 그에 따른다.</br>
+                      4."을"은 물품의 하자,채무불이행 등으로 인한 소비자의 피해에 대하여는 소비자기본법의 '소비자분쟁
+                      해결기준'에 따라 수리 ·교환·환급 또는 배상을 하거나, 해제 · 해지 및 이행 등을 하여야 한다.</br>
+                      5."을"은 "갑"이 노인요양시설(*)에 입소 중이거나, 의료기관에 입원하고 있는 경우 복지용구 급여가
+                      제한될 수 있음을 고지하여햐 하며,만약 "갑"이 시설에</br>
+                      있는 사실을 숨기고 복지용구를 제공받으면 그 책임은 "갑"이 부담한다.</br>
+                      (*) 노인요양시설: 장기요양기관 및 타법령에 의한 사회복지시설(사회복지사업법의 규정에 의한 신고
+                      를 하지 아니하고 설치 운영되는 시설 포함</br>
+                      6."갑"은 타법령에 의해 복지용구와 동일한 품목을 지급받는 경우, 당해 품목에 대하여 급여가 제한될
+                      수 있다.</br>
+                      7."갑"은 대여제품이 불필요하게 되면 계약 종료일 이전이라도 본 계약을 해지할 수 있다.</br>
+                      8. 계약자("갑")의 의무</br>
+                      가. "을"의 동의 없이는 대여제품의 사양변경,가공 또는 개조를 할 수 없다</br>
+                      나. "갑"은 본 계약에 의한 권리의 전부 또는 일부를 제3자에게 양도하거나 전대할 수 없다,</br>
+                      다. 대여기간중 거주지를 옮기거나,입원/입소또는사망등으로 이용상황의 변경이 생겼을 때에는즉시"을"
+                      에게 통지하여야 한다.</br>
+                      9. 본 계약과 관련하여 쌍방의 이행에 따른 분쟁이 발생한 경우에는 "갑"과"을"은 상호 원만히 협의하
+                      여 해결하고자 노력하여야하며, 부득히 해결되지 않을 경우 사법절차에 따라 해결한다</br>
+                      * <span style="font-size:14px; font-weight:bold;">대여는 최소3개월을 기본으로 하여 3개월 이전 대여 취소시 소독비와 회수비 적용가</span><span style="font-size:16px; font-weight:bold;">(침대 1개월미만 15만원, 2~3개월 10만원,휠체어 3개월미만 5만원) 을 청구 합니다.</span></br>
+                      * 본 계약에 대하여 계약 당사자는 이의 없음을 확인 하고 각자 서명, 날인후 계약자 쌍방이 본 계약
+                      서를 각 1통씩 보관한다.</br>
+                    </td>
+                    <td class="tg-baqh f10 cond_origin font_fix" colspan="9" style="text-align: left; position:relative;" >
+                        4. “을”은 물품 등의 하자ㆍ채무불이행 등으로 인한 소비자의 피해에 대하여는 소비자기본법의 ‘소비자분쟁해결기준’에 따라 수리ㆍ교환ㆍ환급 또는 배상을 하거나, 계약의 해제ㆍ해지 및 이행 등을 하여야 한다. </br>
+                        <span class="buyrent_terms_4">5. “을”은 “갑”이 노인요양시설(*)에 입소 중이거나, 의료기관에 입원하고 있는 경우 복지용구 급여가 제한될 수 있음을 고지하여야 하며, 만약 “갑”이 시설에 있는 사실을 숨기고 복지용구를 제공받으면 그 책임은 “갑”이 부담한다.  (*) 노인요양시설 : 장기요양기관 및 타법령에 의한 사회복지시설 (사회복지사업법의 규정에 의한 신고를 하지 아니하고 설치, 운영되는 시설 포함)</span></br>
+                        6. “갑”은 타법령에 의해 복지용구와 동일한 품목을 지급받은 경우, 당해 품목에 대하여 급여가 제한될 수 있다. </br>
+                        7. “갑”은 대여제품이 불필요하게 되면 계약 종료일 이전이라도 본 계약을 해지할 수 있다. </br>
+                        8. 계약자(“갑”)의 의무</br>
+                        가. “을”의 동의 없이는 대여제품의 사양 변경, 가공 또는 개조를 할 수 없다. </br>
+                        나. “갑”은 본 계약에 의한 권리의 전부 또는 일부를 제3자에게 양도하거나 전대할 수 없다.</br>
+                        <span class="buyrent_terms_7_3">다. 대여기간 중 거주지를 옮기거나, 입원/입소 또는 사망 등으로 이용상황의 변경이 생겼을 때에는 즉시 “을”에게 통지를 하여야 한다.</span></br>
+                        9. 본 계약과 관련하여 쌍방의 이행에 따른 분쟁이 발생한 경우에는 “갑”과 “을”은 상호 원만히 협의하여</br>
+                        해결하고자 노력하여야 하며, 부득이 해결되지 않을 경우 사법절차에 따라 해결한다.</br>
+                        <div style="position: absolute; bottom:10px;; right:20px; display:none;" id="qr_custum2" class="qr_custum2"></div>
+
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="tg-baqh" colspan="9">* 본 계약에 대하여 계약당사자는 이의 없음을 확인하고 각자 서명, 날인 후 계약자 쌍방이 본 계약서를 각 1통씩 보관한다.</td>
+                  </tr>
+                  <tr class="pdfday_origin">
+                    <td class="tg-baqh" colspan="2"></td>
+                    <td class="tg-baqh" colspan="3">계약(등록)일 : <span class="pdfday"></span></td>
+                    <td class="tg-baqh" colspan="4"></td>
+                  </tr>
+                  <tr class="h40">
+                    <td class="tg-baqh" colspan="4" style="text-align:center;"><div style="display:flex; justify-content: flex-start; padding-left:27%;">(갑) 수 급 자 : <span class="name"></span></div></td>
+                    <td class="tg-baqh" colspan="3"><div style="display:flex; justify-content: flex-start; padding-left:27%;">계 약 자 : <span class="pdfguardname pdfguardname_custum guardName"></span></div></td>
+                    <!-- <td class="tg-lqy6" colspan="7">(갑) 수 급 자 : <span class="name"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;계 약 자 : <span class="pdfguardname pdfguardname_custum"></span></td> -->
+                    <td class="tg-baqh pdfsign" colspan="2" style="position:relative"><span class="clientSignBox"></span>(서명 또는 인)</span></td>
+                    <!-- <td class="tg-baqh">담당자</td> -->
+                  </tr>
+                  <tr class="h40">
+                    <td class="tg-baqh" colspan="4" style="text-align:center;"><div style="display:flex; justify-content: flex-start; align-items: center; padding-left:27%;">(을) 사 업 체 : <span class="company companyName"></span><span class="company_phone"></span></div></td>
+                    <td class="tg-baqh" colspan="3"><div style="display:flex; justify-content: flex-start; padding-left:27%;">대표 : <span class="ceo ceoName"></span></div></td>
+                    <td class="tg-baqh" colspan="2" style="position:relative"><span class="signBox">(서명 또는 인)</span></td>
+                  </tr>
+                  <tr>
+                    <td class="tg-baqh" colspan="9">※ 택배로 발송하는 지역의 경우 수급자 및 보호자를 대신하여 서명하는 것에 동의합니다. [&nbsp;&nbsp;O&nbsp;&nbsp;]</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-baqh" colspan="4">본인부담금 입금 계좌:</td>
+                    <td class="tg-baqh" colspan="5"><span class="banknumber" style="font-size:17px;"></span></td>
+                  </tr>
+                </tbody>
+                </table>
+    </body>
+</html>

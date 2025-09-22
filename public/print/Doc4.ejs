@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+    <head>
+        <meta http_quiv="content-type" content="text/html; charset=utf-8">
+        <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    </head>
+<style type="text/css">
+    .br {
+        border-right: 1px solid #000;
+    }
+    .bl {
+        border-left: 1px solid #000;
+    }
+    .bd {
+        border-bottom: 1px solid #000;
+    }
+    .bt {
+        border-top: 1px solid #000;
+    }
+
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+    .tg td {
+        border-color: black;
+        border-style: solid;
+        border-width: 1px;
+        font-family: Arial, sans-serif;
+        padding: 2px 1px;
+        word-break: normal;
+    }
+    .tg th {
+        border-color: black;
+        border-style: solid;
+        border-width: 1px;
+        font-family: Arial, sans-serif;
+        font-weight: normal;
+        overflow: hidden;
+        padding: 8px 5px;
+        word-break: normal;
+    }
+    .tg .tg-lboi {
+        text-align: left;
+        vertical-align: middle;
+    }
+    .tg .tg-123x {
+        font-size: 100%;
+        text-align: left;
+        vertical-align: middle;
+    }
+    .tg .tg-9wq8 {
+        text-align: center;
+        vertical-align: middle;
+    }
+    .tg .tg-baqh {
+        text-align: center;
+        vertical-align: top;
+    }
+    .tg .tg-0pky {
+        text-align: left;
+        vertical-align: top;
+    }
+    .tg .tg-0lax {
+        text-align: left;
+        vertical-align: top;
+    }
+    .tg .tg-lqy6 {
+        text-align: right;
+        vertical-align: top;
+    }
+    .tg .tg-c3ow {
+        text-align: center;
+        vertical-align: middle;
+    }
+</style>
+<script>
+    $(document).ready(function(){
+        var h = 10;
+        for(var i=0; i<50; i++){
+            $('.h'+h).css({'height':h+'px'});
+            $('.w'+h).css({'width':h+'px'});
+            h+=10;
+        }
+        for(var f=8; f<21; f++){
+            $('.f'+f).css({'font-size':f+'px'});
+        }
+    });
+    //window.print();
+</script>
+<body>
+    <table class="tg f15 doc4_table" style="width: 100%;">
+        <tbody>
+            <tr class="client_num_area" style="display:none;">
+                <td style="border:none;">NO.<span class="client_num"></span></td>
+            </tr>
+            <tr>
+                <td class="tg-nrix f20 tit" colspan="9" style="font-weight:bold;">제품설치대장</td>
+            </tr>
+            <tr>
+                <td class="tg-nrix w120" colspan="3">수급자명</td>
+                <td class="tg-nrix name w200" colspan="2"></td>
+                <td class="tg-nrix w120" colspan="2">장기요양인정번호</td>
+                <td class="tg-nrix number w200" colspan="2"></td>
+            </tr>
+            <tr>
+                <td class="tg-nrix" colspan="3">대상자 구분</td>
+                <td class="tg-nrix target" colspan="2"></td>
+                <td class="tg-nrix" colspan="2">연락처</td>
+                <td class="tg-nrix phone1" colspan="2"></td>
+            </tr>
+            <tr>
+                <td class="tg-nrix" colspan="3">제품설명여부</td>
+                <td class="tg-nrix" colspan="2">제품에 대한 충분한<br>설명을 들었습니다</td>
+                <td class="tg-nrix" colspan="2">배송구분</td>
+                <td class="tg-nrix delivery" colspan="2">직배송(전용차량)</td>
+            </tr>
+            <tr>
+                <td class="tg-nrix" colspan="3">설치일자</td>
+                <td class="tg-nrix sdate installDate" colspan="2"></td>
+                <td class="tg-nrix" colspan="2">설치자</td>
+                <td class="tg-nrix manager" colspan="2"></td>
+            </tr>
+            <tr>
+                <td class="tg-nrix" colspan="3">설치장소</td>
+                <td class="tg-nrix address" colspan="6"></td>
+            </tr>
+            <tr class="pdfadd2">
+                <td class="tg-nrix w60">급여방식</td>
+                <td class="tg-nrix w80">품목</td>
+                <td class="tg-nrix w100">제품명</td>
+                <td class="tg-nrix">제품코드</td>
+                <td class="tg-nrix w150 targetTxt" colspan="2">대여기간</td>
+                <td class="tg-nrix">공급가액</td>
+                <td class="tg-nrix">본인부담금</td>
+                <td class="tg-nrix">비고</td>
+            </tr>
+            </tbody>
+          </table>
+          <table class="tg f15" style="width: 100%;">
+            <tbody>
+            <tr>
+                <td class="tg-nrix" colspan="9">상기 복지용구에 대한 제품에 대한 취급설명을 충분히 숙지하고 <br/> 상기 제품에 대하여 충분히 설명들었음을 확인합니다</td>
+            </tr>
+            <tr>
+                <td class="tg-nrix" colspan="2">설치일자 :</td>
+                <td class="tg-nrix sdate installDate" colspan="4"></td>
+                <td class="tg-nrix" style="position:relative" colspan="3" rowspan="3"><span class="pdfsign clientSignBox">(인)</span></td>
+            </tr>
+            <tr>
+                <td class="tg-nrix" colspan="2">확인자(성명 및 관계) :</td>
+                <td class="tg-nrix pdfguardname guardName" colspan="4"></td>
+            </tr>
+            <tr>
+                <td class="tg-nrix" colspan="6">
+                  <input type="radio" name="relation" value="본인"> 본인 / 
+                  <input type="radio" name="relation" value="배우자"> 배우자 / 
+                  <input type="radio" name="relation" value="자녀"> 자녀 / 
+                  <input type="radio" name="relation" value="기타"> 기타 (&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)
+                </td>
+            </tr>
+            <tr>
+                <td class="tg-nrix" colspan="6" rowspan="4"><span class="company"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;대&nbsp;&nbsp;&nbsp;표&nbsp;&nbsp;:&nbsp;&nbsp;<span class="ceo ceoName"></span></td>
+                <td class="tg-nrix" style="position:relative" colspan="3" rowspan="4"><span class="signBox">(인)</span></td>
+            </tr>
+            <tr>
+            </tr>
+            <tr>
+            </tr>
+            <tr>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

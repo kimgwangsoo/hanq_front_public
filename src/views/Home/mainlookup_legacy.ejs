@@ -1,0 +1,2048 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="//code.jquery.com/jquery-latest.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+<script src="https://fastly.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script src="https://fastly.jsdelivr.net/npm/less@4"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.5/xlsx.full.min.js"></script>
+<script src="https://fastly.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/css/guide.css">
+<head>
+  <title>
+    메인.
+  </title>
+</head>
+
+<script>
+    function Mobile() { return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent); }
+</script>
+<script>
+    let print_obj = {
+        date_arr:[],
+        date_now:''
+    }
+
+    function hipen_replace(x){
+        $(x).val($(x).replace(/[^0-9]/g,''));
+    }
+
+    function retry_number_format_zero(input) {
+        let num = parseInt(input.value);
+        if(num<10)num = '0'+num;
+        input.value = num;
+    }
+
+    var socket = '';
+    function socket_start(x){
+        if(socket==''){
+            socket = io();
+        }
+        if(x=="go_lookup_buy_product_res"){
+            socket.on('go_lookup_buy_product_res', function(data) {
+                socket.emit('disconnect2', {'name': uid});
+                console.log(data);
+                if(data.name!="fail"){
+                    let pcode = data.pcode;
+                    let bcode = data.bcode;
+                    let resultcompany = data.resultcompany;
+                    let str = '<div style="font-weight:bold">'+data.pcode+'-'+data.bcode+'</div>'+
+                        '<div style="font-weight:bold">업체명 : '+resultcompany+'</div>'+
+                        '<div style="font-weight:bold">등록일 : '+data.resultdate+'</div>'+
+                        '<div style="font-weight:bold">연락처 : '+data.resulttel+'</div>'+
+                        '<div style="font-weight:bold">구분 : '+data.type+'</div>';
+                    if(resultcompany == ''){
+                        resultcompany = '(정상)미계약된 바코드';
+                        str = '<div style="font-weight:bold">'+data.pcode+'-'+data.bcode+'</div>'+
+                        '<div style="font-weight:bold">업체명 : '+resultcompany+'</div>';
+                    }
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: '품목조회완료',
+                        width:'500px',
+                        html:'<div style="font-size:18px;">'+
+                            str+
+                        '</div>',
+                        allowOutsideClick: false,
+                        confirmButtonText:'확인'
+                    });
+                }else{
+                    Swal.fire({
+                    icon: 'error',
+                    title: '업체조회실패',
+                    html:'품목코드 및 바코드 조회불가',
+                    allowOutsideClick: false,
+                    }); 
+                }
+                socket_end();
+            });
+        }
+        
+        
+        if(x=="go_lookup_res"){
+            socket.on("go_lookup_res",function(data){
+                if(data.name=='error'){
+                    if(data.retryerror!=''){
+                        Swal.fire({
+                            icon: 'warning',
+                            width:'500px',
+                            title: `조회 실패(직접입력요청)`,
+                            html: `
+                            <div style="font-size:20px; font-weight:bold;">
+                                <div class="retry_col">생년월일:${data.regident}</div>
+                                <div class="retry_col"><span>유효기간시작일:</span><input type="text" style="border-radius:5px; width:100px; height:30px;" onchage="hipen_replace(this)" class="retry_rcgt"></div>
+                                <div class="retry_col"><span>등급:</span><select style="border-radius:5px; width:100px; height:30px;" class="retry_ranker"><option>선택</option><option value="5">5등급</option><option value="4">4등급</option><option value="3">3등급</option><option value="2">2등급</option><option value="1">1등급</option></select></div>
+                                <div class="retry_col"><span>조회일자:</span><span><input type="text" class="retry_date">년 <input type="text" class="retry_date" onchange="retry_number_format_zero(this)">월 <input type="text" class="retry_date" onchange="retry_number_format_zero(this)">일</span>
+                            </div>`,
+                            showCancelButton:true,
+                            confirmButtonText:"재조회",
+                            cancelButtonText:"취소",
+                            didOpen:()=>{
+                                $('.retry_date').eq(0).val(date_now().split('-')[0]);
+                                $('.retry_date').eq(1).val(date_now().split('-')[1]);
+                                $('.retry_date').eq(2).val(date_now().split('-')[2]);
+                            }
+                        }).then(result=>{
+                            if (result.isConfirmed) {
+                                let nameval = $('.info_name_input').val();
+                                let numval = $('.info_number_input').val();
+                                let date = $('.retry_date').eq(0).val()+$('.retry_date').eq(1).val()+$('.retry_date').eq(2).val()
+                                socket_start('go_lookup_res');
+                                socket.emit('disconnect2', {'name': uid});
+                                socket.emit('login', {'name': uid});
+                                socket.emit('go_lookup_req', { 'name':uid, 'cname':nameval, 'cnumber':numval.replace(/ /g,''), 'company':company, 'date':date, 'regident': data.regident, 'ranker':$('.retry_ranker').val(),'rcgt':$('.retry_rcgt').val(),'retry':'y'});
+                                console.warn({ 'name':uid, 'cname':nameval, 'cnumber':numval.replace(/ /g,''), 'company':company, 'date':date, 'regient': data.regident, 'ranker':$('.retry_ranker').val()})
+                                //socket.emit('message', { 'name':uid, 'msg':nameval.replace(/ /g,'')+';'+numval.replace(/ /g,'')});
+                                lookup_set_start();
+                            }
+                        });
+                    }else{
+                        Swal.fire({
+                            icon: 'error',
+                            title: '조회 실패',
+                            text: '장기요양수급자가 아닙니다',
+                        });
+                    }
+                }else if(data.name=='death'){
+                        $(".sisul").text("사망일["+data.death_dt+"]");
+                        $(".sisul").css({"color":"#ff0000"});
+                        console.warn("사망")
+                }else if(data.name=='warning'){
+                    Swal.fire({
+                        icon: 'warning',
+                        title: '조회 실패(장기요양시스템 점검)',
+                        text: '장기요양정보시스템 접속 불가',
+                    });
+                }else if(data.name=='errorsession'){
+                    Swal.fire({
+                        icon: 'warning',
+                        width:'50%',
+                        title: '조회 실패<br/>(공단로그인창접속대기시간초과)',
+                        html: `
+                        <div style="font-size:20px; font-weight:bold;">공단로그인창을 재실행 또는 새로고침해주세요.</div><br/>
+                        <div style="font-size:20px; font-weight:bold; color:#ff0000;">사업소별 최초 공단로그인창을 실행해야 이용 가능합니다.</div>
+
+                        `,
+                    });
+                }else{
+                    if(guide_chk==1){
+                        guide_toggle_off(guide_interval);
+                        guide_on_lookup_info_0();
+                    }
+                    
+                    let name = data.name;
+                    let number = data.number;
+                    let regident = data.regident;
+                    let reduce_nm = data.reduce_nm;
+                    let reduce_sale = data.reduce_sale;
+                    let ranker = data.ranker;
+                    let money = parseInt(data.money);
+                    let gender = data.gender;
+                    let sisul = data.sisul;
+                    let sisul_txt = "시설입소안함";
+                    let rcgt = data.rcgt;
+                    lookup_new_chk_get().then(lookup_res=>{
+                        if(lookup_res.code==200){
+                            if(lookup_res.data[0].option2==1){
+                                console.log(name,number,ranker.replace(/[^0-9]/g,''),regident.replace(/-/g,''),rcgt.split('~')[0].replace(/-/g,''),$('.date_year input').val()+number_format_zero($('.date_mon input').val())+number_format_zero($('.date_day input').val()))
+                                lookup_new(name,number,ranker.replace(/[^0-9]/g,''),regident.replace(/-/g,''),rcgt.split('~')[0].replace(/-/g,''),$('.date_year input').val()+number_format_zero($('.date_mon input').val())+number_format_zero($('.date_day input').val()))
+                        
+                            }
+                        }
+                    })
+                    if(sisul == 1){
+                        sisul_txt = "시설입소";
+                        $(".sisul").css({"color":"#ff0000"});
+                    }else if(sisul == 2){
+                        sisul_txt = "휠체어보장구";
+                        $(".sisul").css({"color":"#ff0000"});
+                    }else if(sisul == 3){
+                        
+                        sisul_txt = "전산점검중";
+                        if($(".sisul").text()==''){
+                            $(".sisul").css({"color":"#000"});
+                        }
+                    }else{
+                        
+                        sisul_txt = "시설입소안함";
+                        if($(".sisul").text()==''){
+                            $(".sisul").css({"color":"#000"});
+                        }
+                    }
+                    $('.regident').text(regident);
+                    $(".target").text(reduce_nm);
+                    $(".sale").text(reduce_sale);
+                    $(".money").text(money.toLocaleString()+"원");
+                    $(".ranker").text(ranker);
+                    $(".gender").text(gender);
+                    if($(".sisul").text()==''){
+                        $(".sisul").text(sisul_txt);
+                    }
+                    
+                    $(".rcgt").html(rcgt.split("~")[0]+"~<br/>"+rcgt.split("~")[1]);
+                    // $(".sisul").text('사회보장시스템점검중');
+                    let buy_porduct_not_array = data.buy_product_not_array;
+                    let rent_product_not_array = data.rent_product_not_array;
+                    let uproduct = data.uproduct;
+                    let rproduct = data.rproduct;
+                    /*//////////////////////////////////////////////
+                    $(".status_box").eq(0) : 구매가능품목
+                    $(".status_box").eq(1) : 사용불가품목
+                    $(".status_box").eq(2) : 대여중인품목
+                    $(".status_box").eq(3) : 대여불가품목
+                    //////////////////////////////////////////////*/
+                    status_box_set(uproduct,0);
+                    status_box_set(buy_porduct_not_array,2);
+                    status_box_set(rproduct,1);
+                    status_box_set(rent_product_not_array,3);
+                    let all_product_array = data.all_product_array2;
+                    total_date_set(data.apdt_fr_dt_arr,data.apdt_to_dt_arr,data.use_amt_arr);
+                    total_box_set(all_product_array);
+                    product_box_set(all_product_array);
+                }
+                if(data.name!='death'){
+                    lookup_set_stop();
+                    socket_end();
+                }
+            });
+        }
+
+        if(x=="message2"){
+            socket.on("message2",function(data){
+                if(data.msg=='error'){
+                    Swal.fire({
+                        icon: 'error',
+                        title: '조회 실패',
+                        text: '장기요양수급자가 아닙니다',
+                    });
+                }else if(data.name=='warning'){
+                    Swal.fire({
+                        icon: 'warning',
+                        title: '조회 실패(장기요양시스템 점검)',
+                        text: '장기요양정보시스템 접속 불가',
+                    });
+                }else{
+                    if(guide_chk==1){
+                        guide_toggle_off(guide_interval);
+                        guide_on_lookup_info_0();
+                    }
+                    
+                    let name = data.msg;
+                    let number = data.number;
+                    let regident = data.regident;
+                    let reduce_nm = data.reduce_nm;
+                    let reduce_sale = data.reduce_sale;
+                    let ranker = data.ranker;
+                    let money = parseInt(data.money);
+                    let gender = data.gender;
+                    let sisul = data.sisul;
+                    let sisul_txt = "시설입소안함";
+                    if(sisul == 1){
+                        sisul_txt = "시설입소";
+                        $(".sisul").css({"color":"#ff0000"});
+                    }else{
+                        sisul_txt = "시설입소안함";
+                        $(".sisul").css({"color":"#000"});
+                    }
+                    $('.regident').text(regident);
+                    $(".target").text(reduce_nm);
+                    $(".sale").text(reduce_sale);
+                    $(".money").text(money.toLocaleString()+"원");
+                    $(".ranker").text(ranker);
+                    $(".sisul").text(sisul_txt);
+                    //$(".sisul").text('사회보장시스템점검중');
+                    let buy_porduct_not_array = data.buy_product_not_array;
+                    let rent_product_not_array = data.rent_product_not_array;
+                    let uproduct = data.uproduct;
+                    let rproduct = data.rproduct;
+                    /*//////////////////////////////////////////////
+                    $(".status_box").eq(0) : 구매가능품목
+                    $(".status_box").eq(1) : 사용불가품목
+                    $(".status_box").eq(2) : 대여중인품목
+                    $(".status_box").eq(3) : 대여불가품목
+                    //////////////////////////////////////////////*/
+                    status_box_set(uproduct,0);
+                    status_box_set(buy_porduct_not_array,2);
+                    status_box_set(rproduct,1);
+                    status_box_set(rent_product_not_array,3);
+                    let all_product_array = data.all_product_array2;
+                    total_date_set(data.apdt_fr_dt_arr,data.apdt_to_dt_arr,data.use_amt_arr);
+                    total_box_set(all_product_array);
+                    product_box_set(all_product_array);
+                }
+                lookup_set_stop();
+                socket_end();
+            });
+        }
+    }
+
+    function socket_end(){
+        //socket.emit('disconnect3');
+        socket.disconnect(true);
+        socket = '';
+    }
+    
+    var uid = '<%=firstData%>';
+    var company = '<%=company%>';
+    var guide_chk = 0;
+    var guide_interval = '';
+    if(uid=="zoa")location.href="/orderw/1/zoa/1/1";
+    
+    async function lookup_new_chk_get(){
+        return axios({
+            method:'post',
+            url:'/LookUpNewChkGet',
+            data:{
+                company:company,
+                id:uid
+            }
+        }).then(res=>{
+            const data = res.data;
+            console.log(data);
+            return data;
+        })
+    }
+
+    function guide_exit(){
+        location.reload();
+    }
+
+    function guide_toggle_on(x){
+        guide_interval = setInterval(function() {
+            x.fadeTo(500, 0.2,function(){
+                $(x).css({"opacity":1});
+            }).fadeTo(500, 1);
+        }, 1000);
+    }
+
+    function video_sign_url_get(video_name){
+        $('.mainlookup_video').remove();
+        let str = `
+            <video class="mainlookup_video ${video_name}" width="1250px" height="800px" controls>
+        `;
+        fetch('/S3GetVideo?directory=MainLookupVideo&bucketname=hanq&name='+video_name+'&type=webm') // 서버에서 서명된 URL을 가져오는 엔드포인트로 수정해야 합니다.
+        .then(response => response.text())
+        .then(url => {
+            console.log(url)
+            str+=`<source id='MainLookup_video1' class="MainLookup_video1" src="${url}" type="video/webm">`;
+            str+=`
+                </video>
+            `;
+            $('.video_area').append(str);
+        })
+        .catch(error => console.error('Error fetching signed URL:', error));
+    }
+
+    function guide_on_click(obj){
+        $(obj).addClass("guide_on");
+        $('.guide_swal_button').not($(obj)).removeClass("guide_on");
+        
+    }
+
+    function guide_show(){
+        
+        Swal.fire({
+            width:"75%",
+            icon: 'info',
+            title: '화면 학습 영상 선택',
+            html: `<div class="guide_swal">
+                    <div class="guide_swal_button guide_on" onclick="guide_on_chrome(this,'MainLookup_video1')">1.공단로그인</div>
+                    <div class="guide_swal_button" onclick="guide_on_lookup(this,'MainLookup_video2')">2.조회하기</div>
+                    <div class="guide_swal_button" onclick="guide_on_client_up(this,'MainLookup_video3')">3.수급자등록/주문하기</div>
+                </div>
+                <br/>
+                <div class="video_area">
+                   
+                </div>
+                `,
+            showConfirmButton:false,
+            didOpen:()=>{
+                video_sign_url_get("MainLookup_video1");
+            }
+        });
+    }
+
+    function guide_on_client_up(obj,video_name){
+        video_sign_url_get(video_name);
+        guide_on_click(obj);
+        // 기존 적용내역 아래 주석 전부 풀면됨
+        // Swal.close();
+        // $('body').append("<div class='guide_exit' onclick='guide_exit()'>종료</div>");
+        // guide_chk = 1;
+        // var targeted_guide_class = $('[data-guide-open]').attr('data-guide-open');
+        // $('[data-guide="' + targeted_guide_class + '"]').fadeIn(350);
+        // $('.tool_client_up').css({"position":"relative","z-index":"9999999"});
+        // guide_toggle_on($('.tool_client_up'));
+        // $('body').append("<div class='guide_txt'><div class='guide_txt_inner'><div>'수급자등록/주문하기' 버튼을 눌러 실행해주세요</div></div></div>");
+    }
+
+    function guide_on_client_up_0(){
+        $('.popup-close').hide();
+        guide_toggle_on(window.frames['clientup'].$('.lastlookup'));
+        $('body').append("<div class='guide_txt' style='top:5%;'><div class='guide_txt_inner'><div>'최근 공단조회내역 불러오기' 버튼을 클릭해주세요.</div></div></div>");
+    }
+
+    
+
+    async function guide_on_client_up_1(){
+        $('.guide_txt').remove();
+        guide_toggle_off(guide_interval);
+        window.frames['clientup'].$('.lastlookup').css({"position":"relative","z-index":"1"});
+        window.frames['clientup'].$('.swal2-container').css({"z-index":"9999999"});
+        $('body').append("<div class='guide_txt' style='top:5%;'><div class='guide_txt_inner'><div>최근 조회내역에서 등록할 수급자를 선택해주세요.</div></div></div>");
+    }
+
+
+    async function guide_on_client_up_fail(){
+        $('.guide_txt').remove();
+        $('body').append("<div class='guide_txt' style='top:5%;'><div class='guide_txt_inner'><div>이미 등록된 수급자입니다.</div><div>재선택하시거나 학습을 종료해주세요</div><div class='guide_next' onclick='guide_on_client_up_end();'>종료</div></div></div>");
+    }
+
+    async function guide_on_client_up_end(){
+        $('.popup-close').show();
+        guide_chk = 0;
+        $('.guide_txt').remove();
+        var targeted_guide_class = window.frames['clientup'].$('[data-guide-open]').attr('data-guide-open');
+        window.frames['clientup'].$('[data-guide="' + targeted_guide_class + '"]').fadeOut(350);
+        window.frames['clientup'].$('.lastlookup').css({"position":"relative","z-index":""});
+    }
+
+    async function guide_on_client_up_2(){
+        $('.guide_txt').remove();
+        window.frames['clientup'].$('.name, .number, .regident, .ranker, .target, .date1, .date2, .sex, .sale').css({"position":"relative","z-index":"9999999"});
+        window.frames['clientup'].$('.name, .number, .regident, .ranker, .target, .date1, .date2, .sex, .sale').parent().prev().css({"position":"relative","z-index":"9999999"});
+        $('body').append("<div class='guide_txt' style='top:30%; left:30%'><div class='guide_txt_inner'><div>수급자 인정번호,</div><div> 성함, </div><div>생년월일,</div><div> 현재 유효기간,</div><div> 성별,</div><div>대상,</div><div> 등급,</div><div> 본인부담율이 </div><div>자동으로 불러와 입력됩니다.</div><div class='guide_next' onclick='guide_on_client_up_3()'>다음></div></div></div>");
+    }
+
+    async function guide_on_client_up_3(){
+        $('.guide_txt').remove();
+        window.frames['clientup'].$('.name, .number, .regident, .ranker, .target, .date1, .date2, .sex, .sale').css({"position":"relative","z-index":"1"});
+        window.frames['clientup'].$('.name, .number, .regident, .ranker, .target, .date1, .date2, .sex, .sale').parent().prev().css({"position":"relative","z-index":"1"});
+        window.frames['clientup'].$('.address_button').eq(0).css({"position":"relative","z-index":"9999999","background":"#fff"});
+        guide_toggle_on(window.frames['clientup'].$('.address_button').eq(0));
+        $('body').append("<div class='guide_txt' style='top:10%;'><div class='guide_txt_inner'><div>수급자 주소 입력을 위해</div><div>'주소 검색' 버튼을 클릭해주세요.</div></div></div>");
+    }
+
+    async function guide_on_client_up_4(){
+        $('.guide_txt').remove();
+        guide_toggle_off(guide_interval);
+        window.frames['clientup'].$('.address_button').eq(0).css({"position":"relative","z-index":"1","background":"#fff"});
+        window.frames['clientup'].$('#layer').css({"z-index":"9999999"});
+
+        $('body').append("<div class='guide_txt' style='top:10%;'><div class='guide_txt_inner'><div>주소를 검색하고 검색결과 주소를 클릭해주세요</div></div></div>");
+    }
+
+    async function guide_on_client_up_5(){
+        $('.guide_txt').remove();
+        window.frames['clientup'].$('.name, .number, .regident, .ranker, .target, .date1, .date2, .sex, .sale').css({"position":"relative","z-index":"1"});
+        window.frames['clientup'].$('.name, .number, .regident, .ranker, .target, .date1, .date2, .sex, .sale').parent().prev().css({"position":"relative","z-index":"1"});
+        window.frames['clientup'].$('.address_button, .address_1, .address_2, .address2_1, .address2_2, .address_same, #sample2_postcode, #sample3_postcode, .phone1, .phone2, .guardname, .guardtarget, .manager, .centername').css({"position":"relative","z-index":"9999999","background":"#fff"});
+        window.frames['clientup'].$('.address_button, .address_1, .address_2, .address2_1, .address2_2, .address_same, #sample2_postcode, #sample3_postcode, .phone1, .phone2, .guardname, .guardtarget, .manager, .centername').parent().prev().css({"position":"relative","z-index":"9999999"});
+        
+        $('body').append("<div class='guide_txt' style='top:10%;'><div class='guide_txt_inner'><div>수급자의 상세주소, 연락처, 보호자성함, 수급자와 관계,</div><div> 담당자 정보를 입력해주세요.</div><div style='font-size:25px;'>*입력 생략이 가능합니다.</div><div class='guide_next' onclick='guide_on_client_up_6()'>다음></div></div></div>");
+    }
+
+    async function guide_on_client_up_6(){
+        $('.guide_txt').remove();
+        window.frames['clientup'].$('.address_button, .address_1, .address_2, .address2_1, .address2_2, .address_same, #sample2_postcode, #sample3_postcode, .phone1, .phone2, .guardname, .guardtarget, .manager, .centername').css({"position":"relative","z-index":"1","background":"#fff"});
+        window.frames['clientup'].$('.address_button, .address_1, .address_2, .address2_1, .address2_2, .address_same, #sample2_postcode, #sample3_postcode, .phone1, .phone2, .guardname, .guardtarget, .manager, .centername').parent().prev().css({"position":"relative","z-index":"1"});
+        window.frames['clientup'].$('.bankname, .banknum, .bankadmin, .bankphone, .bankregident, .bankdate, .reqeustmemo').css({"position":"relative","z-index":"9999999"});
+        window.frames['clientup'].$('.bankname, .banknum, .bankadmin, .bankphone, .bankregident, .bankdate, .reqeustmemo').parent().prev().css({"position":"relative","z-index":"9999999"});
+        window.frames['clientup'].scrollTo(0,500);
+        $('body').append("<div class='guide_txt' style='top:10%;'><div class='guide_txt_inner'><div>대여품목 등록예정의 경우는</div><div>자동이체 정보를 입력해주세요.</div><div style='font-size:25px;'>*입력 생략이 가능합니다.</div><div class='guide_next' onclick='guide_on_client_up_7()'>다음></div></div></div>");
+    }
+
+    async function guide_on_client_up_7(){
+        $('.guide_txt').remove();
+        window.frames['clientup'].$('.bankname, .banknum, .bankadmin, .bankphone, .bankregident, .bankdate, .reqeustmemo').css({"position":"relative","z-index":"1"});
+        window.frames['clientup'].$('.bankname, .banknum, .bankadmin, .bankphone, .bankregident, .bankdate, .reqeustmemo').parent().prev().css({"position":"relative","z-index":"1"});
+        guide_toggle_on(window.frames['clientup'].$('.signbutton'));
+        window.frames['clientup'].$('.signbutton').css({"position":"relative","z-index":"9999999","background":"#fff"});
+        window.frames['clientup'].$('.signbutton').parent().prev().css({"position":"relative","z-index":"9999999"});
+        $('body').append("<div class='guide_txt' style='top:10%;'><div class='guide_txt_inner'><div>수급자 전자서명을 등록할수있습니다.</div><div>'서명하기' 버튼을 클릭해주세요</div><div>서명 등록시 각종 서류양식에 자동 기입됩니다.</div><div style='font-size:25px;'>*입력 생략이 가능합니다.</div><div class='guide_next' onclick='guide_on_client_up_8()'>다음></div></div></div>");
+    }
+
+    async function guide_on_client_up_7_1(){
+        $('.guide_txt').remove();
+        guide_toggle_off(guide_interval);
+        window.frames['clientup'].$('.signbutton').css({"position":"relative","z-index":"1","background":"#fff"});
+        window.frames['clientup'].$('.signbutton').parent().prev().css({"position":"relative","z-index":"1"});
+        window.frames['clientup'].$('.signbox').css({"position":"relative","z-index":"9999999","background":"#fff"});
+        window.frames['clientup'].$('.signbox').parent().prev().css({"position":"relative","z-index":"9999999"});
+        $('body').append("<div class='guide_txt' style='top:10%;'><div class='guide_txt_inner'><div>서명을 진행해주세요.</div><div>서명 등록시 각종 서류양식에 자동 기입됩니다.</div><div style='font-size:25px;'>*지우기 버튼을 눌러 다시 그릴수있습니다.</div><div class='guide_next' onclick='guide_on_client_up_8()'>다음></div></div></div>");
+    }
+
+    async function guide_on_client_up_8(){
+        guide_toggle_off(guide_interval);
+        $('.guide_txt').remove();
+        window.frames['clientup'].$('.signbutton').css({"position":"relative","z-index":"1","background":"#fff"});
+        window.frames['clientup'].$('.signbutton').parent().prev().css({"position":"relative","z-index":"1"});
+        window.frames['clientup'].$('.signbox').css({"position":"relative","z-index":"1","background":"#fff"});
+        window.frames['clientup'].$('.signbox').parent().prev().css({"position":"relative","z-index":"1"});
+        guide_toggle_on(window.frames['clientup'].$('#submit'));
+        window.frames['clientup'].$('#submit').css({"position":"relative","z-index":"9999999","background":"#fff"});
+        window.frames['clientup'].$('#submit').parent().prev().css({"position":"relative","z-index":"9999999"});
+        $('body').append("<div class='guide_txt' style='top:10%;'><div class='guide_txt_inner'><div>등록하기 버튼을 클릭해주세요.</div><div>다음으로 주문서 입력창으로 이동합니다. </div></div></div>");
+    }
+
+
+    function guide_on_chrome(obj,video_name){
+        video_sign_url_get(video_name);
+        guide_on_click(obj);
+        // 기존 적용 내역 아래 주석 전부 풀면됨
+        // Swal.close();
+        // $('body').append("<div class='guide_exit' onclick='guide_exit()'>종료</div>");
+        // guide_chk = 1;
+        // var targeted_guide_class = $('[data-guide-open]').attr('data-guide-open');
+        // $('[data-guide="' + targeted_guide_class + '"]').fadeIn(350);
+        // $('.tool_browser').css({"position":"relative","z-index":"9999999"});
+        // guide_toggle_on($('.tool_browser'));
+        // $('body').append("<div class='guide_txt'><div class='guide_txt_inner'><div>공단로그인창 버튼을 눌러 실행해주세요</div><div style='font-size:25px;'>(프로그램 실행후 한번만 누르시면 됩니다)</div></div></div>");
+    }
+
+    function guide_on_lookup(obj,video_name){
+        video_sign_url_get(video_name);
+        guide_on_click(obj);
+        // 기존 적용 내역 아래 주석 전부 풀면됨
+        // Swal.close();
+        // $('body').append("<div class='guide_exit' onclick='guide_exit()'>종료</div>");
+        // guide_chk=1;
+        // var targeted_guide_class = $('[data-guide-open]').attr('data-guide-open');
+        // $('[data-guide="' + targeted_guide_class + '"]').fadeIn(350);
+        // $('.main_c_top_1_1_date, .main_c_top_1_1_info').css({"position":"relative","z-index":"9999999"});
+        // guide_toggle_on($('.info_button'));
+        // $('body').append("<div class='guide_txt'><div class='guide_txt_inner'><div>수급자 조회 날짜 확인 후</div><div style=''>성함, 인정번호 입력하시고</div><div> 조회하기 버튼을 눌러주세요</div></div></div>");
+        // return guide_interval
+    }
+
+    async function guide_on_lookup_info_0(){
+        $('.main_c_top_1_1_date, .main_c_top_1_1_info').css({"position":"relative","z-index":"1"});
+        guide_toggle_off(guide_interval);
+        var targeted_guide_class = $('[data-guide-open]').attr('data-guide-open');
+        $('[data-guide="' + targeted_guide_class + '"]').fadeIn(350);
+        $('.main_c_top_1_2').css({"position":"relative","z-index":"9999999"});
+        $('.guide_txt').remove();
+        $('body').append("<div class='guide_txt'><div class='guide_txt_inner'><div>어르신 장기요양기본정보가 표시되며</div><div style=''>요양원 및 기타 시설 입소 어르신은</div><div><span style='color:#ff0000;'>'시설입소'</span>로 표기됩니다.</div><div class='guide_next' onclick='guide_on_lookup_info_1()'>다음></div></div></div>");
+    }
+
+    function guide_on_lookup_info_1(){
+        $('.main_c_top_1_2').css({"position":"relative","z-index":"1"});
+        var targeted_guide_class = $('[data-guide-open]').attr('data-guide-open');
+        $('[data-guide="' + targeted_guide_class + '"]').fadeIn(350);
+        $('.main_c_top_2').css({"position":"relative","z-index":"9999999"});
+        $('.guide_txt').remove();
+        $('body').append("<div class='guide_txt' style='top:60%'><div class='guide_txt_inner'><div>품목별 전체 누적 계약이력이 표시됩니다.</div><div style=''>내구연한 1년 품목은 현재 적용구간 내 계약 품목만 표시됩니다.</div><div class='guide_next' onclick='guide_on_lookup_info_2()'>다음></div></div></div>");
+    }
+
+    function guide_on_lookup_info_2(){
+        $('.main_c_top_2').css({"position":"relative","z-index":"1"});
+        var targeted_guide_class = $('[data-guide-open]').attr('data-guide-open');
+        $('[data-guide="' + targeted_guide_class + '"]').fadeIn(350);
+        $('.main_c_bottom_1').css({"position":"relative","z-index":"9999999"});
+        $('.guide_txt').remove();
+        $('body').append("<div class='guide_txt' style='top:25%;'><div class='guide_txt_inner'><div>조회한 날짜 기준 유효기간 내</div><div style=''>계약가능한 구매품목, 사용불가품목</div><div style=''>대여중인 품목, 대여불가품목이 표시됩니다.</div><div class='guide_next' onclick='guide_on_lookup_info_3()'>다음></div></div></div>");
+    }
+
+    function guide_on_lookup_info_3(){
+        $('.main_c_bottom_1').css({"position":"relative","z-index":"1"});
+        var targeted_guide_class = $('[data-guide-open]').attr('data-guide-open');
+        $('[data-guide="' + targeted_guide_class + '"]').fadeIn(350);
+        $('.main_c_bottom_2').css({"position":"relative","z-index":"9999999"});
+        $('.guide_txt').remove();
+        $('body').append("<div class='guide_txt' style='top:25%;'><div class='guide_txt_inner'><div>조회한 수급자의 전체 적용구간 별</div><div style=''>계약품목 정보가 표시됩니다.</div><div style=''>날짜에 <span style='color:#599273;'>초록색</span> 표시된 날짜가 현재 적용구간입니다.</div><div class='guide_next' onclick='guide_off()'>종료></div></div></div>");
+    }
+
+    function guide_off(){
+        guide_chk = 0;
+        var targeted_guide_class =  $('[data-guide-open]').attr('data-guide-open');
+        $('[data-guide="' + targeted_guide_class + '"]').fadeOut(350);
+        $('.main_c_bottom_2').css({"position":"relative","z-index":"1"});
+        $('.guide_txt').remove();
+        
+    }
+
+    async function guide_toggle_off(guide_interval){
+        await clearInterval(guide_interval);
+
+    }
+
+    function date_now(){
+        var now = new Date();
+        var year= now.getFullYear();
+        var mon = (now.getMonth()+1)>9 ? ''+(now.getMonth()+1) : '0'+(now.getMonth()+1);
+        var day = now.getDate()>9 ? ''+now.getDate() : '0'+now.getDate();
+        var time = now.getHours()+':'+now.getMinutes()+':'+now.getSeconds();
+        var chan_val = year+'-'+mon+'-'+day;
+        return chan_val
+    }
+
+    function number_format_zero(x){
+        let num = parseInt(x);
+        if(num<10)num = '0'+num;
+        return num
+    }
+
+    function date_hour_change(date){
+        const diffMSec = chan_val.getTime() - new Date(date).getTime();
+        const diffHour = diffMSec / (60 * 60 * 1000);
+        return diffHour;
+    }
+
+    async function chrome_update_alert(){
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'middle',
+            showConfirmButton: false,
+            timer: 2500,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        Toast.fire({
+            width:'800px',
+            icon: 'info',
+            title: "<div style='font-size:16px; font-weight:bold;'>크롬 브라우저가 최신버전인지 확인해주세요.</div>",
+            html: "<div style='font-size:16px; font-weight:bold;'>건강보험공단 자동 로그인 진행이 안될시 '크롬창 설정'>'Chrome정보'>크롬 업데이트 진행 하시고 크롬을 다시 시작하시면 정상 실행됩니다.</div>",
+
+        });
+        // Swal.fire({
+        //     width:'800px',
+        //     title: '크롬 브라우저가 최신버전인지 확인해주세요.',
+        //     html: "<div style='font-size:16px; font-weight:bold;'>건강보험공단 자동 로그인 진행이 안될시 '크롬창 설정'>'Chrome정보'>크롬 업데이트 진행 하시고 크롬을 다시 시작하시면 정상 실행됩니다.</div>",
+        //     icon: 'info',
+        //     showCancelButton: false,
+        //     confirmButtonColor: '#3085d6',
+        //     cancelButtonColor: '#d33',
+        //     confirmButtonText: '확인'
+        // }).then((result) => {
+            
+        // });
+    }
+
+    async function chrome_run(){
+        chrome_update_alert();
+        if(guide_chk==1){
+            guide_toggle_off(guide_interval);
+            guide_off();
+            $('.tool_browser').css({"position":"relative","z-index":"1"});
+            guide_chk=0;
+        }
+        socket_start();
+        socket.emit('disconnect2', {'name': uid});
+        socket.emit('login', {'name': uid});
+        socket.emit('chrome_run', { 'name':uid, 'company':company },(callback)=>{
+            console.log(callback);
+            socket_end();
+        });
+        //socket_end();
+    }
+
+    function orderpagepopup(num){
+        $('.popup-inner').css({'max-width':'none','width':'95%'});
+        window.frames['clientup'].location.reload();
+        $('.clientup').attr('src', "//xn--9o7b95g.com/orderup/1/<%=firstData%>?ai="+num);
+        window.frames['clientup'].src = "//xn--9o7b95g.com/orderup/1/<%=firstData%>?ai="+num;
+        console.log(window.frames['clientup'].src);
+        var targeted_popup_class = $('[data-popup-open]').attr('data-popup-open');
+        $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+    }
+
+    async function quick_client_up(){
+        
+        $('.popup-inner').css({'max-width':'none','width':'900px'});
+        window.frames['clientup'].location.reload();
+        $('.clientup').attr('src', "//xn--9o7b95g.com/clientup?chk=proram&username=<%=firstData%>");
+        window.frames['clientup'].src = "//xn--9o7b95g.com/clientup?chk=proram&username=<%=firstData%>";
+        var targeted_popup_class = $('[data-popup-open]').attr('data-popup-open');
+        $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+        document.getElementById('clientup').onload = async function() {
+            if(guide_chk==1){
+                guide_toggle_off(guide_interval);
+                //guide_off();
+                var targeted_guide_class =  $('[data-guide-open]').attr('data-guide-open');
+                $('[data-guide="' + targeted_guide_class + '"]').fadeOut(350);
+                $('.guide_txt').remove();
+                $('.tool_client_up').css({"position":"relative","z-index":"1"});
+                window.frames['clientup'].console.log(window.frames['clientup'].$('[data-guide-open]').attr('data-guide-open'));
+                var targeted_guide_class = window.frames['clientup'].$('[data-guide-open]').attr('data-guide-open');
+                window.frames['clientup'].$('[data-guide="' + targeted_guide_class + '"]').fadeIn(350);
+                window.frames['clientup'].$('.lastlookup').css({"position":"relative","z-index":"9999999"});
+                guide_on_client_up_0();
+            }
+        }
+
+    }
+
+    var look_up_date_now = "";
+    function lookup_set_start(){
+        // $(".info_number_input,.info_name_input").attr("disabled", true);
+        $('.lookup_box, .status_box, .product_box, .total_date, .total_box').text('');
+        $('.product_cnt').text(0);
+        $('.total_date').css({'background-color':'#fff'});
+        // $('.loader').show();
+        // $('.info_btn').hide();
+        // $('.info_btn2').show();
+        
+    }
+
+    function lookup_set_stop(){
+        $(".info_number_input,.info_name_input").attr("disabled", false);
+        $('.loader').hide();
+        $('.info_btn').show();
+        $('.info_btn2').hide();
+    }
+
+    function status_box_set(arr,eq){
+        if(arr==null){
+            $(".status_box").eq(eq).append("<div class='status_item'>없음</div>");
+        }else{;
+            for(x of arr){
+                $(".status_box").eq(eq).append("<div class='status_item'>"+x.replace(/'/g,'')+"</div>");
+            }
+        }
+    }
+
+    /*//////////////////////////////////////////////
+        $(".product_box").eq(0) : 이동변기
+        $(".product_box").eq(1) : 목욕의자
+        $(".product_box").eq(2) : 성인용보행기
+        $(".product_box").eq(3) : 욕창예방방석
+        $(".product_box").eq(4) : 욕창예방매트리스
+        $(".product_box").eq(5) : 지팡이
+        $(".product_box").eq(6) : 자세변환용구
+        $(".product_box").eq(7) : 간이변기
+        $(".product_box").eq(8) : 안전손잡이
+        $(".product_box").eq(9) : 요실금팬티
+        $(".product_box").eq(10) : 미끄럼방지양말
+        $(".product_box").eq(11) : 미끄럼방지매트
+    //////////////////////////////////////////////*/
+    function product_box_set(arr){
+        let look_up_date_now_split = look_up_date_now.split('~');
+        if(arr==null){
+            //$(".product_box").eq(0).append("<div class='product_item'></div>");
+        }else{
+            for(x of arr){
+                console.log(x);
+                let name1 = x[0].replace(/'|\(|\)/g,'').split('/')[0];
+                let name2 = x[0].replace(/'|\(|\)/g,'').split('/')[1];
+                let date = x[1].replace(/'|/g,'');
+                let status = x[2].replace(/'|/g,'');
+                let pcode = x[3].replace(/'|/g,'');
+                let bcode = x[4].replace(/'|/g,'');
+                let type = x[6].replace(/'|\)|\(/g,'');
+                let money = x[7].replace(/'|\)|\(/g,'');
+                if(name1.includes('이동변기')){
+                    $(".product_box").eq(0).append("<div class='product_item'>"+date+" "+name2+" ["+bcode+"] "+type+"</div>");
+                    $(".product_cnt").eq(0).text($('.product_box').eq(0).children().length);
+                }else if(name1.includes('목욕의자')){
+                    $(".product_box").eq(1).append("<div class='product_item'>"+date+" "+name2+" ["+bcode+"] "+type+"</div>");
+                    $(".product_cnt").eq(1).text($('.product_box').eq(1).children().length);
+                }else if(name1.includes('성인용보행기')){
+                    $(".product_box").eq(2).append("<div class='product_item'>"+date+" "+name2+" ["+bcode+"] "+type+"</div>");
+                    $(".product_cnt").eq(2).text($('.product_box').eq(2).children().length);
+                }else if(name1.includes('욕창예방방석')){
+                    $(".product_box").eq(3).append("<div class='product_item'>"+date+" "+name2+" ["+bcode+"] "+type+"</div>");
+                    $(".product_cnt").eq(3).text($('.product_box').eq(3).children().length);
+                }else if(name1.includes('욕창예방 매트리스')){
+                    $(".product_box").eq(4).append("<div class='product_item'>"+date+" "+name2+" ["+bcode+"] "+type+"</div>");
+                    $(".product_cnt").eq(4).text($('.product_box').eq(4).children().length);
+                }else if(name1.includes('지팡이')){
+                    $(".product_box").eq(5).append("<div class='product_item'>"+date+" "+name2+" ["+bcode+"] "+type+"</div>");
+                    $(".product_cnt").eq(5).text($('.product_box').eq(5).children().length);
+                }else if(name1.includes('자세변환용구')){
+                    if(compare_date(date,look_up_date_now_split[0])==1&&compare_date(date,look_up_date_now_split[1])==-1){
+                        $(".product_box").eq(6).append("<div class='product_item'>"+date+" "+name2+" ["+bcode+"] "+type+"</div>");
+                        $(".product_cnt").eq(6).text($('.product_box').eq(6).children().length);
+                    }
+                }else if(name1.includes('간이변기')){
+                    if(compare_date(date,look_up_date_now_split[0])==1&&compare_date(date,look_up_date_now_split[1])==-1){
+                        $(".product_box").eq(7).append("<div class='product_item'>"+date+" "+name2+" ["+bcode+"] "+type+"</div>");
+                        $(".product_cnt").eq(7).text($('.product_box').eq(7).children().length);
+                    }
+                }else if(name1.includes('안전손잡이')){
+                    if(compare_date(date,look_up_date_now_split[0])==1&&compare_date(date,look_up_date_now_split[1])==-1){
+                        $(".product_box").eq(8).append("<div class='product_item'>"+date+" "+name2+" ["+bcode+"] "+type+"</div>");
+                        $(".product_cnt").eq(8).text($('.product_box').eq(8).children().length);
+                    }
+                }else if(name1.includes('요실금팬티')){
+                    if(compare_date(date,look_up_date_now_split[0])==1&&compare_date(date,look_up_date_now_split[1])==-1){
+                        $(".product_box").eq(9).append("<div class='product_item'>"+date+" "+name2+" ["+bcode+"] "+type+"</div>");
+                        $(".product_cnt").eq(9).text($('.product_box').eq(9).children().length);
+                    }
+                }else if(name1.includes('미끄럼 방지용품')){
+                    if(compare_date(date,look_up_date_now_split[0])==1&&compare_date(date,look_up_date_now_split[1])==-1){
+                        if(parseInt(money)<10000){
+                            $(".product_box").eq(10).append("<div class='product_item'>"+date+" "+name2+" ["+bcode+"] "+type+"</div>");
+                            $(".product_cnt").eq(10).text($('.product_box').eq(10).children().length);
+                        }else{
+                            $(".product_box").eq(11).append("<div class='product_item'>"+date+" "+name2+" ["+bcode+"] "+type+"</div>");
+                            $(".product_cnt").eq(11).text($('.product_box').eq(11).children().length);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    function date_format(date){
+        let year = date.substring(0,4);
+        let month = date.substring(4,6);
+        let day = date.substring(6,8);
+        return year+"-"+month+"-"+day;
+    }
+
+    //전체 구매이력 체크
+    function compare_date(date1,date2){
+        let date1_arr = date1.split('-');
+        let date2_arr = date2.split('-');
+        let date1_num = parseInt(date1_arr[0]+date1_arr[1]+date1_arr[2]);
+        let date2_num = parseInt(date2_arr[0]+date2_arr[1]+date2_arr[2]);
+        if(date1_num>=date2_num){
+            return 1;
+        }else{
+            return -1;
+        }
+    }
+
+    //현재 유효기간 체크
+    function compare_date2(date1,date2){
+        let date1_arr = date1.split('-');
+        let date2_arr = date2.split('-');
+        let date1_num = parseInt(date1_arr[0]+date1_arr[1]+date1_arr[2]);
+        let date2_num = parseInt(date2_arr[0]+date2_arr[1]+date2_arr[2]);
+        if(date1_num>date2_num){
+            return 1;
+        }else{
+            return -1;
+        }
+    }
+
+    function total_date_now(x,y){
+        let look_up_date = $('.date_year input').val()+'-'+number_format_zero($('.date_mon input').val())+'-'+number_format_zero($('.date_day input').val());
+        if(compare_date(look_up_date,x)==1&&compare_date2(look_up_date,y)==-1){
+            look_up_date_now = x+"~"+y; 
+            return true;
+        }
+    }
+
+    function total_date_set(apdt_fr_dt_arr,apdt_to_dt_arr,use_amt_arr){
+        print_obj.date_arr = [];
+        for(var i=0;i<apdt_fr_dt_arr.length;i++){
+            let date = date_format(apdt_fr_dt_arr[i].replace(/'|/g,''))+" ~ "+date_format(apdt_to_dt_arr[i].replace(/'|/g,''));
+            print_obj.date_arr.push(date);
+            $(".total_date").eq(i).text(date);
+            let date_now = total_date_now(date_format(apdt_fr_dt_arr[i].replace(/'|/g,'')),date_format(apdt_to_dt_arr[i].replace(/'|/g,'')));
+            
+            console.log(print_obj.date_now,"print_obj.date_now");
+            if(date_now){
+                print_obj.date_now = date;
+                $(".total_date").eq(i).css({"background":"#599273"});
+            }else{
+                $(".total_date").eq(i).css({"background":"#a8a8a8"});
+            }
+        }
+    }
+
+    function total_box_set(arr){
+        if(arr!=null){
+            for(x of arr){
+                let name1 = x[0].replace(/'|\(|\)/g,'').split('/')[0];
+                let name2 = x[0].replace(/'|\(|\)/g,'').split('/')[1];
+                let date = x[1].replace(/'|/g,'');
+                let status = x[2].replace(/'|/g,'');
+                let pcode = x[3].replace(/'|/g,'');
+                let bcode = x[4].replace(/'|/g,'');
+                let type = x[6].replace(/'|\)|\(/g,'');
+                let money = x[7].replace(/'|\)|\(/g,'');
+                for(var i = 0; i<$(".total_date").length;i++){
+                    let total_date_split = $(".total_date").eq(i).text().split('~');
+                    if(compare_date(date,total_date_split[0])==1&&compare_date(total_date_split[1],date)==1){
+                        $(".total_box").eq(i).append("<div class='total_item'>"+date+" "+name2+" ["+bcode+"] "+type+"</div>");
+                    }
+                }
+            }
+        }
+    }
+
+    function go_lookup_req(nameval,numval,date){
+        // Swal.fire({
+        //     icon: 'warning',
+        //     title: '장기요양정보시스템 점검중',
+        //     text: '장기요양정보시스템 점검중',
+        // });
+        if(nameval != "" && numval != "" && date != ""){
+            socket_start('go_lookup_res');
+            socket.emit('disconnect2', {'name': uid});
+            socket.emit('login', {'name': uid});
+            socket.emit('go_lookup_req', { 'name':uid, 'cname':nameval.trim(), 'cnumber':numval.replace(/ /g,''), 'company':company, 'date':date });
+            //socket.emit('message', { 'name':uid, 'msg':nameval.replace(/ /g,'')+';'+numval.replace(/ /g,'')});
+            lookup_set_start();
+        }else{
+            Swal.fire({
+                icon: 'error',
+                title: '조회 실패',
+                text: '조회 조건을 모두 입력해주세요',
+            });
+        }
+    }
+
+    function buyproductchk(x,y){
+        if(x != "" && y != ""){
+            socket_start('go_lookup_buy_product_res');
+            let code = x+";"+y;
+            socket.emit('disconnect2', {'name': uid});
+            socket.emit('login', {'name': uid});
+            socket.emit('go_lookup_buy_product_req', { 'name':uid,'cname':'김법단'.replace(/ /g,''), 'cnumber':'L1807129756'.replace(/ /g,''), 'company':'<%=company%>', 'date':date_now().replace(/-| /g,''), 'pcode':x.replace(/ /g,''), 'bcode':y.replace(/ /g,'')});
+        }else{
+            Swal.fire({
+                icon: 'error',
+                title: '조회 실패',
+                text: '조회 조건을 모두 입력해주세요',
+            });
+        }
+    }
+
+    function quick_seach_tr_click(name,number,date){
+        Swal.close();
+        document.querySelector('.info_name_input').value = name;
+        document.querySelector('.info_number_input').value = number;
+        go_lookup_req(name,number,date);
+    }
+
+    function quick_search_popup(name){
+        if(name!=''){
+            Swal.showLoading();
+            axios({
+                method:"post",
+                url:'/QuickSearchPopup',
+                data:{
+                    name:name,
+                    company:'<%=company%>'
+                }
+            }).then(res=>{
+                Swal.close();
+                console.log(res);
+                if(res.data.code==200){
+                    let data = res.data.data;
+                    let tr = '';
+                    data.forEach(function(obj,index){
+                        let search_data = $('.date_year input').val()+number_format_zero($('.date_mon input').val())+number_format_zero($('.date_day input').val());
+                        tr+=`<tr class="quick_search_tr" onclick="quick_seach_tr_click('${obj.name}','${obj.number}','${search_data}')"><td width="100px;">${obj.name}</td><td>${obj.number}</td><td>${obj.sex}</td><td>${obj.target}(${obj.sale})</td><td>${obj.regident}</td><td>${obj.address}</td><td>${obj.centername}</td></tr>`;
+                    });
+                    Swal.fire({
+                        width:"1000px",
+                        // icon: 'error',
+                        title: '수급자를 선택하시면 조회가 진행됩니다.',
+                        // text: '조회 조건을 모두 입력해주세요',
+                        html: `
+                        <div class="quick_search_popup_container">
+                            <table class="quick_search_popup_table">
+                                <thead>
+                                    <tr><th width="100px">성함</th><th>인정번호</th><th>성별</th><th>대상구분</th><th>생년월일</th><th>주소</th><th>센터명</th></tr>
+                                </thead>
+                                <tbody>
+                                    ${tr}
+                                </tbody>
+                            </table>
+                        </div>
+                        `,
+                        showConfirmButton:false,
+                        showCancelButton:true,
+                        cancelButtonColor: '#d33',
+                        cancelButtonText:"닫기"
+                    });
+                }
+            });
+            
+        }
+    }
+
+    $(document).ready(function(){
+        $('.date_year>input').val(date_now().split('-')[0]);
+        $('.date_mon>input').val(date_now().split('-')[1]);
+        $('.date_day>input').val(date_now().split('-')[2]);
+
+        //input포커스 조회 엔터키 실행
+        $(".quick_search_input").keyup(function(key) {
+            if (key.keyCode == 13) {
+                quick_search_popup($('.quick_search_input').val());
+            }
+        });
+
+        //input포커스 조회 엔터키 실행
+        $(".info_number_input,.info_name_input").keydown(function(key) {
+            if (key.keyCode == 13) {
+                go_lookup_req($('.info_name_input').val(),$('.info_number_input').val(),$('.date_year input').val()+number_format_zero($('.date_mon input').val())+number_format_zero($('.date_day input').val()));
+            }
+        });
+
+        $(".info_pcode_input,.info_bcode_input").keydown(function(key) {
+            if (key.keyCode == 13) {
+                buyproductchk($('.info_pcode_input').val(),$('.info_bcode_input').val());
+            }
+        });
+
+
+        //----- OPEN
+        $('[data-popup-open]').on('click', function (e) {
+            var targeted_popup_class = jQuery(this).attr('data-popup-open');
+            $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+        });
+
+        //----- CLOSE
+        $('[data-popup-close]').on('click', function (e) {
+            var targeted_popup_class = jQuery(this).attr('data-popup-close');
+            $('[data-popup="' + targeted_popup_class + '"]').fadeOut(350);
+        });
+
+        //----- CLOSE
+        $('[data-guide-close]').on('click', function (e) {
+            var targeted_guide_class = jQuery(this).attr('data-guide-close');
+            $('[data-guide="' + targeted_guide_class + '"]').fadeOut(350);
+        });
+
+        //guide_interval = guide_on_lookup();
+    });
+
+    function print_btn(){
+        Swal.fire({
+            html: `<div id="printArea" style="width:190mm; background:#fff; padding:10px;">
+                <div style="display:flex; flex-direction:column; justify-content:space-between; align-items:center; font-size:19px;">
+                    <div style="display:flex; justify-content:center; align-items:center; font-weight:bold;">
+                        <div>${$('.date_year input').val()}</div>년<div>${$('.date_mon input').val()}</div>월<div>${$('.date_day input').val()}</div>일
+                    </div>
+                    <div style="display:flex; justify-content:center; align-items:center; font-weight:bold; margin:20px 0px;">
+                        <div style="display:flex; justify-content:center; align-items:center;">성함: <div class="info_name_input_print">${$('.info_name_input').val()}</div></div>
+                        <div style="width:30px;"></div>
+                        <div style="display:flex; justify-content:center; align-items:center;">인정번호: <div class="info_number_input_print">${$('.info_number_input').val()}</div></div>
+                    </div>
+                </div>
+                <div style="display:flex; flex-direction:column; justify-content:center; align-items:center;">
+                    <div class="main_c_top_1_2" style="display:flex; justify-content:center; align-items:center; font-weight:bold;">
+                        <div>
+                            <div class="regident_box flex_start" style="margin:10px 10px;"><div class="lookup_title" style="background: #d9d9d9; color: #000; height: 40px; width: 120px; border-radius: 5px;">생년월일</div><div class="lookup_box regident" style="text-align: center;">${$(".regident").text()}</div></div>
+                            <div class="gender_box flex_start" style="margin:10px 10px;"><div class="lookup_title">성별</div><div class="lookup_box gender" style="text-align: center;">${$(".gender").text()}</div></div>
+                            <div class="ranker_box flex_start" style="margin:10px 10px;"><div class="lookup_title">인정등급</div><div class="lookup_box ranker" style="text-align: center;">${$(".ranker").text()}</div></div>
+                            <div class="target_box flex_start" style="margin:10px 10px;"><div class="lookup_title">대상</div><div class="lookup_box target" style="text-align: center;">${$(".target").text()}</div></div>
+                        </div>
+                        <div>
+                            <div class="sale_box flex_start" style="margin:10px 10px;"><div class="lookup_title">본인부담율</div><div class="lookup_box sale" style="text-align: center;">${$(".sale").text()}</div></div>
+                            <div class="money_box flex_start" style="margin:10px 10px;"><div class="lookup_title">사용가능금액</div><div class="lookup_box money" style="text-align: center;">${$(".money").text()}</div></div>
+                            <div class="money_box flex_start" style="margin:10px 10px;"><div class="lookup_title">특이사항</div><div class="lookup_box sisul" style="text-align: center;">${$(".sisul").text()}</div></div>
+                            <div class="rcgt_box flex_start" style="margin:10px 10px;"><div class="lookup_title">현재유효기간</div><div class="lookup_box rcgt" style="text-align: center;">${$(".rcgt").text()}</div></div>
+                        </div>
+                    </div>
+                    <div style="margin:10px 0px;">
+                        <div style="font-weight:bold; font-size:19px; text-align:center; margin:10px 0px;">적용구간 (${print_obj.date_now})</div>
+                        ${print_obj.date_arr.map(function(date,index){
+                            if(index % 2 == 0) {
+                                return `<div style="display:flex; font-weight:bold; font-size:16px;">
+                                    <div class="">${date}</div>
+                                    ${print_obj.date_arr[index+1] ? `<div class="" style="margin-left:20px;">${print_obj.date_arr[index+1]}</div>` : ''}
+                                </div>`;
+                            }
+                            return '';
+                        }).join('')}
+                    </div>
+                    ${(() => {
+                        const clonedContent = $('.main_c_bottom_1').clone();
+                        clonedContent.find('*').css('color', '#000');
+                        clonedContent.css('color', '#000');
+                        clonedContent.find('.status_box_buy').css('height', '320px');
+                        return clonedContent.prop('outerHTML');
+                    })()}
+                </div>
+                </div>`,
+            width: '200mm',
+            showConfirmButton: true,
+            showCloseButton: true,
+            showCancelButton:true,
+            confirmButtonText:"프린트", 
+            confirmButtonColor:"#599273",
+            cancelButtonText:"닫기",
+            cancelButtonColor:"#d33",
+            position: 'top',
+            preConfirm:()=>{
+                // 현재 페이지의 모든 스타일시트 수집
+                const styleSheets = Array.from(document.styleSheets);
+                let styles = '';
+                
+                // 스타일시트 내용 추출
+                styleSheets.forEach(sheet => {
+                    try {
+                        const rules = Array.from(sheet.cssRules || sheet.rules);
+                        rules.forEach(rule => {
+                            styles += rule.cssText + '\n';
+                        });
+                    } catch (e) {
+                        // CORS 정책으로 인해 외부 스타일시트 접근 불가능한 경우
+                        console.log('Cannot access stylesheet:', e);
+                    }
+                });
+
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
+                    <html>
+                    <head>
+                        <title>Print</title>
+                        <style>
+                            ${styles}
+                            @media print {
+                                body { 
+                                    width: 190mm;
+                                    margin: 0 auto;
+                                }
+                                #printArea {
+                                    padding: 10px;
+                                }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        ${document.getElementById('printArea').innerHTML}
+                    </body>
+                    </html>
+                `);
+                
+                printWindow.document.close();
+                
+                printWindow.onload = function() {
+                    printWindow.print();
+                    printWindow.close();
+                };
+                return false;
+            }
+        });
+    }
+</script>
+<style>
+@font-face {
+    font-family: 'Source Sans Pro';
+    font-style: normal;
+    font-weight: 200;
+    src: url(https://fonts.gstatic.com/s/sourcesanspro/v21/6xKydSBYKcSV-LCoeQqfX1RYOo3i94_wlxdr.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'Source Sans Pro';
+    font-style: normal;
+    font-weight: 300;
+    src: url(https://fonts.gstatic.com/s/sourcesanspro/v21/6xKydSBYKcSV-LCoeQqfX1RYOo3ik4zwlxdr.ttf) format('truetype');
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 300;
+}
+
+@font-face {
+    font-family: 'Material Icons';
+    font-style: normal;
+    font-weight: 400;
+    src: url(path/to/MaterialIcons-Regular.eot);
+    /* For IE6-8 */
+    src:
+    local('Material Icons'),
+    local('MaterialIcons-Regular'),
+}
+
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 16px;
+    /* Preferred icon size */
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+    /* Support for all WebKit browsers. */
+    -webkit-font-smoothing: antialiased;
+    /* Support for Safari and Chrome. */
+    text-rendering: optimizeLegibility;
+    /* Support for Firefox. */
+    -moz-osx-font-smoothing: grayscale;
+    /* Support for IE. */
+    font-feature-settings: 'liga';
+}
+
+iframe {
+    width: 100%;
+    height: 100%;
+}
+
+/* Outer */
+.guide {
+    width: 100%;
+    height: 100%;
+    display: none;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+}
+
+/* Inner */
+.guide-inner {
+    max-width: 900px;
+    height: 880px;
+    width: 100%;
+    /*padding:40px;*/
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 1);
+    border-radius: 8px;
+    background: #fff;
+}
+
+/* Close Button */
+.guide-close {
+    width: 30px;
+    height: 30px;
+    padding-top: 4px;
+    display: inline-block;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    transition: ease 0.25s all;
+    -webkit-transform: translate(50%, -50%);
+    transform: translate(50%, -50%);
+    border-radius: 1000px;
+    background: rgba(0, 0, 0, 0.8);
+    font-family: Arial, Sans-Serif;
+    font-size: 20px;
+    text-align: center;
+    line-height: 100%;
+    color: #fff;
+}
+
+.guide-close:hover {
+    -webkit-transform: translate(50%, -50%) rotate(180deg);
+    transform: translate(50%, -50%) rotate(180deg);
+    background: rgba(0, 0, 0, 1);
+    text-decoration: none;
+}
+/* Outer */
+.popup {
+    width: 100%;
+    height: 100%;
+    display: none;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+}
+
+/* Inner */
+.popup-inner {
+    max-width: 900px;
+    height: 880px;
+    width: 100%;
+    /*padding:40px;*/
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 1);
+    border-radius: 8px;
+    background: #fff;
+}
+
+/* Close Button */
+.popup-close {
+    width: 30px;
+    height: 30px;
+    padding-top: 4px;
+    display: inline-block;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    transition: ease 0.25s all;
+    -webkit-transform: translate(50%, -50%);
+    transform: translate(50%, -50%);
+    border-radius: 1000px;
+    background: rgba(0, 0, 0, 0.8);
+    font-family: Arial, Sans-Serif;
+    font-size: 20px;
+    text-align: center;
+    line-height: 100%;
+    color: #fff;
+}
+
+.popup-close:hover {
+    -webkit-transform: translate(50%, -50%) rotate(180deg);
+    transform: translate(50%, -50%) rotate(180deg);
+    background: rgba(0, 0, 0, 1);
+    text-decoration: none;
+}
+
+.loader {
+    display:none;
+    border: 16px solid #f3f3f3;
+    border-top: 16px solid #3498db;
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+    
+input{
+    border-radius: 5px;
+    border:none;
+    background:#d9d9d9;
+}
+
+.topline {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 32px;
+    background: #1a2136;
+    z-index: 999;
+}
+
+.flex_center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flex_start {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.flex_between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.flex_column_center{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.flex_column_start{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.btn{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 9px -4px rgba(0, 0, 0, 0.3), 0 4px 18px 0 rgba(0, 0, 0, 0.2);
+    padding:10px;
+    cursor:pointer;
+    background:#fff;
+    color:#000;
+}
+
+.btn:hover{
+    background:#fff;
+    border:1px solid #CC414D;
+    border-radius: 2px;
+    box-shadow:1px 1px 1px 1px #CC414D;
+    color:#000;
+}
+
+.main_c{
+    margin-top:55px;
+    margin-right:5px;
+    margin-left:5px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.main_c, .main_c_top, .main_c_bottom {
+    /*border:1px solid #000;*/
+}
+
+.main_c_top, .main_c_bottom{
+    width:100%;
+    height:100%;
+}
+
+.main_c_top_1{
+    width:70%;
+}
+.main_c_top_2{
+    background: #fff;
+    width:130%;
+}
+
+.main_c_top_1_1{
+    width:45%;
+}
+.main_c_top_1_2{
+    width:45%;
+}
+.main_c_top_1_1_date,.main_c_top_1_1_info{
+    width:100%;
+}
+
+.main_c_top_1_1_date>div,.main_c_top_1_1_tool>div{
+    width:100%;
+    margin:5px;
+}
+
+.info_input{
+    width:65%;
+}
+
+.info_button{
+    width:30%;
+    position: relative;
+}
+
+.main_c_top_1_1_date div>input{
+    width:105%;
+    height:30px;
+    font-weight: bold;
+    font-size:18px;
+    text-align: center;
+}
+
+.main_c_top_1_1_info div>input{
+    width:100%;
+    height:40px;
+    margin-top:10px;
+    font-size:18px;
+    text-align: center;
+}
+
+.info_btn>div,.info_btn2>div{
+    width:100%;
+    height:90px;
+    margin-top:10px;
+    background:#414141;
+    font-weight: bold;
+    color:#fff;
+}
+
+.info_btn2{
+    z-index:-1;
+    width:100%;
+    display: none;
+   /* position:absolute; */
+   top:auto;
+}
+
+.main_c_top_1_1_tool,.tool_button{
+    width:100%;
+}
+
+.tool_button div{
+    width:100%;
+    margin-top:10px;
+}
+.tool_button div>div{
+    width:100%;
+    height:50px;
+}
+
+.tool_loading_refresh div{
+    width:100%;
+    height:40px;
+    margin-top:20px;
+}
+
+.tool_lading_bar .bar{
+    width:100%;
+    height:50px;
+    margin-top:20px;
+    border:1px solid #a8a8a8;
+}
+
+.main_c_top_1_2{
+    background:#fff;
+    margin-left:15px;
+    font-size:18px;
+    /* border:1px solid #a8a8a8; */
+    border-radius: 10px;
+    padding-bottom:20px;
+}
+
+.main_c_top_1_2>div{
+    margin-top:20px;
+}
+
+.main_c_top_1_2>div>div{
+    margin-right:10px;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main_c_top_2>div{
+    width:100%;
+}
+
+.main_c_top_2>div>div{
+    width:100%;
+    margin:5px;
+}
+
+.product_box{
+    width:100%;
+    height:80px;
+    box-shadow: 0 8px 1px -4px rgba(0, 0, 0, 0.3), 0 4px 18px 0 rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    font-size:16px;
+    overflow-y: scroll;
+}
+
+.product_info{
+    height:30px;
+    font-size:15px;
+}
+
+.product_cnt{
+    font-size:20px;
+    padding-left:3px;
+    padding-right:3px;
+}
+
+.product_item{
+    padding-bottom:3px;
+}
+
+.main_c_bottom_1{
+    width:70%;
+}
+
+.main_c_bottom_2{
+    width:130%;
+    background: #fff;
+}
+
+.main_c_bottom_1_1,.main_c_bottom_1_2{
+    width:100%;
+    
+}
+
+.main_c_bottom_1_1>div,.main_c_bottom_1_2>div{
+    width:93%;
+    border-radius: 5px;
+}
+
+.status_box{
+    box-shadow: 0 8px 1px -4px rgba(0, 0, 0, 0.3), 0 4px 18px 0 rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    background: #fff;
+}
+
+.status_box_buy{
+    height:270px;
+}
+
+.status_box_buy_not{
+    height:210px
+}
+
+.status_box_rent{
+    height:75px;
+}
+
+.status_box_rent_not{
+    height:135px
+}
+
+
+.lookup_title{
+    background:#d9d9d9;
+    color:#000;
+    height:40px;
+    width:120px;
+    border-radius: 5px;
+}
+.lookup_box{
+    width:150px;
+    height:40px;
+    box-shadow: 0 8px 1px -4px rgba(0, 0, 0, 0.3), 0 4px 18px 0 rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+}
+
+.status_title{
+    height:40px;
+    border-radius: 5px;
+}
+
+.total_date{
+    width:97%;
+    /* background:#1a2136; */
+    color:#fff;
+    font-weight: bold;
+    font-size: 20px;
+    height:40px;
+    border-radius: 5px;
+}
+
+.total_item{
+    padding-bottom:3px;
+}
+
+.main_c_bottom_2_1,.main_c_bottom_2_2{
+    width:100%;
+}
+
+.main_c_bottom_2_1>div,.main_c_bottom_2_2>div{
+    width:50%;
+}
+
+.total_box{
+    width:97%;
+    height:175px;
+    box-shadow: 0 8px 1px -4px rgba(0, 0, 0, 0.3), 0 4px 18px 0 rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    overflow-y: scroll;
+}
+
+
+.tool_browser>div{
+    font-size:18px;
+    font-weight: bold;
+    background:#eab7b7;
+}
+
+.tool_browser>div>img{
+    width:12%;
+    padding-right:10px;
+}
+
+.tool_client_up>div{
+    font-size:18px;
+    font-weight: bold;
+    background:#c7e4ff;
+}
+
+.main_c_bottom_1_1 div:nth-child(1) .status_title,.main_c_bottom_1_1 div:nth-child(2) .status_title{
+    background:#599273;
+    color:#fff;
+    font-size:18px;
+}
+.main_c_bottom_1_1 div:nth-child(1) .status_box,.main_c_bottom_1_2 div:nth-child(1) .status_box{
+    margin-bottom:5px;
+}
+
+.main_c_bottom_1_2 div:nth-child(1) .status_title,.main_c_bottom_1_2 div:nth-child(2) .status_title{
+    background:#1a2136;;
+    color:#fff;
+    font-size:18px;
+}
+
+
+.status_box{
+    font-size:18px;
+    overflow-y: scroll;
+}
+
+.guide_exit{
+    position:fixed;
+    top:3%;
+    right:1%;
+    width:70px;
+    height: 35px;
+    background:#ee6464;
+    color:#fff;
+    padding:5px;
+    border-radius: 5px;
+    z-index: 999999;
+    font-weight: bold;
+    text-align: center;
+    font-size:20px;
+    cursor:pointer;
+}
+
+.retry_date{
+    width:80px;
+    text-align: center;
+}
+
+.retry_col{
+    padding:5px;
+}
+
+.quick_search{
+    margin:0px 0px 5px 0px;
+}
+
+.quick_search_input{
+    width:50%;
+    height:35px;
+    font-size:18px;
+    text-align:center;
+}
+
+.quick_search_btn{
+    width:60px;
+    height:35px;
+    box-shadow: 0 8px 1px -4px rgba(0, 0, 0, 0.3), 0 4px 18px 0 rgba(0, 0, 0, 0.2);
+    background:#333;
+    border-radius: 5px;
+    color:#fff;
+    line-height:35px;
+    cursor:pointer;
+}
+
+.quick_search_btn:hover{
+    background:#fff;
+    color:#000;
+}
+
+.quick_search_popup_container{
+    width:100%;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.quick_search_popup_table{
+    font-size:15px;
+}
+
+.quick_search_popup_table tr th,.quick_search_popup_table tr td{
+    padding:10px;
+    text-align:center;
+}
+
+.quick_search_tr:hover{
+    opacity:0.7;
+    background:rgba(231, 231, 231, 0.274);
+    cursor:pointer;
+}
+.print_btn{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    width:120px;
+    height:30px;
+    background:#333;
+    box-shadow: 0 8px 1px -4px rgba(0, 0, 0, 0.3), 0 4px 18px 0 rgba(0, 0, 0, 0.2);
+    color:#fff;
+    border-radius: 5px;
+    margin:10px;
+    font-size:16px;
+}
+
+.print_btn:hover{
+    background:#fff;
+    color:#000;
+    cursor:pointer;
+}
+
+@media (max-width: 600px) {
+    
+}
+
+@media (max-width: 1650px) {
+    .popup-inner{
+        height:600px;
+    } 
+}
+</style>
+
+<body>
+    <div class="loader"></div>
+    <div class="topline mobile"></div>
+    <% if(firstData=="zoa"){%>
+        <%- include('webtopmenu_w') %>
+    <% }else{ %>
+        <%- include('webtopmenu') %>
+    <% } %>
+    <div class="main_c flex_column_center">
+        <div class="main_c_top flex_center">
+            <div class="main_c_top_1 flex_center">
+                <div class="main_c_top_1_1 flex_column_center">
+                    <div class="guide_show" onclick="guide_show()">화면 학습 하기</div>
+                    <div class="print_btn" onclick="print_btn();">화면출력<div class="material-icons">print</div></div>
+                    <div class="quick_search flex_between">수급자검색:<input type="text" class="quick_search_input" placeholder="성함"><div class="quick_search_btn" onclick="quick_search_popup($('.quick_search_input').val());"><div class="material-icons">search</div></div></div>
+                    <div class="main_c_top_1_1_date flex_center">
+                        <div class="date_year">
+                            <input type="number" placeholder="년도">
+                        </div>
+                        <div class="date_mon">
+                            <input type="number" placeholder="월">
+                        </div>
+                        <div class="date_day">
+                            <input type="number" placeholder="일">
+                        </div>
+                    </div>
+                    <div class="main_c_top_1_1_info flex_between">
+                        <div class="info_input">
+                            <div class="info_name">
+                                <input type="text" name="info_name_input" class="info_name_input" placeholder="성함">
+                            </div>
+                            <div class="info_number">
+                                <input type="text" class="info_number_input" placeholder="인정번호">
+                            </div>
+                        </div>
+                        <div class="info_button">
+                            <div class="info_btn" onclick="go_lookup_req($('.info_name_input').val(),$('.info_number_input').val(),$('.date_year input').val()+number_format_zero($('.date_mon input').val())+number_format_zero($('.date_day input').val()));">
+                                <div class="btn info_btn1">조회하기</div>
+                            </div>
+                            <div class="info_btn2 flex_column_center">
+                                <div class="btn flex_column_center">조회중</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="main_c_top_1_1_tool flex_column_center">
+                        <div class="tool_button">
+                            <div class="tool_browser" onclick="chrome_run();">
+                                <div class="btn"><img src="/img/bg_aside.png">공단로그인창</div>
+                            </div>
+                            <div class="tool_client_up" onclick="quick_client_up();">
+                                <div class="btn">수급자등록/주문하기</div>
+                            </div>
+                        </div>
+                        <!-- <div class="tool_loading">
+                            <div class="tool_loading_refresh flex_center">
+                                <div class="btn">자동 새로고침</div>
+                            </div>
+                            <div class="tool_lading_bar">
+                                <div class="bar"></div>
+                            </div>
+                        </div> -->
+                    </div>
+                    <!-- <div class="main_c_top_1_1_info flex_between">
+                        <div class="info_input">
+                            <div class="info_name">
+                                <input type="text" name="info_pcode_input" class="info_pcode_input" placeholder="품목코드">
+                            </div>
+                            <div class="info_number">
+                                <input type="text" class="info_bcode_input" placeholder="바코드">
+                            </div>
+                        </div>
+                        <div class="info_button">
+                            <div class="info_btn" onclick="buyproductchk($('.info_pcode_input').val(),$('.info_bcode_input').val());">
+                                <div class="btn info_btn1">품목<br/>조회하기</div>
+                            </div>
+                            <div class="info_btn2 flex_column_center">
+                                <div class="btn flex_column_center">조회중</div>
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+                <div class="main_c_top_1_2 flex_column_center">
+                    <div class="regident_box flex_start"><div class="lookup_title">생년월일</div><div class="lookup_box regident"></div></div>
+                    <div class="gender_box flex_start"><div class="lookup_title">성별</div><div class="lookup_box gender"></div></div>
+                    <div class="ranker_box flex_start"><div class="lookup_title">인정등급</div><div class="lookup_box ranker"></div></div>
+                    <div class="target_box flex_start"><div class="lookup_title">대상</div><div class="lookup_box target"></div></div>
+                    <div class="sale_box flex_start"><div class="lookup_title">본인부담율</div><div class="lookup_box sale"></div></div>
+                    <div class="money_box flex_start"><div class="lookup_title">사용가능금액</div><div class="lookup_box money"></div></div>
+                    <div class="money_box flex_start"><div class="lookup_title">특이사항</div><div class="lookup_box sisul"></div></div>
+                    <div class="rcgt_box flex_start"><div class="lookup_title">현재유효기간</div><div class="lookup_box rcgt"></div></div>
+
+                </div>
+            </div>
+            <div class="main_c_top_2 flex_column_center">
+                <div class="flex_center">
+                    <div>
+                        <div class="flex_between product_info"><div>이동변기(5년,1개)</div><div class="flex_center">구매수량:&nbsp;&nbsp;<div class="product_cnt">0</div>개</div></div>
+                        <div class="product_box"></div>
+                    </div>
+                    <div>
+                        <div class="flex_between product_info"><div>목욕의자(5년,1개)</div><div class="flex_center">구매수량:&nbsp;&nbsp;<div class="product_cnt">0</div>개</div></div>
+                        <div class="product_box"></div>
+                    </div>
+                    <div>
+                        <div class="flex_between product_info"><div>성인용보행기(5년,2개)</div><div class="flex_center">구매수량:&nbsp;&nbsp;<div class="product_cnt">0</div>개</div></div>
+                        <div class="product_box"></div>
+                    </div>
+                </div>
+                <div class="flex_center">
+                    <div>
+                        <div class="flex_between product_info"><div>욕창예방방석(3년,1개)</div><div class="flex_center">구매수량:&nbsp;&nbsp;<div class="product_cnt">0</div>개</div></div>
+                        <div class="product_box"></div>
+                    </div>
+                    <div>
+                        <div class="flex_between product_info"><div>욕창예방매트리스(3년,1개)</div><div class="flex_center">구매수량:&nbsp;&nbsp;<div class="product_cnt">0</div>개</div></div>
+                        <div class="product_box"></div>
+                    </div>
+                    <div>
+                        <div class="flex_between product_info"><div>지팡이(2년,1개)</div><div class="flex_center">구매수량:&nbsp;&nbsp;<div class="product_cnt">0</div>개</div></div>
+                        <div class="product_box"></div>
+                    </div>
+                </div>
+                <div class="flex_center">
+                    <div>
+                        <div class="flex_between product_info"><div>자세변환용구(1년,5개)</div><div class="flex_center">구매수량:&nbsp;&nbsp;<div class="product_cnt">0</div>개</div></div>
+                        <div class="product_box"></div>
+                    </div>
+                    <div>
+                        <div class="flex_between product_info"><div>간이변기(1년,2개)</div><div class="flex_center">구매수량:&nbsp;&nbsp;<div class="product_cnt">0</div>개</div></div>
+                        <div class="product_box"></div>
+                    </div>
+                    <div>
+                        <div class="flex_between product_info"><div>안전손잡이(1년,10개)</div><div class="flex_center">구매수량:&nbsp;&nbsp;<div class="product_cnt">0</div>개</div></div>
+                        <div class="product_box"></div>
+                    </div>
+                </div>
+                <div class="flex_center">
+                    <div>
+                        <div class="flex_between product_info"><div>요실금팬티(1년,4개)</div><div class="flex_center">구매수량:&nbsp;&nbsp;<div class="product_cnt">0</div>개</div></div>
+                        <div class="product_box"></div>
+                    </div>
+                    <div>
+                        <div class="flex_between product_info"><div>미끄럼방지양말(1년,6개)</div><div class="flex_center">구매수량:&nbsp;&nbsp;<div class="product_cnt">0</div>개</div></div>
+                        <div class="product_box"></div>
+                    </div>
+                    <div>
+                        <div class="flex_between product_info"><div>미끄럼방지매트(1년,5개)</div><div class="flex_center">구매수량:&nbsp;&nbsp;<div class="product_cnt">0</div>개</div></div>
+                        <div class="product_box"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="main_c_bottom flex_center">
+            <div class="main_c_bottom_1 flex_center">
+                <div class="main_c_bottom_1_1 flex_column_center">
+                    <div>
+                        <div class="status_title flex_column_center">구매가능품목</div>
+                        <div class="status_box flex_column_start status_box_buy"></div>
+                    </div>
+                    <div>
+                        <div class="status_title flex_column_center">대여중인품목</div>
+                        <div class="status_box flex_column_start status_box_rent"></div>
+                    </div>
+                    
+                </div>
+                <div class="main_c_bottom_1_2 flex_column_center">
+                    <div>
+                        <div class="status_title flex_column_center">사용불가품목</div>
+                        <div class="status_box flex_column_start status_box_buy_not"></div>
+                    </div>
+                    <div>
+                        <div class="status_title flex_column_center">대여불가품목</div>
+                        <div class="status_box flex_column_start status_box_rent_not"></div>
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="main_c_bottom_2 flex_column_center">
+                
+                <div class="main_c_bottom_2_1 flex_center">
+                    <div class="flex_column_center">
+                        <div class="total_date flex_column_center"></div>
+                        <div class="total_box"></div>
+                    </div>
+                    <div class="flex_column_center">
+                        <div class="total_date flex_column_center"></div>
+                        <div class="total_box"></div>
+                    </div>
+                    <div class="flex_column_center">
+                        <div class="total_date flex_column_center"></div>
+                        <div class="total_box"></div>
+                    </div>
+                    <div class="flex_column_center">
+                        <div class="total_date flex_column_center"></div>
+                        <div class="total_box"></div>
+                    </div>
+                </div>
+                <div class="main_c_bottom_2_2 flex_center">
+                    <div class="flex_column_center">
+                        <div class="total_date flex_column_center"></div>
+                        <div class="total_box"></div>
+                    </div>
+                    <div class="flex_column_center">
+                        <div class="total_date flex_column_center"></div>
+                        <div class="total_box"></div>
+                    </div>
+                    <div class="flex_column_center">
+                        <div class="total_date flex_column_center"></div>
+                        <div class="total_box"></div>
+                    </div>
+                    <div class="flex_column_center">
+                        <div class="total_date flex_column_center"></div>
+                        <div class="total_box"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <a style="display:none;" class="btn" data-popup-open="popup-1" href="#">Open Popup #1</a>
+    <a style="display:none;" class="btn" data-guide-open="guide-1" href="#">Open guide #1</a>
+    <div class="popup" data-popup="popup-1">
+        <div class="popup-inner">
+            <iframe name="clientup" id="clientup" class="clientup" src="//xn--9o7b95g.com/clientup?username=<%=firstData%>" frameborder="0"></iframe>
+            <a class="popup-close" data-popup-close="popup-1" href="#">x</a>
+        </div>
+    </div>
+    <div class="guide" data-guide="guide-1">
+        <div class="guide-inner" style="display:none;">
+            <a class="guide-close" data-guide-close="guide-1" href="#">x</a>
+        </div>
+    </div>
+    <%- include('channeltalk') %>
+  </body>
+  <script>
+
+  </script>
+  </html>

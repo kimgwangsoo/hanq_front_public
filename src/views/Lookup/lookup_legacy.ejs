@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script  src="//code.jquery.com/jquery-latest.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>  
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script src="/socket.io/socket.io.js"></script>
+<link rel="stylesheet" type="text/css" href="/css/guide.css">
+<head>
+    <title><%= title %></title>
+</head>
+<script>
+    function Mobile() {return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);}
+</script>
+<style>
+    .guide_on{
+        background:#333;
+        color:#fff;
+    }
+    video::-webkit-media-controls-fullscreen-button {
+        display: none;
+    }
+
+    video::-internal-media-controls-download-button {
+        display:none;
+    }
+
+    video::-webkit-media-controls {
+        overflow: hidden !important
+    }
+
+    video::-webkit-media-controls-enclosure {
+        width: calc(100% + 32px);
+        margin-left: auto;
+    }
+    @font-face {
+  font-family: 'Source Sans Pro';
+  font-style: normal;
+  font-weight: 200;
+  src: url(https://fonts.gstatic.com/s/sourcesanspro/v21/6xKydSBYKcSV-LCoeQqfX1RYOo3i94_wlxdr.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Source Sans Pro';
+  font-style: normal;
+  font-weight: 300;
+  src: url(https://fonts.gstatic.com/s/sourcesanspro/v21/6xKydSBYKcSV-LCoeQqfX1RYOo3ik4zwlxdr.ttf) format('truetype');
+}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-weight: 300;
+}
+body {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 300;
+}
+.wrapper {
+  background: #f1f1f1;
+  background: linear-gradient(to top right, #fdfdfd 0%, #ffffff 100%);
+  position: absolute;
+  top: 40%;
+  left: 0;
+  width: 100%;
+  height: 800px;
+  margin-top: -600px;
+  overflow: hidden;
+  color: white;
+  z-index:-999;
+}
+.bg-bubbles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+.bg-bubbles li {
+  position: absolute;
+  list-style: none;
+  display: block;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(0, 33, 104, 0.15);
+  bottom: -160px;
+  -webkit-animation: square 25s infinite;
+  animation: square 25s infinite;
+  transition-timing-function: linear;
+}
+.bg-bubbles li:nth-child(1) {
+  left: 10%;
+}
+.bg-bubbles li:nth-child(2) {
+  left: 20%;
+  width: 80px;
+  height: 80px;
+  -webkit-animation-delay: 2s;
+          animation-delay: 2s;
+  -webkit-animation-duration: 17s;
+          animation-duration: 17s;
+}
+.bg-bubbles li:nth-child(3) {
+  left: 25%;
+  -webkit-animation-delay: 4s;
+          animation-delay: 4s;
+}
+.bg-bubbles li:nth-child(4) {
+  left: 40%;
+  width: 60px;
+  height: 60px;
+  -webkit-animation-duration: 22s;
+          animation-duration: 22s;
+  background-color: rgba(0, 0, 0, 0.25);
+}
+.bg-bubbles li:nth-child(5) {
+  left: 70%;
+}
+.bg-bubbles li:nth-child(6) {
+  left: 80%;
+  width: 120px;
+  height: 120px;
+  -webkit-animation-delay: 3s;
+          animation-delay: 3s;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+.bg-bubbles li:nth-child(7) {
+  left: 32%;
+  width: 160px;
+  height: 160px;
+  -webkit-animation-delay: 7s;
+          animation-delay: 7s;
+}
+.bg-bubbles li:nth-child(8) {
+  left: 55%;
+  width: 20px;
+  height: 20px;
+  -webkit-animation-delay: 15s;
+          animation-delay: 15s;
+  -webkit-animation-duration: 40s;
+          animation-duration: 40s;
+}
+.bg-bubbles li:nth-child(9) {
+  left: 25%;
+  width: 10px;
+  height: 10px;
+  -webkit-animation-delay: 2s;
+          animation-delay: 2s;
+  -webkit-animation-duration: 40s;
+          animation-duration: 40s;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+.bg-bubbles li:nth-child(10) {
+  left: 90%;
+  width: 160px;
+  height: 160px;
+  -webkit-animation-delay: 11s;
+          animation-delay: 11s;
+}
+@-webkit-keyframes square {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-800px) rotate(600deg);
+  }
+}
+@keyframes square {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-800px) rotate(600deg);
+  }
+}
+    @font-face { 
+            font-family: 'Material Icons'; 
+            font-style: normal; 
+            font-weight: 400; 
+            src: url(path/to/MaterialIcons-Regular.eot); 
+            /* For IE6-8 */ 
+            src: 
+            local('Material Icons'), 
+            local('MaterialIcons-Regular'), 
+        }
+    .material-icons { 
+            font-family: 'Material Icons'; 
+            font-weight: normal; 
+            font-style: normal; 
+            font-size: 16px; /* Preferred icon size */ 
+            display: inline-block; 
+            line-height: 1; 
+            text-transform: none; 
+            letter-spacing: normal; 
+            word-wrap: normal; 
+            white-space: nowrap; 
+            direction: ltr; /* Support for all WebKit browsers. */ 
+            -webkit-font-smoothing: antialiased; /* Support for Safari and Chrome. */ 
+            text-rendering: optimizeLegibility; /* Support for Firefox. */ 
+            -moz-osx-font-smoothing: grayscale; /* Support for IE. */ 
+            font-feature-settings: 'liga'; }
+    .title {
+        display:flex;
+        align-items: center;
+        font-size:20px;
+        font-weight: bold;
+    }
+    .title span{
+        font-size:30px;
+    }
+    .search-form{
+        display: flex;
+        justify-content: center;
+        padding:20px;
+    }
+    .search-bar{
+        width:250px;
+        border:1px solid #000000;
+        background:#ffffff;
+        border-radius: 5px;
+        height:40px;
+    }
+    .search-button{
+        background:#ffffff;
+        border-radius: 5px;
+        border:2px solid #000000;
+        width:60px;
+        margin-left: 5px;
+    }
+    .search-button:hover{
+        border:2px solid #2e89ff;
+        background:#dcffff;
+        width:60px;
+    }
+    .maincontainer{
+        display:flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width:100%;
+        position: relative;
+        padding-top:50px;
+        padding-left:50px;
+        padding-right:50px;
+        padding-bottom:100px;
+    }
+    /*.maincontainer::before{
+        content : "";
+        display: block;
+        position: absolute;
+        background-size: cover;
+        top: 0;
+        left: 0;
+        background-image: url( "/img3" );
+        width: 100%;
+        height: 100%;
+        opacity : 0.1;
+        z-index: -1;
+    }*/
+    .topmenu{
+        width:100%;
+        font-size:15px;
+    }
+    .topmenu tr td{
+        padding-bottom:15px;
+    }
+    .topmenu tr td:nth-child(1) span{
+        width:100px;
+        padding:10px;
+        border:1px solid #000000;
+        border-radius: 5px;
+        background:#ffffff;
+        font-weight:bold;
+        cursor: pointer;
+    }
+    .topmenu tr td:nth-child(1) span:hover{
+        border:1px solid #2e89ff;
+        background:#dcffff;
+    }
+
+    .topmenu tr td:nth-child(2) span{
+        width:100px;
+        border:1px solid #000000;
+        border-radius: 5px;
+        background:#ffffff;
+        font-weight:bold;
+        text-align: center;
+    }
+    .topmenu tr td:nth-child(2) span:nth-child(2){
+        border:1px solid #006426;
+    }
+    .topmenu tr td:nth-child(2) span:nth-child(3){
+        border:1px solid #0004ee;
+    }
+    .topmenu tr td:nth-child(2) span:nth-child(4){
+        border:1px solid #006426;
+    }
+    .topmenu tr td:nth-child(2) span:nth-child(5){
+        border:1px solid #8d0000;
+    }
+    .topmenu tr td:nth-child(2){
+        display:flex;
+        justify-content:flex-end;
+        font-weight: bold;
+    }
+    .table{
+        border:2px solid #000000;
+    }
+    .table tr{
+        height:40px;
+    }
+    .center td{
+        text-align: center;
+        font-weight:bold;
+    }
+    .table tr:nth-child(1){
+        font-size:20px;
+    }
+    .table tr:nth-child(2){
+        font-size:16px;
+    }
+
+    .pagingnum{
+        border:1px solid #ffffff;
+        padding:5px;
+        border-radius: 4px;
+        background:#ffffff;
+    }
+    .table tr:nth-child(1),.table tr:nth-child(2){
+        border:2px solid #000000;
+        background: #1a2136;
+        color:#ffffff;
+        font-size:15px;
+        font-weight: bold;
+    }
+    .table>tbody>tr>td{
+        padding:6px;
+    }
+
+</style>
+<style>
+    /* Outer */
+.popup {
+	width:100%;
+	height:100%;
+	display:none;
+	position:fixed;
+	top:0px;
+	left:0px;
+	background:rgba(0,0,0,0.3);
+}
+
+/* Inner */
+.popup-inner {
+	max-width:500px;
+    height:600px;
+	width:100%;
+	/*padding:40px;*/
+	position:absolute;
+	top:50%;
+	left:50%;
+	-webkit-transform:translate(-50%, -50%);
+	transform:translate(-50%, -50%);
+	box-shadow:0px 2px 6px rgba(0,0,0,1);
+	border-radius:3px;
+	background:#fff;
+}
+
+/* Close Button */
+.popup-close {
+	width:30px;
+	height:30px;
+	padding-top:4px;
+	display:inline-block;
+	position:absolute;
+	top:0px;
+	right:0px;
+	transition:ease 0.25s all;
+	-webkit-transform:translate(50%, -50%);
+	transform:translate(50%, -50%);
+	border-radius:1000px;
+	background:rgba(0,0,0,0.8);
+	font-family:Arial, Sans-Serif;
+	font-size:20px;
+	text-align:center;
+	line-height:100%;
+	color:#fff;
+}
+
+.popup-close:hover {
+	-webkit-transform:translate(50%, -50%) rotate(180deg);
+	transform:translate(50%, -50%) rotate(180deg);
+	background:rgba(0,0,0,1);
+	text-decoration:none;
+}
+
+
+    /* Outer */
+.popup2 {
+width:100%;
+height:100%;
+display:none;
+position:fixed;
+top:0px;
+left:0px;
+background:rgba(0,0,0,0.3);
+}
+
+/* Inner */
+.popup2-inner {
+	max-width:80%;
+    height:700px;
+	width:100%;
+	/*padding:40px;*/
+	position:absolute;
+	top:50%;
+	left:50%;
+	-webkit-transform:translate(-50%, -50%);
+	transform:translate(-50%, -50%);
+	box-shadow:0px 2px 6px rgba(0,0,0,1);
+	border-radius:3px;
+	background:#fff;
+}
+
+/* Close Button */
+.popup2-close {
+	width:30px;
+	height:30px;
+	padding-top:4px;
+	display:inline-block;
+	position:absolute;
+	top:0px;
+	right:0px;
+	transition:ease 0.25s all;
+	-webkit-transform:translate(50%, -50%);
+	transform:translate(50%, -50%);
+	border-radius:1000px;
+	background:rgba(0,0,0,0.8);
+	font-family:Arial, Sans-Serif;
+	font-size:20px;
+	text-align:center;
+	line-height:100%;
+	color:#fff;
+}
+
+.popup2-close:hover {
+	-webkit-transform:translate(50%, -50%) rotate(180deg);
+	transform:translate(50%, -50%) rotate(180deg);
+	background:rgba(0,0,0,1);
+	text-decoration:none;
+}
+
+
+iframe{
+    width:100%;
+    height:100%;
+}
+
+.uproduct{
+    font-size:12px;
+}
+.flexcol{
+    display:flex;
+    flex-direction: column;
+}
+.datepickerall input{
+    width:100px;
+    height:25px;
+}
+
+.lookup_option{
+    margin:0px 10px 0px 10px;
+    font-weight:bold;
+}
+
+@media (max-width: 1400px) {
+    .popup2-inner{
+        height:600px;
+    }
+}
+
+@media (max-width: 600px) {
+        body{
+            font-size:10px;
+        }
+        .popup2-inner{
+            max-width:350px;
+            height:500px;
+        }
+        .maincontainer{
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-top:55px;
+        }
+        .title{
+            font-size:15px;
+        }
+        .search-form input:nth-child(1){
+            width:150px;
+        }
+        .topmenu{
+            font-size:10px;
+            text-align: center;
+        }
+        .table tr:nth-child(2){
+        font-size:10px;
+        }
+        .table tr:nth-child(2) td:nth-child(2){
+            width:20%;
+        }
+    }
+@media (max-width: 300px) {
+        .search-form input:nth-child(1){
+            width:100px;
+        }
+    }
+    .topline{
+        position: fixed;
+        top:0;
+        width:100%;
+        height:32px;
+        background: #122459;
+        z-index: 999;
+    }
+</style>
+
+<%- include('alert2') %>
+<%- include('webtopmenu') %>
+<script>
+    var uid2 = '<%=uid2%>';
+    // socket.on('go_lookup_res', function(data) {
+    //     location.reload();
+    // });
+    function datepicker(){
+        $.datepicker.setDefaults({
+            dateFormat: 'yy-mm-dd',
+            prevText: '이전 달',
+            nextText: '다음 달',
+            monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+            monthNamesShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+            dayNames: ['일', '월', '화', '수', '목', '금', '토'],
+            dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
+            dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
+            showMonthAfterYear: true,
+            yearSuffix: '년'
+        });
+        $( "#datepicker" ).datepicker({
+            changeMonth: true,
+            changeYear: true
+        });
+        $( "#datepicker2" ).datepicker({
+            changeMonth: true,
+            changeYear: true
+        });
+        $( "#datepicker,#datepicker2" ).datepicker( "option", "showAnim", "slide" );
+    }
+    
+    var managerlist = '';
+    
+    $(document).ready(function () {
+        var tr_length = $('.table tr td').length;
+        var tab_td = $('.table tr td');//tb 테이블의 td들 불러오기
+        for (var i = 0; i < tr_length; i++) {
+            var td2 = tab_td.eq(i).text();
+            if(td2=="일반") $(".table tr td:eq("+i+")").parent().addClass('success');
+            if(td2=="의료급여") $(".table tr td:eq("+i+")").parent().addClass('info');
+            if(td2=="감경") $(".table tr td:eq("+i+")").parent().addClass('warning');
+            if(td2=="기초") $(".table tr td:eq("+i+")").parent().addClass('danger');
+        
+        }
+        var tr_length = $('.table tr td').length;
+        var tab_td = $('.table tr td');//tb 테이블의 td들 불러오기
+        $(tab_td).click(function(){
+            if($(this).parent().hasClass('tablemenu')!=1){
+                window.frames['clientmodify'].location.reload();
+                $('.clientmodify').attr('src',"//localhost:802/lookupclick?uid=<%=username%>&username="+uid2+"&chk=program&number="+$(this).parent().children('td:eq(2)').text()+"&date="+$(this).parent().children('td:eq(-1)').text()+"&company=<%=company.replace(/#/g,'%23')%>"+"&key="+$(this).parent().data('key'));
+                window.frames['clientmodify'].src="//localhost:802/lookupclick?uid=<%=username%>&username="+uid2+"&chk=program&number="+$(this).parent().children('td:eq(2)').text()+"&date="+$(this).parent().children('td:eq(-1)').text()+"&company=<%=company.replace(/#/g,'%23')%>"+"&key="+$(this).parent().data('key');
+
+                var targeted_popup_class = $('[data-popup-open2]').attr('data-popup-open2');
+                $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+                //e.preventDefault();
+            }
+        });
+        $(tab_td).hover(function(){
+            if($(this).parent().hasClass('tablemenu')!=1)$(this).parent().css({'border':'2px solid #000000',"cursor":"pointer","opacity":"0.5"});
+                }, function() {
+                    if($(this).parent().hasClass('tablemenu')!=1)$(this).parent().css({'border':'1px solid #bebebe',"opacity":"1"});
+            });
+        for (var i = 0; i < tr_length; i++) {
+            var td2 = tab_td.eq(i);
+        }
+    
+        $(".table").hide();
+        $(".table").fadeIn(500);
+        var pagen='<%=page%>';
+        $(".pagingnum").eq(pagen-1).css("background","#000000");
+
+        $(".clientup span").click(function(){
+            window.frames['clientup'].location.reload();
+            var targeted_popup_class = $('[data-popup-open]').attr('data-popup-open');
+            $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+            e.preventDefault();
+        });
+
+
+        $(function() {
+            //----- OPEN
+            $('[data-popup-open]').on('click', function(e) {
+                var targeted_popup_class = jQuery(this).attr('data-popup-open');
+                $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+
+                e.preventDefault();
+            });
+
+            //----- CLOSE
+            $('[data-popup-close]').on('click', function(e) {
+                var targeted_popup_class = jQuery(this).attr('data-popup-close');
+                $('[data-popup="' + targeted_popup_class + '"]').fadeOut(350);
+
+                e.preventDefault();
+            });
+        });
+        if($(".sisulchk").text()=="시설입소") $(".sisulchk").css("color","#ff0000");
+
+
+        if(Mobile()==true){
+            $('.mobile').css("display","none");
+            $('.pc').css("display","");
+        }else{
+            $('.pc').css("display","none");
+            $('.mobile').css("display","");
+        }
+
+        $('.search-button2').click(function(){
+            history.go(0);
+        });
+
+        $.ajax({
+            url:'/companymanager',
+            data:'company=<%=company%>',
+            type: 'POST',
+            dataType: "JSON",
+            success: function (result) {
+                if(result.code==200){
+                    managerlist = result.data;
+                    console.log(managerlist);
+                }
+            }
+        });
+
+        lookup('');
+
+    });
+
+    function priceToString(price) {
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+    // var socket = io();
+
+    // function detailsearch(){
+    //     var str = '';
+    //     $.each(managerlist, function(i){
+    //         str+='<option value="'+managerlist[i].id+'">'+managerlist[i].name+'</option>';
+    //     });
+    //     const { value: formValues } = Swal.fire({
+    //     title: '상세검색',
+    //     width:'370px',
+    //     html:
+    //         '<form class="detailsearch" action="//localhost:802/lookup/1/'+uid+'" method="get">'+
+    //         '<div class="flexcol">'+
+    //             '<div class="flex"><span style="width:160px; font-weight:bold; font-size:15px;">조회담당자&nbsp;&nbsp;&nbsp;</span><select id="swal-input1" class="swal2-input" name="companychk"><option value="all">전체</option>'+str+'</select></div>'+
+    //             '<div class="flex"><span style="width:160px; font-weight:bold; font-size:15px;">조회날짜&nbsp;&nbsp;&nbsp;</span><span class="datepickerall"><input type="text" name="datepicker" id="datepicker"></span>~<span class="datepickerall"><input type="text" name="datepicker2" id="datepicker2"></span></div>'+
+    //         '</div>'+
+    //         '</form>',
+    //     focusConfirm: false,
+    //     showCancelButton: true,
+    //     confirmButtonColor: '#3085d6',
+    //     cancelButtonColor: '#d33',
+    //     confirmButtonText: '검색',
+    //     cancelButtonText: '취소',
+    //     didOpen: () => {
+    //         $('.swal2-input').val(uid2).prop("selected",true);
+    //         datepicker();
+    //     },
+    //     }).then((result) => {
+    //         if (result.isConfirmed) {
+    //             $('.detailsearch').submit();
+    //         }
+    //     });
+    //     //$( '.searchdetail' ).toggle( 'slow' );
+    // }
+
+    var guide_chk = 0;
+    var guide_interval = '';
+
+    async function lookup(query){
+        let all_option_chk = document.querySelector('.lookup_option_chkbox').checked;
+        console.log("all",all_option_chk);
+        if(all_option_chk==true)uid2 = 'all'; else uid2 ='<%=uid2%>';
+        $.ajax({
+            url:"/lookup",
+            data:"username=<%=username%>&query="+query+'&company=<%=company%>&alloptionchk='+all_option_chk,
+            type:'POST',
+            dataType:"JSON",
+            async:0,
+            success:function(results){
+                let lookup_tr = '';
+                $(".lookup_tr").remove();
+                $.each(results.rows, function(i){
+                    var trcolor = 'success';
+                    if(results.rows[i].target.replace(/[a-z0-9]|[ \[\]{}()<>?|`~!@#$%^&*-_+=,.;:\"'\\]/g,'')=='감경'){
+                        trcolor = 'warning';
+                    }
+                    if(results.rows[i].target.replace(/[a-z0-9]|[ \[\]{}()<>?|`~!@#$%^&*-_+=,.;:\"'\\]/g,'')=='기초'){
+                        trcolor = 'danger';
+                    }
+                    if(results.rows[i].target.replace(/[a-z0-9]|[ \[\]{}()<>?|`~!@#$%^&*-_+=,.;:\"'\\]/g,'')=='의료급여'){
+                        trcolor = 'info';
+                    }
+                    lookup_tr+=`<tr class="active center lookup_tr `+trcolor+`" data-key='${results.rows[i].num}'>
+                        <td>`+(i+1)+`</td>
+                        <td>`+results.rows[i].name+`</td>
+                        <td>`+results.rows[i].number+`</td>
+                        <td>`+results.rows[i].regident.replace(/(\-)/g,'').substr(2, 6).slice(0, 2)+`****</td>
+                        <td>`+results.rows[i].target.replace('.0','')+`</td>
+                        <td class="mobile">`+results.rows[i].ranker.replace('등급','')+`</td>
+                        <td class="mobile">`+parseInt(results.rows[i].money).toLocaleString()+`원</td>
+                        <td class="uproduct mobile">`+results.rows[i].uproduct.replace(/(\(|\)|\')/g,'')+`</td>
+                        <td class="mobile">`+results.rows[i].rproduct.replace(/(\(|\)|\')/g,'')+`</td>
+                        <td class="sisulchk mobile">`+results.rows[i].sisulchk+`</td>
+                        <td>`+results.rows[i].date+`</td>
+                    </tr>`;
+                });
+
+                $(".lookup_table").append(lookup_tr);
+                $(".lookup_tr").hide();
+                $(".lookup_tr").fadeIn(100);
+                $(".lookup_len").text(results.rowslen);
+                var tr_length = $('.table tr td').length;
+                var tab_td = $('.table tr td');//tb 테이블의 td들 불러오기
+                $(tab_td).click(function(){
+                    console.log(guide_chk)
+                    
+                    if($(this).parent().hasClass('tablemenu')!=1){
+                        window.frames['clientmodify'].location.reload();
+                        $('.clientmodify').attr('src',"//localhost:802/lookupclick?uid=<%=username%>&username="+uid2+"&chk=program&number="+$(this).parent().children('td:eq(2)').text()+"&date="+$(this).parent().children('td:eq(-1)').text()+"&company=<%=company%>"+"&key="+$(this).parent().data('key'));
+                        window.frames['clientmodify'].src="//localhost:802/lookupclick?uid=<%=username%>&username="+uid2+"&chk=program&number="+$(this).parent().children('td:eq(2)').text()+"&date="+$(this).parent().children('td:eq(-1)').text()+"&company=<%=company%>"+"&key="+$(this).parent().data('key');
+
+                        var targeted_popup_class = $('[data-popup-open2]').attr('data-popup-open2');
+                        $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+                        document.getElementById('clientmodify').onload = async function() {
+                            if(guide_chk==1){
+                                guide_on_relookup_1();
+                            }else if(guide_chk==2){
+                                guide_on_clientup_1();
+                            }else if(guide_chk==3){
+                                guide_on_product_lookup_1();
+                            }
+                        }
+                        //e.preventDefault();
+                    }
+                });
+                $(tab_td).hover(function(){
+                    if($(this).parent().hasClass('tablemenu')!=1)$(this).parent().css({'border':'2px solid #000000',"cursor":"pointer","opacity":"0.5"});
+                }, function() {
+                    if($(this).parent().hasClass('tablemenu')!=1)$(this).parent().css({'border':'1px solid #bebebe',"opacity":"1"});
+                });
+                if(Mobile()==true){
+                    $('.mobile').css("display","none");
+                    $('.pc').css("display","");
+                }else{
+                    $('.pc').css("display","none");
+                    $('.mobile').css("display","");
+                }
+                return 0
+            }
+        });
+    }
+
+    function enterkey(x) {
+        if (window.event.keyCode == 13) {
+            lookup($(x).val());
+        }
+    }
+
+    function guide_toggle_on(x){
+        guide_interval = setInterval(function() {
+            x.fadeTo(500, 0.2,function(){
+                $(x).css({"opacity":1});
+            }).fadeTo(500, 1);
+        }, 1000);
+    }
+
+    async function guide_toggle_off(guide_interval){
+        await clearInterval(guide_interval);
+    }
+
+    function guide_on_click(obj){
+        $(obj).addClass("guide_on");
+        $('.guide_swal_button').not($(obj)).removeClass("guide_on");
+        
+    }
+
+    function video_sign_url_get(video_name){
+        $('.lookup_video').remove();
+        let str = `
+            <video class="lookup_video ${video_name}" width="1250px" height="800px;" controls>
+        `;
+        fetch('/S3GetVideo?directory=LookupVideo&bucketname=hanq&name='+video_name+'&type=webm') // 서버에서 서명된 URL을 가져오는 엔드포인트로 수정해야 합니다.
+        .then(response => response.text())
+        .then(url => {
+            console.log(url)
+            str+=`<source id='MainLookup_video1' class="Lookup_video1" src="${url}" type="video/webm">`;
+            str+=`
+                </video>
+            `;
+            $('.video_area').append(str);
+        })
+        .catch(error => console.error('Error fetching signed URL:', error));
+    }
+
+    function guide_show(){
+        Swal.fire({
+            width:"75%",
+            icon: 'info',
+            title: '화면 학습 선택',
+            html: `
+            <div class="guide_swal">
+                <div class="guide_swal_button guide_on" onclick="guide_on_relookup(this,"Lookup_video1")">1.최근조회기록화면 설명</div>
+                <!--div class="guide_swal_button" onclick="guide_on_clientup()">2.수급자등록</div-->
+                <!--div class="guide_swal_button" onclick="guide_on_product_lookup()">3.업체조회</div-->
+            </div>
+            <br/>
+            <div class="video_area">
+                
+            </div>
+            `,
+            showConfirmButton:false,
+            didOpen:()=>{
+                video_sign_url_get("Lookup_video1");
+            }
+        });
+    }
+
+    function guide_on_relookup(){
+        video_sign_url_get(video_name);
+        guide_on_click(obj);
+        // 아래 주석 풀면 이전상태로
+        // Swal.close();
+        // guide_chk = 1;
+        // var targeted_guide_class = $('[data-guide-open]').attr('data-guide-open');
+        // $('[data-guide="' + targeted_guide_class + '"]').fadeIn(350);
+        // $('.lookup_table').css({"position":"relative","z-index":"9999999"});
+        // $('body').append("<div class='guide_txt' style='top:10%'><div class='guide_txt_inner'><div>재조회 진행 수급자의 내역을 클릭해주세요.</div></div></div>");
+    }
+
+    function guide_on_relookup_1(){
+        $('.guide_txt').remove();
+        var targeted_guide_class = $('[data-guide-open]').attr('data-guide-open');
+        $('[data-guide="' + targeted_guide_class + '"]').fadeOut(350);
+        $('.lookup_table').css({"position":"relative","z-index":"0"});
+        $('body').append("<div class='guide_txt' style='top:33%'><div class='guide_txt_inner'><div>조회내역 상세내역 창의 '재조회' 버튼을 클릭해주세요.</div></div></div>");
+        
+        var targeted_guide_class = window.frames['clientmodify'].$('[data-guide-open]').attr('data-guide-open');
+        window.frames['clientmodify'].$('[data-guide="' + targeted_guide_class + '"]').fadeIn(350);
+        window.frames['clientmodify'].$('.relookup').eq(0).css({"position":"relative","z-index":"9999999","background":"#fff"});
+        guide_toggle_on(window.frames['clientmodify'].$('.relookup').eq(0));
+    
+    }
+
+    function guide_on_relookup_2(){
+        guide_chk = 0;
+        $('.guide_txt').remove();
+        window.frames['clientmodify'].$('.relookup').eq(0).css({"position":"relative","z-index":"0"});
+        var targeted_guide_class = window.frames['clientmodify'].$('[data-guide-open]').attr('data-guide-open');
+        window.frames['clientmodify'].$('[data-guide="' + targeted_guide_class + '"]').fadeOut(350);
+        guide_toggle_off(guide_interval);
+    }
+
+    function guide_on_clientup(){
+        Swal.close();
+        guide_chk = 2;
+        let targeted_guide_class2 = $('[data-guide-open]').attr('data-guide-open');
+        $('[data-guide="' + targeted_guide_class2 + '"]').fadeIn(350);
+        $('.lookup_table').css({"position":"relative","z-index":"9999999"});
+        $('body').append("<div class='guide_txt' style='top:10%'><div class='guide_txt_inner'><div>등록하실 수급자의 조회내역을 클릭해주세요.</div></div></div>");
+    }
+
+    function guide_on_clientup_1(){
+        $('.guide_txt').remove();
+        let targeted_guide_class2 = $('[data-guide-open]').attr('data-guide-open');
+        $('[data-guide="' + targeted_guide_class2 + '"]').fadeOut(350);
+        $('.lookup_table').css({"position":"relative","z-index":"0"});
+        $('body').append("<div class='guide_txt' style='top:33%'><div class='guide_txt_inner'><div>조회내역 상세내역 창의 '수급자등록' 버튼을 클릭해주세요.</div></div></div>");
+        
+        let targeted_guide_class = window.frames['clientmodify'].$('[data-guide-open]').attr('data-guide-open');
+        window.frames['clientmodify'].$('[data-guide="' + targeted_guide_class + '"]').fadeIn(350);
+        window.frames['clientmodify'].$('.relookup').eq(1).css({"position":"relative","z-index":"9999999","background":"#fff"});
+        guide_toggle_on(window.frames['clientmodify'].$('.relookup').eq(1));
+        
+    }
+
+    function guide_on_clientup_2(){
+        window.frames['clientmodify'].$('.relookup').eq(1).css({"position":"relative","z-index":"0"});
+        let targeted_guide_class = window.frames['clientmodify'].$('[data-guide-open]').attr('data-guide-open');
+        window.frames['clientmodify'].$('[data-guide="' + targeted_guide_class + '"]').fadeOut(350);
+        guide_toggle_off(guide_interval);
+        guide_chk = 0;
+        $('.guide_txt').remove();
+        $('.lookup_table').css({"position":"relative","z-index":"0"});
+    }
+
+    function guide_on_product_lookup(){
+        Swal.close();
+        guide_chk = 3;
+        let targeted_guide_class = $('[data-guide-open]').attr('data-guide-open');
+        $('[data-guide="' + targeted_guide_class + '"]').fadeIn(350);
+        $('.lookup_table').css({"position":"relative","z-index":"9999999"});
+        $('body').append("<div class='guide_txt' style='top:10%'><div class='guide_txt_inner'><div>계약된 품목의 계약업체정보를 조회할 수급자의 조회내역을 클릭해주세요.</div></div></div>");
+    }
+
+    function guide_on_product_lookup_1(){
+        $('.guide_txt').remove();
+        let targeted_guide_class = $('[data-guide-open]').attr('data-guide-open');
+        $('[data-guide="' + targeted_guide_class + '"]').fadeOut(350);
+        $('.lookup_table').css({"position":"relative","z-index":"0"});
+        $('body').append("<div class='guide_txt' style='top:20%'><div class='guide_txt_inner'><div>품목별 적용구간 내 계약이력이 표시됩니다.</div><div class='guide_next' onclick='guide_on_product_lookup_2()'>다음></div></div></div>");
+       
+        let targeted_guide_class2 = window.frames['clientmodify'].$('[data-guide-open]').attr('data-guide-open');
+        window.frames['clientmodify'].$('[data-guide="' + targeted_guide_class2 + '"]').fadeIn(350);
+        window.frames['clientmodify'].$('.maincontainer3').css({"position":"relative","z-index":"9999999","background":"#fff"});
+    
+    }
+
+    function guide_on_product_lookup_2(){
+        $('.guide_txt').remove();
+        window.frames['clientmodify'].$('.maincontainer3').css({"position":"relative","z-index":""});
+        if(window.frames['clientmodify'].$('.product_lookup').length>0){
+            window.frames['clientmodify'].$('.product_lookup').eq(0).css({"position":"relative","z-index":"9999999"});
+            guide_toggle_on(window.frames['clientmodify'].$('.product_lookup').eq(0));
+            $('body').append("<div class='guide_txt' style='top:20%'><div class='guide_txt_inner'><div>'업체조회'버튼을 클릭해주세요.</div></div></div>");
+        }else{
+            Swal.fire({
+                icon: 'warning',
+                title: '계약이력이 없습니다',
+                text: '계약이력이 있는 수급자를 선택해주세요',
+            });
+            guide_on_product_lookup_3();
+            
+        }
+        
+    }
+
+    function guide_on_product_lookup_3(){
+        guide_chk = 0;
+        guide_toggle_off(guide_interval);
+        $('.guide_txt').remove();
+        window.frames['clientmodify'].$('.relookup').eq(1).css({"position":"relative","z-index":"0"});
+        let targeted_guide_class = window.frames['clientmodify'].$('[data-guide-open]').attr('data-guide-open');
+        window.frames['clientmodify'].$('[data-guide="' + targeted_guide_class + '"]').fadeOut(350);        
+    }
+
+    
+</script>
+<body>
+    <div style="display:none;" class="wrapper">
+        <ul class="bg-bubbles">
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+</div>
+<!-- <div class="topline mobile"></div> -->
+    <div class="pc" style="display:none;">
+        <%- include('mobilemenu') %>
+    </div>
+<a style="display:none;" class="btn" data-popup-open="popup-1" href="#">Open Popup #1</a>
+<a style="display:none;" class="btn" data-popup-open2="popup-2" href="#">Open Popup #1</a>
+<div class="maincontainer">
+    <div class="guide_show mobile" onclick="guide_show()">화면 학습 하기</div>
+    <h1 class="title"><span class="material-icons">history</span>&nbsp;&nbsp;&nbsp;&nbsp;<%= title %></h1>
+    <span class="material-icons" style="font-weight:bold; font-size:13px; display:none;">warning 전날 조회내역까지만 노출됩니다</span>
+    <div class="search-form">
+        <input type="text" class="search-bar" name="query" placeholder=" 검색어를 입력하세요." onkeyup="enterkey(this);">
+        <input type="submit" class="search-button material-icons" value="search" onclick="lookup($('.search-bar').val());" >
+        <div class="lookup_option" style="display:flex; align-items: center;">
+            <div style="font-weight:bold;">전체 담당자</div>&nbsp;&nbsp;&nbsp;<input type="checkbox" class="lookup_option_chkbox" style="width:25px; height:25px;">
+        </div>
+        <!-- <input type="button" class="search-button material-icons search-detail-button" value="manage_search" onclick="detailsearch()"> -->
+    </div>
+    <table class="topmenu">
+        <tr>
+            <td class="clientup" style="display:none;"><span>수급자등록하기</span></td>
+            <td>조회 회수:&nbsp;&nbsp;<span class="lookup_len"><%=rows.length %>명</span></td>
+        </tr>
+    </table>
+    <table class="table table-bordered lookup_table">
+        <tr style="display:none;" class="tablemenu">
+            <td colspan="20">
+                <%
+                for(var j = 0; j < rows.length / page_num; j++){
+                %>
+                <a class="pagingnum" href="//localhost:802/page/<%= j + 1 %>/<%= username%>"><%= j + 1 %></a>
+                <%
+                }
+                %>
+            </td>
+        </tr>
+        <tr class="center tablemenu">
+            <td>번호</td>
+            <td>수급자성함</td>
+            <td>인정번호</td>
+            <td>생년월일</td>
+            <td>대상</td>
+            <td class="mobile">등급</td>
+            <td class="mobile">사용가능금액</td>
+            <td width="40%" class="mobile">구매가능품목</td>
+            <td class="mobile">대여중인품목</td>
+            <td class="mobile">시설이용유무</td>
+            <td>일자</td>
+        </tr>
+        <%
+        for(var i = (page * page_num) - page_num; i < (page * page_num); i++) {
+        if(i > length){
+            i++;
+        }else{
+            if(rows.length>0){
+                var data = rows[i];
+                var trcolor = 'success';
+                if(data.target.replace(/[a-z0-9]|[ \[\]{}()<>?|`~!@#$%^&*-_+=,.;:\"'\\]/g,'')=='감경'){
+                    trcolor = 'warning';
+                }
+                if(data.target.replace(/[a-z0-9]|[ \[\]{}()<>?|`~!@#$%^&*-_+=,.;:\"'\\]/g,'')=='기초'){
+                    trcolor = 'danger';
+                }
+                if(data.target.replace(/[a-z0-9]|[ \[\]{}()<>?|`~!@#$%^&*-_+=,.;:\"'\\]/g,'')=='의료급여'){
+                    trcolor = 'info';
+                }
+        %>
+        <tr class="active center <%=trcolor%> lookup_tr">
+            <td><%= i + 1 %></td>
+            <td><%= data.name %></td>
+            <td><%= data.number %></td>
+            <td><%= data.regident.replace(/(\-)/g,'').substr(2, 6); %></td>
+            <td><%= data.target.replace('.0',''); %></td>
+            <td class="mobile"><%= data.ranker.replace('등급',''); %></td>
+            <td class="mobile"><%= parseInt(data.money).toLocaleString(); %>원</td>
+            <td class="uproduct mobile"><%= data.uproduct.replace(/(\(|\)|\')/g,''); %></td>
+            <td class="mobile"><%= data.rproduct.replace(/(\(|\)|\')/g,''); %></td>
+            <td class="sisulchk mobile"><%= data.sisulchk %></td>
+            <td><%= data.date %></td>
+        </tr>
+        <% }else{
+            %>
+            <tr class="tablemenu lookup_tr">
+                <td colspan="11" style="text-align:center; font-weight:bold; font-size:20px;">조회내역이 없습니다</td>
+            </tr>
+            <%
+        }
+        }
+        }
+        %>
+    </table>
+</div>
+<div class="popup" data-popup="popup-1">
+	<div class="popup-inner">
+        <iframe name="clientup" src="//localhost:802/clientup?username=<%=username%>" frameborder="0"></iframe>
+		<a class="popup-close" data-popup-close="popup-1" href="#">x</a>
+	</div>
+</div>
+<div class="popup2" data-popup="popup-2">
+	<div class="popup2-inner">
+        <iframe class='clientmodify' id="clientmodify" name="clientmodify" src="" frameborder="0"></iframe>
+		<a class="popup2-close" data-popup-close="popup-2" href="#">x</a>
+	</div>
+</div>
+
+<a style="display:none;" class="btn" data-guide-open="guide-1" href="#">Open guide #1</a>
+
+<div class="guide" data-guide="guide-1">
+    <div class="guide-inner" style="display:none;">
+        <a class="guide-close" data-guide-close="guide-1" href="#">x</a>
+    </div>
+</div>
+
+<div class="pc">
+    <%- include('mobilefoot') %>
+</div>
+</body>
+</html>

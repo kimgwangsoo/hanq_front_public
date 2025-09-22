@@ -1,0 +1,2606 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+	<meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1,width=device-width">
+    <title></title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+    <script src="//code.jquery.com/jquery-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/1.5.3/signature_pad.min.js"></script>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <!-- <script src="/html2canvas.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> -->
+    <script src="/axios/dist/axios.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
+    <script src="https://cdn.rawgit.com/eligrey/FileSaver.js/5ed507ef8aa53d8ecfea96d96bc7214cd2476fd2/FileSaver.min.js"></script> 
+    <!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
+</head>
+<style>
+    .background{
+        width:100%;
+        position: relative;
+        border: 2px solid #6a6b70;
+    }
+    /*
+    .background::after{
+        content : "";
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-image: url( "/img2" );
+        width: 100%;
+        height: 100%;
+        opacity : 0.4;
+        z-index: -1;
+    }
+    */
+    @font-face { 
+        font-family: 'Material Icons'; 
+        font-style: normal; 
+        font-weight: 400; 
+        src: url(path/to/MaterialIcons-Regular.eot); 
+        /* For IE6-8 */ 
+        src: 
+        local('Material Icons'), 
+        local('MaterialIcons-Regular'), 
+    }
+    .material-icons { 
+        font-family: 'Material Icons'; 
+        font-weight: normal; 
+        font-style: normal; 
+        font-size: 24px; /* Preferred icon size */ 
+        display: inline-block; 
+        line-height: 1; 
+        text-transform: none; 
+        letter-spacing: normal; 
+        word-wrap: normal; 
+        white-space: nowrap; 
+        direction: ltr; /* Support for all WebKit browsers. */ 
+        -webkit-font-smoothing: antialiased; /* Support for Safari and Chrome. */ 
+        text-rendering: optimizeLegibility; /* Support for Firefox. */ 
+        -moz-osx-font-smoothing: grayscale; /* Support for IE. */ 
+        font-feature-settings: 'liga'; 
+    }
+    .title{
+        width:100%;
+        display:flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding-bottom:30px;
+    }
+
+    table tr td{
+        border-radius: 3px;
+    }
+        
+    .maincontainer{
+        width:100%;
+        display:flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding-bottom:25px;
+        font-weight: bold;
+    }
+    .maincontainer .table1{
+        color:#000000;
+    }
+    .maincontainer .table1 tr td{
+        width:120px;
+        height:20px;
+        border-radius: 3px;
+    }
+
+    .maincontainer .table1 tr td input{
+        height:25px;
+        width:450px;
+        color:#000000;
+    }
+
+    .maincontainer .table1 tr td input[type=button]{
+        background:#ffffff;
+        height:40px;
+        margin:5px;
+        border:1px solid #000000;
+        border-radius: 3px;
+        box-shadow:1px 1px 1px 1px #000000;
+        font-size:17px;
+        font-weight:bold;
+        cursor:pointer;
+    }
+
+    .maincontainer .table1 tr td input[type=button]:hover{
+        background:linear-gradient( right, #89ecfd, #4f9bff, #a9d2eb );
+        border:1px solid #CC414D;
+        border-radius: 2px;
+        box-shadow:1px 1px 1px 1px #212f6e;
+    }
+    .maincontainer .table1 tr td select{
+        height:40px;
+        width:450px;
+    }
+    .maincontainer .table1 tr td:nth-child(1){
+        text-align: center;
+        background:#1a2136;
+        border:1px solid #ffffff;
+        border-radius: 2px;
+        width:150px;
+        font-size:13px;
+        color:#fff;
+    }
+    .maincontainer .table1 tr td:nth-child(2){
+        /*background: linear-gradient( 45deg, #ffffff, #ffffff, #ffffff );*/
+        text-align: center;
+    }
+
+    .signbox{
+        display:none;
+    }
+
+    #signature { 
+        background:#ffffff;
+        border:1px solid #000; 
+    }
+    #save, #clear { 
+        padding:5px 20px; border:0; color:rgb(255, 255, 255); background:#000; margin-top:5px; 
+    }
+
+    #submit,#submit2,#bsubmit,#submitorder{
+        background:#ffffff;
+        height:28px;
+        margin:5px;
+        border:1px solid #000000;
+        border-radius: 3px;
+        box-shadow:1px 1px 1px 1px #000000;
+        font-size:30px;
+        cursor:pointer;
+    }
+    #submit:hover,#submit2:hover,#bsubmit:hover,#submitorder:hover{
+        border:1px solid #CC414D;
+    }
+    .titletarget select{
+        height:40px;
+        width:450px;
+        border:2px solid rgb(23, 0, 87);
+        font-weight: bold;
+        font-size:20px;
+        text-align:center;
+        text-align-last: center;
+        -ms-text-align-last: center;
+        -moz-text-align-last: center;
+    }
+    .flex{
+        width:100%;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+    }
+    .flexc{
+        width:100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .flexaround{
+        width:100%;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+    }
+    .reqeustmemo{
+        width:450px;
+    }
+    .toptab div{
+        width:100%;
+        height:50px;
+        border:1px solid #000;
+        cursor:pointer;
+    }
+    .toptab div:hover{
+        background:#1a2136;
+        color:#fff;
+        opacity: 0.6;
+    }
+    .on{
+        background:#1a2136;
+        color:#fff;
+    }
+    .off{
+        background:#e4e4e4;
+        color:#000;
+    }
+    .flexcolumn{
+        display:flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .zerostatetable{
+        
+        margin-bottom:30px;
+    }
+    .zerostatetable tr td{
+        text-align: center;
+
+    }
+    .zerostatetable tr:nth-child(1) td{
+        height:30px;
+        background:#1a2136;
+        border:1px solid #ffffff;
+        border-radius: 2px;
+        width:150px;
+        font-size:13px;
+        color:#fff;
+    }
+    .zerostatetable .zerodatatd{
+        height:30px;
+        background:#42a369;
+        color:#fff;
+    }
+    .zerostatetable caption{
+        font-size:20px;
+    }
+    #submit, #bsubmit, #submit2, #submitorder{
+        width:350px;
+    }
+    .cmsdelete{
+        background:#c94242; color:#fff; cursor:pointer;
+    }
+    .cmsdelete:hover{
+        background:#fff;
+        color:#000;
+    }
+    .need_area{
+        width:80%;
+        
+    }
+    .need_write_btn{
+        display:flex;
+        align-items: center;
+        justify-content: center;
+        cursor:pointer;
+        border-radius: 5px;
+        font-weight: bold;
+        width: 150px;
+        
+        height: 40px;
+        background: #fff;
+        color:#000;
+        box-shadow: 0 8px 9px -4px rgb(59 113 202 / 30%), 0 4px 18px 0 rgb(59 113 202 / 20%);
+    }
+
+    .need_write_btn:hover{
+        box-shadow: 0 8px 9px -4px rgba(5, 20, 46, 0.3), 0 4px 18px 0 rgba(1, 13, 31, 0.2);
+        opacity:0.8;
+    }
+
+    .need_tr{
+        border:1px solid #000;
+        border-radius: 5px;
+    }
+
+    .need_date{
+        text-align: center;
+        width:100px;
+        height:20px;
+    }
+
+    .need_result_txt{
+        text-align: center;
+        width:70%;
+        height:25px;
+        overflow: hidden;
+    }
+    .need_colum{
+        background:#ececec;
+        border-radius: 5px;
+        font-size:18px;
+        /* display: flex;
+        justify-content: center; */
+    }
+
+    .tg  {
+        border-collapse:collapse;
+        border-spacing:0;
+        font-weight:bold;
+    }
+    .tg td{
+        font-family:Arial, sans-serif;
+        font-size:14px;
+        overflow:hidden;
+        padding:10px 5px;
+        word-break:normal;
+    }
+    .tg th{
+        font-family:Arial, sans-serif;
+        font-size:14px;
+        font-weight:bold;
+        overflow:hidden;
+        padding:10px 5px;
+        word-break:normal;
+    }
+    .tg .tg-c3ow{
+        border-color:inherit;
+        text-align:center;
+        vertical-align:top;
+    }
+    .tg .tg-0pky{
+        border-color:inherit;
+        text-align:left;
+        vertical-align:top;
+    }
+    .tg .tg-0lax{
+        text-align:left;
+        vertical-align:top;
+    }
+
+    .need_write_textarea{
+        width:95%;
+        height:100px;
+        font-size:15px;
+    }
+
+    .need_write_chkbox{
+        width:20px;
+        height:20px;
+    }
+    .need_tr{
+        cursor:pointer;
+    }
+    .need_tr:hover{
+        background:#e4e4e4;
+    }
+    .client_requestmemo{
+        width: 98%;
+        height: 54px;
+        resize: none;
+    }
+    .pdfsign_span{
+        position:relative;
+    }
+    @media (max-width: 600px) {
+        .tg td{
+            font-family:Arial, sans-serif;
+            font-size:10px;
+            overflow:hidden;
+            padding:3px 0px;
+            word-break:normal;
+        }
+        .tg th{
+            font-family:Arial, sans-serif;
+            font-size:10px;
+            font-weight:bold;
+            overflow:hidden;
+            padding:3px 0px;
+            word-break:normal;
+        }
+        .need_write_textarea{
+            width:95%;
+            height:100px;
+            font-size:15px;
+        }
+        .swal2-content {
+            padding:0px;
+        }
+        .need_guard_target{
+            width:80%;
+        }
+    }
+</style>
+<body>
+    <script>
+        function Mobile() { return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent); }
+        var socket = io({
+            transports: ['websocket']
+        });
+        var tablemsgno = '<%=articles2[0].msgno%>';
+        var uid = '<%=firstData%>';
+        var company = '<%=company%>';
+        var ceo = '<%=articles.contents[0].ceo%>';
+        var bankaddr = '<%=bankaddr%>';
+        var target = '<%=target%>';
+        const cmschk2 = '<%=cmschk2%>';
+        if(company=='거봉의료기'){ company='한솔'; ceo='정종각'; bankaddr = '전라남도 광양시 광양읍 백운로 1'; }
+        var now = new Date();
+        var year= now.getFullYear();
+        var mon = (now.getMonth()+1)>9 ? ''+(now.getMonth()+1) : '0'+(now.getMonth()+1);
+        var day = now.getDate()>9 ? ''+now.getDate() : '0'+now.getDate();
+        var chan_val = year+'-'+mon+'-'+day;
+        
+        function imgchange(){
+            $('#print1').contents().find('html').scrollTop(0);
+            html2canvas($('#print1').contents().find('body'), {
+                onrendered: function(canvas) {
+                    canvas.toBlob(function(blob) {
+                        saveAs(blob, 'image.png');
+                });
+                
+                }
+            });
+        }
+        
+        function zerostatetable(){
+            $('.zerostatetable').show();
+            $.ajax({
+                url: "/zerostatetable",
+                data: "company=" + company + "&number=<%=number%>",
+                type: 'POST',
+                dataType: "JSON",
+                success: function (result) {
+                    if(result.data.length>0){
+                        $.each(result.data,function(i){
+                            var zerodata = result.data[i];
+                            $('.zerostatetable').append('<tr class="zerodatatd"><td>'+zerodata.sdate+'</td><td>'+zerodata.cdate+'</td><td>'+zerodata.money+'</td><td>'+zerodata.accessnum+'</td><td>'+zerodata.access+'</td></tr>');
+                        });
+                    }
+                }
+            });
+        }
+
+        function cmsfiledelete(x){
+            var cmstxt = '신규';
+            if(x==2)cmstxt = '취소';
+            Swal.fire({
+                width: '500px',
+                fontsize:'13px',
+                title: '<%=name%>님 CMS증빙('+cmstxt+') 전송취소하시겠습니까?',
+                text: "",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: '확인',
+                cancelButtonText: '취소'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const thebillapikey = "<%=thebillapikey%>";
+                    $.ajax({ 
+                        url: "/cmsfiledelete", 
+                        data: "chk="+x+"&number=<%=number%>&company=<%=company%>&thebillid=<%=thebillid%>&thebillapikey="+encodeURIComponent(thebillapikey),
+                        type: 'GET',
+                        dataType: "JSON", 
+                        success: function (result) { 
+                            if(result.code==200){
+                                Swal.fire('취소완료', '', 'success');
+                                window.parent.location.reload();
+                            }
+                            if(result.code=='E301'){
+                                Swal.fire('증빙전송된 파일 없음', '', 'error');
+                            }
+                        } 
+                    });
+                }
+            });
+        }
+        
+        function cmspayup(number,name,company,bankname,banknum,bankadmin,bankregident,bankphone,bankdate,msgno,thebillid,thebillapikey){
+            $.ajax({ 
+                url: "/cmspayup", 
+                data: "number=<%=number%>&name=<%=name%>&company="+company+"&bankname="+bankname+"&banknum="+banknum+"&bankadmin="+bankadmin+"&bankregident="+bankregident+"&bankphone="+bankphone+"&bankdate="+bankdate+"&msgno="+msgno+"&thebillid="+thebillid+"&thebillapikey="+encodeURIComponent(thebillapikey),
+                type: 'POST',
+                dataType: "JSON", 
+                async:false,
+                success: function (result) { 
+
+                } 
+            });
+        }
+        
+        function cmsclientup(cmsfilechk,number,name,company,bankname,banknum,bankadmin,bankregident,bankphone,bankdate,msgno,thebillid,thebillapikey){
+            $.ajax({ 
+                url: "/cmsclientup", 
+                data: "chk=p&chk2="+cmsfilechk+"&number=<%=number%>&name=<%=name%>&company="+company+"&bankname="+bankname+"&banknum="+banknum+"&bankadmin="+bankadmin+"&bankregident="+bankregident+"&bankphone="+bankphone+"&bankdate="+bankdate+"&msgno="+msgno+"&thebillid="+thebillid+"&thebillapikey="+encodeURIComponent(thebillapikey),
+                type: 'POST',
+                dataType: "JSON", 
+                async:false,
+                success: function (result) { 
+                    //cmspayup(number,name,company,bankname,banknum,bankadmin,bankregident,bankphone,bankdate,msgno);
+                } 
+            });
+        }
+        
+        function imgcmspost(bankname,banknum,bankadmin,bankphone,bankregident,bankdate,msgno,cmsfilechk,bankdate2){
+            var cmsfiletxt = '';
+            if(cmsfilechk=='n')cmsfiletxt = '신규';
+            if(cmsfilechk=='c')cmsfiletxt = '변경';
+            if(cmsfilechk=='x')cmsfiletxt = '해지';
+            $('#print1').contents().find('html').scrollTop(0);
+            html2canvas($('#print1').contents().find('body'), {
+                onrendered: function(canvas) {
+                    var data = {
+                            data:canvas.toDataURL("image/jpg"),
+                            id:'<%=number%>',
+                            type:'cms',
+                            name:'',
+                            thebillid:'<%=thebillid%>'
+                        }
+                    sendMessage(data);
+                    Swal.fire({
+                        width: '500px',
+                        fontsize:'13px',
+                        title: '<%=name%>님 CMS('+cmsfiletxt+')증빙전송하시겠습니까?',
+                        text: "",
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: '전송',
+                        cancelButtonText: '취소'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const thebillapikey='<%=thebillapikey%>';
+                            //alert(String(thebillapikey));
+                            $.ajax({ 
+                                url: "/cmsfileupload", 
+                                data: "chk="+cmsfilechk+"&number=<%=number%>&name=<%=name%>&company="+company+"&bankname="+bankname+"&banknum="+banknum+"&bankadmin="+bankadmin+"&bankregident="+bankregident+"&bankphone="+bankphone+"&bankdate="+bankdate+"&msgno="+msgno+"&bankdate2="+bankdate2+"&thebillid=<%=thebillid%>&thebillapikey="+encodeURIComponent(thebillapikey),
+                                type: 'GET',
+                                dataType: "JSON", 
+                                success: function (result) { 
+                                    if(result.code==200){
+                                        cmsclientup(cmsfilechk,'<%=number%>','<%=name%>',company,bankname,banknum,bankadmin,bankregident,bankphone,bankdate,msgno,'<%=thebillid%>','<%=thebillapikey%>');
+                                        Swal.fire('전송완료', '', 'success');
+                                        window.parent.location.reload();
+                                    }
+                                    if(result.code==201){
+                                        cmsclientup(cmsfilechk,'<%=number%>','<%=name%>',company,bankname,banknum,bankadmin,bankregident,bankphone,bankdate,msgno,'<%=thebillid%>','<%=thebillapikey%>');
+                                        Swal.fire('전송완료', '', 'success');
+                                        window.parent.location.reload();
+                                    }
+                                    if(result.code==300){
+                                        //cmsclientup(cmsfilechk,'<%=number%>','<%=name%>',company,bankname,banknum,bankadmin,bankregident,bankphone,bankdate,msgno,'<%=thebillid%>','<%=thebillapikey%>');
+                                        if(result.code2=='E201')Swal.fire('은행에서 이전 증빙전송파일 처리 진행중입니다', '', 'warning');
+                                    }
+                                } 
+                            });
+                            
+                        }
+                        
+                    });
+                    function sendMessage(data){
+                        var msg = JSON.stringify(data);
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('POST', '/image');
+                        xhr.send(msg);
+                    }
+                }
+            });
+        }
+
+        async function sendMessage2(data){
+            var msg = JSON.stringify(data);
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/image');
+            xhr.send(msg);
+            return 0;
+        }
+
+        function calculateRentalCost(startDate, endDate, monthlyRentalCost) {
+            const getDaysInMonth = (date) => new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+            const getCost = (start, end) => monthlyRentalCost / getDaysInMonth(start) * (end.getDate() - start.getDate() + 1);
+
+            const results = [];
+            let currentDate = startDate;
+            let total_money = 0;
+            while (currentDate <= endDate) {
+                const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+                const rentalDays = (endDate < lastDayOfMonth) ? endDate.getDate() - currentDate.getDate() + 1 : lastDayOfMonth.getDate() - currentDate.getDate() + 1;
+                const totalCost = (endDate < lastDayOfMonth) ? getCost(currentDate, endDate) : getCost(currentDate, lastDayOfMonth)
+                results.push({
+                    startDate: currentDate.toLocaleDateString(),
+                    endDate: lastDayOfMonth.toLocaleDateString(),
+                    rentalDays,
+                    dailyRentalCost: totalCost / rentalDays,
+                    totalCost
+                });
+                total_money+=totalCost;
+                currentDate = new Date(lastDayOfMonth.getFullYear(), lastDayOfMonth.getMonth() + 1, 1);
+                
+            }
+
+            console.log(parseInt(total_money));
+            return total_money;
+        }
+
+        $(document).ready(function(){   
+            $.datepicker.setDefaults({
+                dateFormat: 'yymmdd',
+                prevText: '이전 달',
+                nextText: '다음 달',
+                monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+                monthNamesShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+                dayNames: ['일', '월', '화', '수', '목', '금', '토'],
+                dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
+                dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
+                showMonthAfterYear: true,
+                yearSuffix: '년'
+            });
+            $( "#datepicker,#datepicker2,#datepicker_guardresident" ).datepicker({
+                changeMonth: true,
+                changeYear: true,
+                yearRange: '1900:2039',
+                dateFormat: 'yy-mm-dd',
+            });
+            $( "#datepicker,#datepicker2,#datepicker_guardresident" ).datepicker( "option", "showAnim", "slide" );
+            $('.signbutton').click(function(){
+                $(".signbox").toggle('slow');
+            });
+
+
+            var canvas = $("#signature")[0];
+            var signature = new SignaturePad(canvas, {
+                minWidth : 2,
+                maxWidth : 2,
+                penColor : "rgb(0, 0, 0)"
+            });
+        
+            $("#clear").on("click", function() {
+                signature.clear();
+            });
+        
+            $("#submit").on("click", function() {
+                if(signature.isEmpty()&&$('.signbox').css('display')=='block') {
+                    alert("서명을 해주세요.");
+                } else {
+                    let all_modify_chk_obj = {
+                        address_all_modify : 0,
+                        phone_all_modify: 0
+                    };
+                    if($('#address_all_modify').is(":checked")){
+                        all_modify_chk_obj.address_all_modify = 1;
+                    }
+                    if($('#phone_all_modify').is(":checked")){
+                        all_modify_chk_obj.phone_all_modify = 1;
+                    }
+                    $.ajax({ 
+                        url: "/clientmodifyup", 
+                        data: "id=" + uid +
+                        "&name=" + $(".name").val() +
+                        "&number=" + $(".number").val() +
+                        "&regident=" + $(".regident").val()+
+                        "&ranker=" + $(".ranker").val()+
+                        "&target=" + $(".target").val()+
+                        "&date1=" + $(".date1").val()+
+                        "&date2=" + $(".date2").val()+
+                        "&sale=" + $(".sale").val()+
+                        "&sex=" + $(".sex").val()+
+                        "&addressdetail=" + $(".addressdetail").val()+
+                        "&addressnum=" + $(".addressnum").val()+
+                        "&address=" + $(".address").val()+
+                        "&address2detail=" + $(".address2detail").val()+
+                        "&address2=" + $(".address2").val()+
+                        "&address2num=" + $(".address2num").val()+
+                        "&guardname=" + $(".guardname").val()+
+                        "&guardtarget=" + $(".guardtarget").val()+
+                        "&phone1=" + $(".phone1").val()+
+                        "&phone2=" + $(".phone2").val()+
+                        "&centername=" + $(".centername").val()+
+                        "&manager=" + $(".manager").val()+
+                        "&reqeustmemo=" + $(".client_requestmemo").val()+
+                        "&chk=" + $(".titletargetselect").val()+
+                        "&company=<%=company%>"+
+                        "&address_all_modify="+all_modify_chk_obj.address_all_modify+
+                        "&phone_all_modify="+all_modify_chk_obj.phone_all_modify+
+                        "&guardresident=" + $(".guardresident").val(),
+                        type: 'POST',
+                        dataType: "JSON", 
+                        success: function (result) { 
+                            var data = {
+                                data:signature.toDataURL("image/png"),
+                                id:'<%=company%>',
+                                name:$(".number").val(),
+                                type:'sign',
+                                thebillid:'',
+                            }
+                            // console.log(fulldata[0]);
+                            if($('.signbox').css('display')=='block')sendMessage2(data);
+                                Swal.fire({
+                                    title: '수정이 완료되었습니다.',
+                                    text: "",
+                                    icon: 'success',
+                                    showCancelButton: false,
+                                    confirmButtonColor: '#3085d6',
+                                    cancelButtonColor: '#d33',
+                                    confirmButtonText: '확인'
+                                }).then((result) => {
+                                if (result.isConfirmed) {
+                                    location.reload();
+                                }
+                            })
+                            //socket.emit('toastmessage', { 'name':uid,'msg':$(".name").val()+'님('+$(".number").val()+') 정보가 수정되었습니다.'});
+                        } 
+                    });
+                }
+            });
+
+            $("#bsubmit").on("click", function() {
+                if($('.banknum').val()==''||$('.bankadmin').val()==''||$('.bankphone').val()==''||$('.bankregident').val()==''||$('.bankdate').val()=='') {
+                    Swal.fire('미입력정보가있습니다.','','error');
+                } else {
+                    $.ajax({ 
+                        url: "/clientmodifyupb", 
+                        data: "id=" + uid +"&banknum=" + $(".banknum").val() +"&bankadmin=" + $(".bankadmin").val() +
+                        "&bankphone=" + $(".bankphone").val()+"&bankregident=" + $(".bankregident").val()+
+                        "&bankdate=" + $(".bankdate").val()+"&bankname=" + $(".bankname").val()+"&number=" + $(".number").val()+"&company=<%=company%>",
+                        type: 'POST',
+                        dataType: "JSON", 
+                        success: function (result) { 
+                            Swal.fire({
+                                title: '수정이 완료되었습니다.',
+                                text: "",
+                                icon: 'success',
+                                showCancelButton: false,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: '확인'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.parent.location.reload();
+                                }
+                            });
+                            //socket.emit('toastmessage', { 'name':uid,'msg':$(".name").val()+'님('+$(".number").val()+') 정보가 수정되었습니다.'});
+                        } 
+                    });
+                }
+            });
+
+            $("input").on('propertychange change keyup paste input', function(){
+                //$(this).css("border","2px solid #ff8c5e");
+            });
+
+            // $(".phone1").on("input", function(){
+            //     $(".phone2").val($(".phone1").val());
+            // });
+        
+            $(".lastlookup").click(function(){
+                $.ajax({
+                    type: 'GET',
+                    url: '/lastlookup?username='+uid,
+                    //cache: false,
+                    //data: "data=" + data,
+                    dataType: "JSON", 
+                    //processData: false,
+                    //contentType: false,
+                    success: function (data) {
+                        //alert(data.message);
+                        $('.name').val(data.message.name).css("border","1px solid #ff9900");
+                        let str = data.message.number;
+                        var strl = '';
+                        if(str.match("L")) strl=''; else strl='L';
+                        $('.number').val(strl+data.message.number).css("border","1px solid #ff9900");
+                        $('.regident').val(data.message.regident).css("border","1px solid #ff9900");
+                        $('.ranker').val(data.message.ranker).css("border","1px solid #ff9900");
+                        $('.target').val(data.message.target.substring(0, 2)).css("border","1px solid #ff9900");
+                        datenowsplit = data.message.datenow.split('~');
+                        var reg = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi;
+                        datenowreplace1=datenowsplit[0].replace(reg,'');
+                        datenowreplace2=datenowsplit[1].replace(reg,'');
+                        $('.date1').val(datenowreplace1).css("border","1px solid #ff9900");
+                        $('.date2').val(datenowreplace2).css("border","1px solid #ff9900");
+                        $(".sale").val(data.message.target.substring(2, 7).replace(/ /g, "")).prop("selected", true).css("border","1px solid #ff9900");
+                        //$('.sale').val(data.message.target.substring(2, 6).trim());
+                        //alert('불러오기 완료!');
+                        $('.lastlookup span:last').html('done_outline');
+                    }
+                });
+            });
+
+            $("#addresschk").click(function(){
+                document.getElementById("sample3_postcode").value = document.getElementById("sample2_postcode").value;
+                document.getElementById("sample3_address").value = document.getElementById("sample2_address").value;
+                document.getElementById("sample3_detailAddress").value = document.getElementById("sample2_detailAddress").value;
+            });
+
+            var sale = "<%=sale%>";
+            var sex = "<%=sex%>";
+            var chk = "<%=chk%>";
+            var manager = "<%=manager%>";
+            var guardtarget = "<%=guardtarget%>";
+            $(".sale").val(sale.replace(/ /g,'')).prop("selected", true);
+            $(".guardtarget").val(guardtarget).prop("selected", true);
+            $(".sex").val(sex).prop("selected", true);
+            $(".manager").val(manager).prop("selected", true);
+            $(".titletargetselect").val(chk).prop("selected", true);
+            $('.titletargetselect').change(function(){
+                if(this.value=="n") {
+                    targetchk=0;
+                    //$('.titletarget select').css('border','2px solid #ff7d27');
+                }else if(this.value=="y"){
+                    targetchk=1;
+                    //$('.titletarget select').css('border','2px solid #4f9bff');
+                }
+            });
+            $('#bsubmit').hide();
+            $('.bankname').val('<%=articles2[0].bankname%>').prop("selected", true);
+        });//end:document
+
+        function deleteclient(){
+            Swal.fire({
+                width: '500px',
+                fontsize:'15px',
+                title: '정말로 삭제 하시겠습니까?',
+                text: "주문 내역도 전부 삭제됩니다. 다시 되돌릴 수 없습니다. 신중하세요.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: '삭제',
+                cancelButtonText: '취소'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "/deleteclient",
+                        data: "id=" + uid + "&row=" + $(".number").val()+ "&company=<%=company%>",
+                        type: 'POST',
+                        dataType: "JSON",
+                        success: function (result) {
+                            if(result.result){
+                                window.parent.location.reload();
+                                Swal.fire(
+                                    '삭제되었습니다.',
+                                    '',
+                                    'success'
+                                );
+                            }else{
+                                Swal.fire(
+                                    '삭제주문이 없습니다.',
+                                    '',
+                                    'error'
+                                );
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        function inputchange(x){
+            $(x).val($(x).val().replace(/ /g,''));
+            $(x).val($(x).val().replace(/(\-|\/)/g,''));
+            //$(".phone2").val($(".phone1").val());
+        }
+        
+        function inputchange2(x){
+            $(x).val($(x).val().replace(/[^0-9]/g,''));
+        }
+        
+        function toptab(x,y){
+            if($(x).hasClass('off')){
+                $(x).addClass('on').removeClass('off');
+                $(x).siblings('div').removeClass('on').addClass('off');
+            }
+            if(y=='state'){
+                $('.statetable').show();
+                $('.titletarget').show();
+                $('.cmstable').hide();
+                $('#submit2').show();
+                $('#bsubmit').hide();
+                $('#submit').show();
+                if(target=='기초'||target=='의료급여'){
+                    zerostatetable();
+                }
+            }
+            if(y=='cms'){
+                $('.cmstable').show();
+                $('.titletarget').hide();
+                $('.statetable').hide();
+                $('#submit2').hide();
+                $('#bsubmit').show();
+                $('#submit').hide();
+                $('.zerostatetable').hide();
+            }
+        }
+    </script>
+
+    <div class="background">
+        <div class="maincontainer">
+            <div class="title">
+                <div class="flexaround toptab">
+                    <div class="flexc on" onclick="toptab(this,'state');">
+                        <span class="material-icons">build</span>&nbsp;&nbsp;<span>수급자 기본정보</span>
+                    </div>
+                    <div class="flexc off" onclick="toptab(this,'cms');">
+                        <span class="material-icons">currency_exchange</span>&nbsp;&nbsp;<span>수급자 결제정보(CMS/가상계좌)</span>
+                    </div>
+                </div>
+                
+                <div style="display:none;" class="lastlookup">
+                    <span>최근 공단조회내역 불러오기&nbsp;&nbsp;&nbsp;</span><span class="material-icons" style="font-size:17px;">rocket_launch</span>
+                </div>
+                <br/>
+                <div class="titletarget">
+                    <select class="titletargetselect">
+                        <option value="y">급여</option>
+                        <option value="n">비급여</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="flexcolumn">
+                <table class="zerostatetable" style="display:none;">
+                    <caption><div class="flexc"><span class="material-icons">assignment_ind</span>수급자 입소이용의뢰서 정보</div></caption>
+                    <tr>
+                        <td>접수일자</td><td>승인일자</td><td>금액</td><td>통보 보장기관</td><td>실제 보장기관</td>
+                    </tr>
+                </table>
+                <table class="statetable table1">
+                    <tr>
+                        <td>인정번호</td><td><input class="number" type="text" placeholder="요양인정번호 10자리" value="<%=number%>"></td>
+                    </tr>
+                    <tr>
+                        <td>수급자성함</td><td><input class="name" type="text" value="<%=name%>"></td>
+                    </tr>
+                    <tr>
+                        <td>생년월일</td><td><input class="regident" type="text" placeholder="예시: 630321" value="<%=regident%>"></td>
+                    </tr>
+                    <tr>
+                        <td>성 별</td><td><select class="sex"><option value="">선택</option><option value="남">남</option><option value="여">여</option></select></td>
+                    </tr>
+                    <%
+                    var rcgt = rcgt.replace(/ |-/g,'').split('~');
+                    %>
+                    <tr>
+                        <td>유효기간</td><td><input class="date1" type="text" id="" value="<%=rcgt[0] || '재조회를 진행해주세요'%>" readonly><input class="date2" type="text" id="" value="<%=rcgt[1] || '재조회를 진행해주세요'%>" readonly></td>
+                    </tr>
+                    <tr>
+                        <td>적용구간</td><td><input class="date1" type="text" id="" value="<%=date1%>" readonly><input class="date2" type="text" id="" value="<%=date2%>" readonly></td>
+                    </tr>
+                    <tr>
+                        <td>주소1</td>
+                        <td>    
+                            <input class="material-icons" type="button" onclick="sample2_execDaumPostcode()" value="주소 검색 saved_search"><br>
+                            <input class="addressnum" type="text" id="sample2_postcode" placeholder="우편번호" value="<%=addressnum%>"><br>
+                            <input class="address" type="text" id="sample2_address" placeholder="주소" value="<%=address%>"><br>
+                            <input class="addressdetail" type="text" id="sample2_detailAddress" placeholder="상세주소" value="<%=addressdetail%>">
+                            <input style="display:none;" type="text" id="sample2_extraAddress" placeholder="참고항목">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>주소2</td>
+                        <td>    
+                            <div style="width:100%; display:flex; justify-content:center; font-size:14px;"><div style="display:flex;">주소2 동일&nbsp;<input id="addresschk" style="width:17px; height:17px;" type="checkbox"></div>&nbsp;&nbsp;&nbsp;&nbsp;<div style="display:flex;">기존 주문서 주소 일괄수정&nbsp;<input id="address_all_modify" style="width:17px; height:17px;" type="checkbox"></div></div>
+                            <input class="material-icons" type="button" onclick="sample3_execDaumPostcode()" value="주소 검색 saved_search"><br>
+                            <input class="address2num" type="text" id="sample3_postcode" placeholder="우편번호" value="<%=address2num%>">
+                            <input class="address2" type="text" id="sample3_address" placeholder="주소" value="<%=address2%>"><br>
+                            <input class="address2detail" type="text" id="sample3_detailAddress" placeholder="상세주소" value="<%=address2detail%>">
+                            <input style="display:none;" type="text" id="sample3_extraAddress" placeholder="참고항목">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>연락처1</td>
+                        <td>
+                            <div style="">기존 주문서 연락처 일괄수정&nbsp;<input id="phone_all_modify" style="width:17px; height:17px;" type="checkbox"></div>
+                            <input class="phone1" type="text" value="<%=phone1%>" onchange="inputchange(this);">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>연락처2</td><td><input class="phone2" type="text" value="<%=phone2%>" onchange="inputchange2(this);"></td>
+                    </tr>
+                    <tr>
+                        <td>보호자성함</td><td><input class="guardname" type="text" value="<%=guardname%>" onchange="inputchange(this);"></td>
+                    </tr>
+                    <tr>
+                        <td>수급자관계</td><td><select class="guardtarget" style="height:30px;"><option value="본인">본인</option><option value="가족">가족</option><option value="가족(배우자)">배우자</option><option value="가족(자녀)">자녀</option><option value="가족(부모)">부모</option><option value="가족(형제)">형제</option><option value="가족(자부)">자부</option><option value="기타(친척등)">기타(친척등)</option></select></td>
+                    </tr>
+                    <tr>
+                        <td>보호자 생년월일</td><td><input class="guardresident" id="datepicker_guardresident" type="text" placeholder="예시 : 1999-01-01" value="<%=guardresident%>" readonly><span class="material-icons" onclick="document.getElementById('datepicker_guardresident').value='';" style="cursor:pointer; position: absolute; margin-left: -25px; margin-top: 5px;">clear</span></td>
+                    </tr>
+                    <tr>
+                        <td>담당자</td>
+                        <td>
+                            <select class="manager" style="height:30px;">
+                                <% if (articles.contents.length != 0) { %>
+                                    <% articles.contents.forEach(function(Article){ %>
+                                    <option value="<%=Article.name%>"><%=Article.name%></option>
+                                <%
+                                });
+                                %>
+                                    <% } else { %>
+                                        <option value="">담당자없음</option>
+                                    <% } %>
+                        </select>
+                    </td>
+                    </tr>
+                    <tr>
+                        <td>센터명</td><td><input class="centername" type="text" value="<%=centername%>"></td>
+                    </tr>
+                    <tr>
+                        <td>대 상</td><td><input class="target" type="text" placeholder="예시: 일반" value="<%=target%>"></td>
+                    </tr>
+                    <tr>
+                        <td>등 급</td><td><input class="ranker" type="text" placeholder="예시: 5등급" value="<%=ranker%>"></td>
+                    </tr>
+                    <tr>
+                        <td>본인부담율</td><td><select class="sale"><option value="">선택</option><option value="15%">15%</option><option value="9.0%">9%</option><option value="6.0%">6%</option><option value="0%">0%</option></select></td>
+                    </tr>
+                    <tr>
+                        <td>메 모</td><td><textarea class="client_requestmemo"><%=requestmemo%></textarea></td>
+                    </tr>
+                    <tr>
+                        <td><br/>욕구사정기록<br/><br/><div class="need_write_btn" onclick="need_write();">기록 추가/작성하기</div></td><td class="need_th"></td>
+                    </tr>
+                    <tr>
+                        <td>서 명</td><td><img style="width:85px;" src="/signfiles/<%=number%>/<%=company.replace(/#/g,'%23').replace(/ /g,'%20')%>"></td>
+                    </tr>
+                    <tr>
+                        <td></td><td><input class="signbutton" type="button" value="서명 수정"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <div style="width:100%; text-align: center;" class="signbox">
+                                <canvas id="signature" width="200" height="200"></canvas>
+                                <div style="width:100%; text-align: center;">
+                                    <button style="display:none;" id="save">Save</button>
+                                    <button id="clear">지우기</button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+            
+                <style>
+                    .cmstop{
+                        margin-bottom:50px;
+                    }
+                    .cmstop .cmsstate{
+                        font-size:25px;
+                    }
+                    .cmsstate span{
+                        color:#910000;
+                    }
+                    .cmstable{
+                        width:100%;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                    .cmstable table{
+                        margin-bottom:30px;
+                    }
+                    .cmstable table tr{
+                        height:40px;
+                    }
+                    .cmstable table tr td input{
+                        height:40px;
+                    }
+                    .cmstable table tr td select{
+                        height:40px;
+                        font-weight: bold;
+                        font-size:18px;
+                    }
+                    .cmsdocument{
+                        background: #be5a5a;
+                        color:#fff;
+                    }
+                    .cmsdocument2{
+                        background: #5a99be;
+                        color:#fff;
+                        cursor: pointer;
+                    }
+                    .cmsdocument2:hover{
+                        background:#fff;
+                        color:#000;
+                    }
+                    .maincontainer .cmsrent tr td{
+                        width:120px;
+                        height:20px;
+                        text-align: center;
+                        border-radius: 3px;
+                    }
+                    .maincontainer .cmsbuy tr td{
+                        width:129px;
+                        height:20px;
+                        text-align: center;
+                        border-radius: 3px;
+                    }
+                    .maincontainer .cmspay tr td{
+                        width:120px;
+                        height:20px;
+                        text-align: center;
+                        border-radius: 3px;
+                    }
+                    .maincontainer .orderpay tr td{
+                        width:120px;
+                        height:20px;
+                        text-align: center;
+                        border-radius: 3px;
+                    }
+                    .maincontainer .cmsrent tr:nth-child(1) td{
+                        background:#1a2136;
+                        color:#fff;
+                        
+                    }
+                    .maincontainer .cmsbuy thead tr:nth-child(1) th{
+                        background:#1a2136;
+                        color:#fff;
+                        width:150px;
+                    }
+                    .maincontainer .cmsbuy_pay thead tr:nth-child(1) th{
+                        background:#1a2136;
+                        color:#fff;
+                        width:150px;
+                    }
+                    .maincontainer .cmsbuy tfoot tr:nth-child(1) td{
+                        width:150px;
+                        text-align: center;
+                    }
+                    .maincontainer .cmsbuy_pay tfoot tr:nth-child(1) td{
+                        width:150px;
+                        text-align: center;
+                    }
+                    .maincontainer thead{
+                        display:block;
+                    }
+                    .maincontainer .cmsbuy tbody{
+                        display:block;
+                        max-height:200px;
+                        overflow-y: scroll;
+                    }
+
+                    .maincontainer .cmsbuy_pay tbody{
+                        display:block;
+                        max-height:200px;
+                        overflow-y: scroll;
+                    }
+                    .maincontainer .cmsbuy tfoot{
+                        display:block;
+                    }
+                    .maincontainer .cmsbuy_pay tfoot{
+                        display:block;
+                    }
+                    .maincontainer .cmsbuy tbody tr:nth-child(1) td{
+                        width:150px;
+                    }
+                    .maincontainer .cmsbuy_pay tbody tr:nth-child(1) td{
+                        text-align: center;
+                        width:150px;
+                    }
+                    .buy_total_dan,.buy_total_gong,.buy_total_bon,.buy_total_cnt,.payment_total_price{
+                        background:#1a2136;
+                        color:#fff;
+                    }
+                    .maincontainer .cmspay tr:nth-child(1) td{
+                        background:#1a2136;
+                        color:#fff;
+                        
+                    }
+                    .maincontainer .orderpay tr:nth-child(1) td{
+                        background:#1a2136;
+                        color:#fff;
+                        
+                    }
+                    .cmsrenttd td{
+                        background: linear-gradient( 45deg, #ffffff, #f1f1f1, #e4e4e4 );
+                        font-size:20px;
+                    }
+                    .red{
+                        color:#ff0000;
+                    }
+                    @media (max-width: 600px) {
+                        .maincontainer{
+                            padding-bottom: 50px;
+                        }
+                        .maincontainer .table1 tr td:nth-child(1) {
+                            font-size:10px;
+                            width: 100px;
+                        }
+                        .maincontainer .table1 tr td input {
+                            width:220px;
+                        }
+                        .maincontainer .table1 tr td select {
+                            width:230px;
+                            }
+                        .table1 .reqeustmemo{
+                            width:220px;
+                        }
+                        .titletarget select {
+                            width: 320px;
+                        }
+                        #submit, #bsubmit, #submit2, #submitorder{
+                            width:330px;
+                        }
+                        .cmsrenttd td {
+                            font-size: 12px;
+                        }
+                    }
+                </style>
+                
+                <script>
+                    var cmschk = '<%=cmschk%>';
+                    var yester = new Date(now.setMonth(now.getMonth() - 1));
+                    var yyear = yester.getFullYear();
+                    var ymon = ('0' + (yester.getMonth() + 1)).slice(-2);
+                    var yday = yester.getDate() > 9 ? '' + yester.getDate() : '0' + yester.getDate();
+                    let lastDate = new Date(yyear, ymon, 0);
+                
+                    const rentmoneycal = lastDate.getDate();
+                    const isSameDate = (date1, date2) => {
+                        return date1.getFullYear() === date2.getFullYear()
+                            && date1.getMonth() === date2.getMonth()
+                    }
+
+                    function calculateRentalCost(startDate, endDate, monthlyPrice) {
+                        startDate = new Date(startDate);
+                        endDate = new Date(endDate);
+                        
+                        // 시작일과 종료일이 같은 달인 경우
+                        if(isSameDate(startDate, endDate)) {
+                            const daysInMonth = new Date(startDate.getFullYear(), startDate.getMonth()+1, 0).getDate();
+                            const days = endDate.getDate() - startDate.getDate() + 1;
+                            return (monthlyPrice / daysInMonth) * days;
+                        }
+                        
+                        let totalCost = 0;
+                        let currentDate = new Date(startDate);
+                        
+                        // 첫달 계산
+                        const firstMonthDays = new Date(currentDate.getFullYear(), currentDate.getMonth()+1, 0).getDate();
+                        const firstMonthRemainingDays = firstMonthDays - currentDate.getDate() + 1;
+                        totalCost += (monthlyPrice / firstMonthDays) * firstMonthRemainingDays;
+                        
+                        // 중간 달 계산
+                        currentDate.setDate(1);
+                        while(currentDate < endDate) {
+                            currentDate.setMonth(currentDate.getMonth() + 1);
+                            if(currentDate <= endDate && !isSameDate(currentDate, endDate)) {
+                                totalCost += monthlyPrice;
+                            }
+                        }
+                        
+                        // 마지막 달 계산
+                        if(!isSameDate(startDate, endDate)) {
+                            const lastMonthDays = new Date(endDate.getFullYear(), endDate.getMonth()+1, 0).getDate();
+                            totalCost += (monthlyPrice / lastMonthDays) * endDate.getDate();
+                        }
+                        
+                        return totalCost;
+                    }
+                    async function cmsbuy(syear,smonth,eyear,emonth){
+                        return axios({
+                            method:'post',
+                            url:'/cmsbuy',
+                            data:{
+                                company:"<%=company%>",
+                                number:"<%=number%>",
+                                syear:syear,
+                                smonth:smonth,
+                                eyear:eyear,
+                                emonth:emonth,
+                            }
+                        }).then(res=>{
+                            const data = res.data;
+                            if(data.code==200){
+                                const order_data = data.data;
+                                const product_dan = data.productdan;
+                                console.log(order_data);
+                                let product_dan_obj = {};
+                                product_dan.forEach(function(obj){
+                                    product_dan_obj[obj.pkey] = {buyprice:obj.buyprice,date:obj.date};
+                                });
+                                let str = '';
+                                let client_sale = '<%=parseInt(sale)/100%>';
+                                let client_sale_gong = '<%=1-parseInt(sale)/100%>';
+                                let buy_total = {
+                                    dan:0,
+                                    gong:0,
+                                    bon:0,
+                                    cnt:0,
+                                }
+                                let payment_str = '';
+                                let payment_total = 0;
+                                order_data.forEach(function(obj){
+                                    let product_split = obj.product.split(',');
+                                    let buycnt_split = obj.buycnt.split(',');
+                                    let productkey_split = obj.productkey.split(',');
+                                    if(obj.date){
+                                        payment_str += `<tr><td>${obj.date||''}</td><td>${obj.type==0?'현금':obj.type==1?'카드':'이체'}</td><td>${parseInt(obj.price).toLocaleString()||''}원</td></tr>`;
+                                        payment_total += parseInt(obj.price);
+                                    }
+                                    product_split.forEach(function(product,index){
+                                        let product_code = product.split('|')[0];
+                                        let product_name = product.split('|')[1];
+                                        let price_gong = product_dan_obj[productkey_split[index]].buyprice * client_sale_gong;
+                                        let price_bon = product_dan_obj[productkey_split[index]].buyprice * client_sale;
+                                        buy_total.dan += parseInt(product_dan_obj[productkey_split[index]].buyprice)*parseInt(buycnt_split[index]);
+                                        buy_total.gong += price_gong*parseInt(buycnt_split[index]);
+                                        buy_total.bon += price_bon*parseInt(buycnt_split[index]);
+                                        buy_total.cnt += parseInt(buycnt_split[index]);
+                                        str += `<tr><td>${obj.orderdate.split(' ')[0]}</td><td style="font-size:13px;">${product_code}</td><td>${product_name}</td><td>${(parseInt(product_dan_obj[productkey_split[index]].buyprice)*parseInt(buycnt_split[index])).toLocaleString()}원</td><td style="width:50px;">${buycnt_split[index]}개</td><td>${(price_gong*parseInt(buycnt_split[index])).toLocaleString()}원</td><td>${(price_bon*parseInt(buycnt_split[index])).toLocaleString()}원</td></tr>`;
+                                    });
+                                });
+                                
+                                let total_str = `<tr>
+                                    <td></td><td></td><td>합계</td><td class="buy_total_dan"></td><td class="buy_total_cnt" style="width:50px;"></td><td class="buy_total_gong"></td><td class="buy_total_bon"></td>
+                                </tr>`;
+                                console.log(payment_str);
+                                $('.cmsbuy tbody').html(str);
+                                $('.cmsbuy tfoot').html(total_str);
+                                $('.buy_total_dan').text(buy_total.dan.toLocaleString()+'원');
+                                $('.buy_total_gong').text(buy_total.gong.toLocaleString()+'원');
+                                $('.buy_total_bon').text(buy_total.bon.toLocaleString()+'원');
+                                $('.buy_total_cnt').text(buy_total.cnt.toLocaleString()+'개');
+
+                                // let payment_str = '';
+                                // console.log("payment",payment)
+                                // payment.forEach(function(obj){
+                                //     payment_str += `<tr><td>${obj.date.split(' ')[0]}</td><td>${obj.type}</td><td>${obj.price.toLocaleString()}원</td><</tr>`;
+                                // });
+                                let payment_total_str = `<tr><td></td><td>합계</td><td class="payment_total_price">${payment_total.toLocaleString()}원</td></tr>`;
+                                $('.cmsbuy_pay tbody').html(payment_str);
+                                $('.cmsbuy_pay tfoot').html(payment_total_str);
+                            }else{
+                                $('.cmsbuy tbody').html('');
+                                $('.cmsbuy tfoot').html('');
+                                $('.buy_total_dan').text('0원');
+                                $('.buy_total_gong').text('0원');
+                                $('.buy_total_bon').text('0원');
+                                $('.buy_total_cnt').text('0개');
+                                $('.cmsbuy_pay tbody').html('');
+                            }
+                        });
+                    }
+
+
+                    var totalrent = 0;
+                    async function cmsrent() {
+                        return $.ajax({
+                            url: "/cmsrent",
+                            data: "id=" + uid + "&company=<%=company%>&number=<%=number%>",
+                            type: "POST",
+                            dataType: "JSON",
+                            success: function (result) {
+                                if (result) {
+                                    if(result.result){
+                                        let total_rent = 0;
+                                        let plist = {};
+                                        result.product.forEach(function(obj,index){
+                                            plist[obj.code] = obj.rentprice;
+                                        });
+                                        var rentend = day;
+                                        var rentendtxt = '';
+                                        $.each(result.result,function(i){
+                                            var rentproductname = result.result[i].productname.split(',');
+                                            var rentproductname2 = [];
+                                            let sale = parseInt(result.result[i].sale.replace(/.0%|[^0-9]/g,''))/100;
+                                            $.each(rentproductname,function(x){
+                                                rentproductname2.push(rentproductname[x].split('|')[1]);
+                                                let pcode = rentproductname[x].split('|')[0];
+                                                var sdate = result.result[i].rentstart;
+                                                var edate = result.result[i].rentend;
+                                                if(new Date(sdate)<=new Date(yyear+'-'+ymon+'-'+'01') && new Date(edate)>=new Date(yyear+'-'+ymon+'-'+rentmoneycal)){
+                                                    rentend = parseInt(plist[pcode]*sale);
+                                                }else if(new Date(sdate)<=new Date(yyear+'-'+ymon+'-'+'01') && new Date(edate)<=new Date(yyear+'-'+ymon+'-'+rentmoneycal)){
+                                                    rentend = (parseInt(plist[pcode]*sale) / rentmoneycal) * (parseInt(edate.split('-')[2]));
+                                                    // rentend = (parseInt(result.result[i].money) / rentmoneycal) * Math.abs((parseInt(edate.split('-')[2]) - parseInt(sdate.split('-')[2]) + 1));
+                                                }else if (isSameDate(new Date(sdate), new Date(yyear+'-'+ymon+'-01')) && new Date(edate) <= new Date(yyear+'-'+ymon+'-'+rentmoneycal)) {
+                                                    rentend = (parseInt(plist[pcode]*sale) / rentmoneycal) * (parseInt(edate.split('-')[2]) - parseInt(sdate.split('-')[2]) + 1);
+                                                } else if (isSameDate(new Date(sdate), new Date(yyear+'-'+ymon+'-01')) && new Date(edate) > new Date(yyear+'-'+ymon+'-'+rentmoneycal)) {
+                                                    rentend = (parseInt(plist[pcode]*sale) / rentmoneycal) * (parseInt(rentmoneycal)-(parseInt(sdate.split('-')[2])-1));
+                                                } else {
+                                                    rentend = 0;
+                                                }
+                                                var rentprice = rentend;
+                                                total_rent = calculateRentalCost(result.result[i].rentstart, result.result[i].rentend, parseInt(plist[pcode]*sale));
+                                                
+                                                if(new Date(edate)>=new Date(yyear+'-'+ymon+'-01')){
+                                                    totalrent += total_rent;
+                                                    $('.cmsrent').append('<tr class="cmsrenttd"><td>'+rentproductname2[x]+'</td><td class="cmsrent_month_price">'+parseInt(plist[pcode]*sale).toLocaleString()+'원</td><td class="'+rentendtxt+'">'+parseInt(rentprice).toLocaleString()+'원</td><td class="cmsrent_rentstart">'+result.result[i].rentstart+'</td><td class="'+rentendtxt+' cmsrent_rentend">'+result.result[i].rentend+'</td><td>'+parseInt(total_rent).toLocaleString()+'원</td></tr>');
+                                                }
+                                            });
+                                            
+                                        });
+                                        
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                    function cmsdelete(){
+                        const thebillapikey = "<%=thebillapikey%>";
+                        swal.fire({
+                        width: '450px',
+                        fontsize: '20px',
+                        title: '해지요청 하시겠습니까?(현재 계약종료일 금액까지 출금요청됩니다)',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: '확인',
+                        cancelButtonText: '취소',
+                        allowOutsideClick: false,
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $.ajax({
+                                    url: "/cmsdelete",
+                                    data: "company=<%=company%>&number=<%=number%>&thebillapikey="+encodeURIComponent(thebillapikey),
+                                    type: 'POST',
+                                    dataType: "JSON",
+                                    success: function (result) {
+                                        if(result){
+                                            if(result.code==200){
+                                                Swal.fire('해지요청완료.','','success');
+                                            }else{
+                                                Swal.fire('오류코드['+result.code+'(고객센터 문의)');
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                </script>
+            
+                <div class="cmstable" style="display:none;" class="flexcolumn">
+                    <table class="table1">
+                        <tr>
+                            <td>은행명</td>
+                            <td>
+                                <select class="bankname">
+                                    <option value="002">산업은행</option>
+                                    <option value="003">기업은행</option>
+                                    <option value="004">국민은행</option>
+                                    <option value="005">외환은행</option>
+                                    <option value="007">수협</option>
+                                    <option value="011">농협</option>
+                                    <option value="020">우리은행</option>
+                                    <option value="023">제일은행</option>
+                                    <option value="027">씨티은행</option>
+                                    <option value="031">대구은행</option>
+                                    <option value="032">부산은행</option>
+                                    <option value="034">광주은행</option>
+                                    <option value="035">제주은행</option>
+                                    <option value="037">전북은행</option>
+                                    <option value="039">경남은행</option>
+                                    <option value="045">새마을금고</option>
+                                    <option value="048">신협</option>
+                                    <option value="071">우체국</option>
+                                    <option value="081">하나은행</option>
+                                    <option value="088">신한은행</option>
+                                    <option value="089">케이뱅크</option>
+                                    <option value="090">카카오뱅크</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>계좌번호</td><td><input class="banknum" type="text" value="<%=articles2[0].banknum%>" onchange="inputchange(this);"></td>
+                        </tr>
+                        <tr>
+                            <td>예금주</td><td><input class="bankadmin" type="text" value="<%=articles2[0].bankadmin%>" onchange="inputchange(this);"></td>
+                        </tr>
+                        <tr>
+                            <td>예금주연락처</td><td><input class="bankphone" type="text" value="<%=articles2[0].bankphone%>" onchange="inputchange(this);"></td>
+                        </tr>
+                        <tr>
+                            <td>예금주주민번호(앞 6자리)</td><td><input class="bankregident" type="text" value="<%=articles2[0].bankregident%>" onchange="inputchange(this);"></td>
+                        </tr>
+                        <tr>
+                            <td>출금일</td><td><input class="bankdate" type="text" value="<%=bankdate%>" onchange="inputchange2(this);"></td>
+                        </tr>
+                        <tr class="cmsdocument2">
+                            <td>CMS신청서</td>
+                            <td onclick="cmsfileup();">작성/전송하기</td>
+                        </tr>
+                        <tr class="cmsdocument">
+                            <td>증빙전송</td>
+                            <%
+                            
+                            var cmsedate3 = new Date(new Date(cmsdate).setDate(new Date(cmsdate).getDate()+1));
+                            if(cmschk==2)cmsedate3 = new Date(new Date(cmsxdate).setDate(new Date(cmsxdate).getDate()+1));
+                            %>
+                            <td class="" onclick=""><span class="cmsfilestate" style="width:100%;">미전송</span><input type="button" class="btn btn-primary cmsfiledelete" style="width:250px;" value="전송취소(<%=cmsedate3.getFullYear()+'-'+(cmsedate3.getMonth()+1)+'-'+cmsedate3.getDate()%>까지 가능)" onclick="cmsfiledelete('<%=cmschk%>')"></td>
+                        </tr>
+                        <tr class="cmsdeletetr">
+                            <td>CMS해지</td>
+                            <td class="cmsdelete" onclick="cmsdelete();">해지요청</td>
+                        </tr>
+                    </table>
+                    <div class="flexcolumn cmstop">
+                        <!--div class="cmsstate">CMS결제 <span>미등록</span></div-->
+                        <div class="cmsrenttxt" style="padding:6px; font-size:20px;"></div>
+                        <table class="cmsrent">
+                            <tr>
+                                <td>품목</td><td>한달금액</td><td>출금예정금액</td><td>계약시작일</td><td>계약종료일</td><td>본인부담금</td>
+                            </tr>
+                        </table>
+                        <div class="cmspaytxt" style="padding:6px; font-size:20px;">CMS 출금 정보</div>
+                        <table class="cmspay">
+                            <tr>
+                                <td>출금일</td><td>출금금액</td><td>출금예금주</td><td>상태</td>
+                            </tr>
+                        </table>
+                        <div class="cmspaytxt" style="padding:6px; font-size:20px;">대여 입금처리내역</div><div>미수금 총액: <span class="cmspay_total"></span></div>
+                        <table class="orderpay">
+                            <tr>
+                                <td>결제일</td><td>결제방식</td><td>결제금액</td><td>구분</td><td>결제기간</td><td>현재결제잔액</td>
+                            </tr>
+                        </table>
+
+                        <div class="cmsbuytxt" style="padding:6px; font-size:20px;"></div>
+
+                        <table class="cmsbuy">
+                            <thead>
+                                <tr>
+                                    <th>주문일자</th><th>품목코드</th><th>제품명</th><th>단가</th><th style="width:50px;">수량</th><th>공단부담금</th><th>본인부담금</th><th style="width:15px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                            <tfoot>
+
+                            </tfoot>
+                        </table>
+                        <div class="" style="padding:6px; font-size:20px;">구입 입금처리내역</div>
+                        <table class="cmsbuy_pay">
+                            <thead>
+                                <tr>
+                                    <th>결제일</th>
+                                    <th>결제방식</th>
+                                    <th>결제금액</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                            <tfoot>
+
+                            </tfoot>
+                        </table>
+
+                        
+                    </div>
+                </div>
+            
+            </div>
+            
+            <script>
+                async function order_pay_history_get(){
+                    return axios({
+                        method:'post',
+                        url:'/OrderPayHistoryGet',
+                        data:{
+                            company:"<%=company%>",
+                            number:"<%=number%>",
+                        }
+                    }).then(res=>{
+                        const data = res.data;
+                        return data;
+                    });
+                }
+
+                function need_write(){
+                    Swal.fire({
+                        width: '95%',
+                        fontsize: '23px',
+                        didOpen: () => {
+                            $( "#need_datepicker" ).datepicker({
+                                changeMonth: true,
+                                changeYear: true,
+                                timeFormat:'HH:mm:ss',
+                                dateFormat: 'yy-mm-dd',
+                                controlType:'select',
+                                oneLine:true,
+                            });
+                            $( "#need_datepicker" ).datepicker( "option", "showAnim", "slide" );
+                            let now = new Date();
+                            let year= now.getFullYear();
+                            let mon = (now.getMonth()+1)>9 ? ''+(now.getMonth()+1) : '0'+(now.getMonth()+1);
+                            let day = now.getDate()>9 ? ''+now.getDate() : '0'+now.getDate();
+                            let chan_val = year +'-'+ mon +'-'+ day;
+                            axios({
+                                method:'post',
+                                url:'/needgetclient',
+                                data:{
+                                    company:"<%=company%>",
+                                    number:'<%=number%>'
+                                }
+                            }).then(res=>{
+                                const data = res.data.data;
+                                console.log(data);
+                                $('.need_address').text(data[0].address);
+                                $('.need_target').text(data[0].target);
+                                $('.need_sex').text(data[0].sex);
+                                $('.need_regident').text(data[0].regident);
+                                const today = new Date();
+                                const birthDate = new Date(data[0].regident);
+
+                                let age = today.getFullYear() - birthDate.getFullYear();
+                                const m = today.getMonth() - birthDate.getMonth();
+                                if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                                    age--;
+                                }
+                                $('.need_age').text(age);
+                                $('.need_phone').text(data[0].phone1);
+                            });
+                            $('.need_date').val(chan_val);
+                            $('.need_writer').text('<%=managername%>');
+                            if(Mobile()==true){
+                                $('.mobile').css("display","none");
+                                $('.pc').css("display","");
+                            }else{
+                                $('.pc').css("display","none");
+                                $('.mobile').css("display","");
+                            }
+                        },
+                        title: '',
+                        html:
+                        `
+                        <div style="height:650px; overflow-y:scroll; font-size:10px;">
+                            <table class="tg">
+                            <thead>
+                                <tr>
+                                <th class="tg-c3ow" colspan="4" rowspan="2" style="font-size:28px;">욕구사정 기록지</th>
+                                <th class="tg-0pky">작성일</th>
+                                <th class="tg-0pky need_date" colspan="2"><input type="text" readonly class="need_date" id="need_datepicker"></th>
+                                </tr>
+                                <tr>
+                                <th class="tg-0pky">작성자</th>
+                                <th class="tg-0pky" colspan="2"><div class="need_writer"></div>&nbsp;&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="pdfsign_span"><image style="width:60px; -webkit-user-drag: none; position:absolute; left:15px; top:-30px;" src="/companystamp/<%=company.replace(/#/g,"%23").replace(/ /g,"%20")%>" onerror="this.style.display=\'none\'">서명 또는 (인)</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                <td class="tg-0pky need_colum">수급자성명</td>
+                                <td class="tg-0pky" colspan="2"><%=name%></td>
+                                <td class="tg-0pky need_colum">키</td>
+                                <td class="tg-0pky"><input type="text" class="need_height" style="width:40px; height:20px;">cm</td>
+                                <td class="tg-0pky need_colum">생년월일</td>
+                                <td class="tg-0pky need_regident"></td>
+                                </tr>
+                                <tr>
+                                <td class="tg-0pky need_colum">인정번호/등급</td>
+                                <td class="tg-0pky" colspan="2"><div class="flex"><%=number%>&nbsp;&nbsp;/&nbsp;&nbsp;<div class="need_target"></div></div></td>
+                                <td class="tg-0pky need_colum">체중</td>
+                                <td class="tg-0pky"><input type="text" class="need_weight" style="width:40px; height:20px;">kg</td>
+                                <td class="tg-0pky need_colum">성별/연령</td>
+                                <td class="tg-0pky "><div class="flex"><div class="need_sex"></div>&nbsp;&nbsp;/&nbsp;&nbsp;<div class="need_age">60</div></div></td>
+                                </tr>
+                                <tr>
+                                <td class="tg-0pky need_colum">주소</td>
+                                <td class="tg-0pky need_address" colspan="4"></td>
+                                <td class="tg-0pky need_colum">전화번호</td>
+                                <td class="tg-0pky need_phone"></td>
+                                </tr>
+                                <tr>
+                                <td class="tg-0pky need_colum" colspan="7">1. 신체상태(일상생활 동작 수행능력)</td>
+                                </tr>
+                                <tr>
+                                <td class="tg-0pky" colspan="7">
+                                    <textarea class="need_write_textarea need_body"></textarea>
+                                </td>
+                                </tr>
+                                <tr>
+                                <td class="tg-0pky need_colum" colspan="7">2. 인지상태(정신상태, 감정)</td>
+                                </tr>
+                                <tr>
+                                <td class="tg-0pky" colspan="7">
+                                    <textarea class="need_write_textarea need_mental"></textarea>
+                                </td>
+                                </tr>
+                                <tr>
+                                <td class="tg-0pky need_colum" colspan="7">3. 가족 및 환경 상태</td>
+                                </tr>
+                                <tr>
+                                <td class="tg-0pky need_colum">구분</td>
+                                <td class="tg-0pky need_colum" colspan="6">확인</td>
+                                </tr>
+                                <tr>
+                                <td class="tg-0pky need_colum">주수발자</td>
+                                <td class="tg-0pky" colspan="2"><input type="checkbox" class="need_write_chkbox family_chkbox" value="y"> 유&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" class="need_write_chkbox family_chkbox" value="n"> 무</td>
+                                <td class="tg-0pky need_colum" colspan="2">관계</td>
+                                <td class="tg-0pky" colspan="2"><input type="text" class="need_guard_target" style="height:20px;"></td>
+                                </tr>
+                                <tr>
+                                <td class="tg-0pky need_colum">자녀수</td>
+                                <td class="tg-0pky" colspan="6"><input type="text" class="need_children_cnt" style="height:20px;"></td>
+                                </tr>
+                                <tr>
+                                <td class="tg-0pky need_colum">동거인</td>
+                                <td class="tg-0pky" colspan="6"><input type="checkbox" class="need_write_chkbox with_chkbox" value="0"> 독거&nbsp;&nbsp;&nbsp;<input type="checkbox" class="need_write_chkbox with_chkbox" value="1">부부&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" class="need_write_chkbox with_chkbox" value="2"> 부모&nbsp;&nbsp;&nbsp;<input type="checkbox" class="need_write_chkbox with_chkbox" value="3"> 자녀&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" class="need_write_chkbox with_chkbox" value="4"> 손자녀 <input type="checkbox" class="need_write_chkbox with_chkbox" value="5"> 친척&nbsp;&nbsp;<input type="checkbox" class="need_write_chkbox with_chkbox" value="6"> 친구,이웃</td>
+                                </tr>
+                                <tr>
+                                <td class="tg-0pky need_colum" colspan="7">4. 희망급여</td>
+                                </tr>
+                                <tr>
+                                    <td class="tg-0pky need_colum" colspan="3">보유중인 품목</td>
+                                    <td class="tg-0pky need_colum" colspan="4">희망 품목</td>
+                                </tr>
+                                <tr>
+                                    <td class="tg-0pky" colspan="3"><textarea class="need_write_textarea need_have_product"></textarea></td>
+                                    <td class="tg-0pky" colspan="4"><textarea class="need_write_textarea need_want_product"></textarea></td>
+                                </tr>
+                                <tr>
+                                <td class="tg-0lax need_colum" colspan="7">5. 총평</td>
+                                </tr>
+                                <tr>
+                                <td class="tg-0lax" colspan="7">
+                                    <textarea class="need_write_textarea need_result"></textarea>
+                                </td>
+                                </tr>
+                            </tbody>
+                            </table>
+                        </div>
+                        `,
+                    //icon: 'info',
+                    showCancelButton: true,
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: '작성',
+                    cancelButtonText: '취소',
+                    allowOutsideClick: false,
+                    
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const need_date = $('#need_datepicker').val();
+                            const need_writer = '<%=managername%>';
+                            const need_height = document.querySelector('.need_height').value;
+                            const need_weight = document.querySelector('.need_weight').value;
+                            const need_body = document.querySelector('.need_body').value;
+                            const need_mental = document.querySelector('.need_mental').value;
+                            let need_family_val = '';
+                            $.each($('.family_chkbox'),function(i){
+                                if ($('.family_chkbox').eq(i).is(":checked")) {
+                                    need_family_val = $('.family_chkbox').eq(i).val();
+                                }
+                            });
+                            let need_with_live_val = '';
+                            $.each($('.with_chkbox'),function(i){
+                                if ($('.with_chkbox').eq(i).is(":checked")) {
+                                    need_with_live_val = $('.with_chkbox').eq(i).val();
+                                }
+                            });
+                            const need_family = need_family_val;
+                            const need_guard_target = document.querySelector('.need_guard_target').value;
+                            const need_children_cnt = document.querySelector('.need_children_cnt').value;
+                            const need_with_live = need_with_live_val;
+                            const need_have_product = document.querySelector('.need_have_product').value;
+                            const need_want_product = document.querySelector('.need_want_product').value;
+                            const need_result = document.querySelector('.need_result').value;
+
+                            axios({
+                                method:'post',
+                                url:'/need_save',
+                                data:{
+                                    needdate:need_date,
+                                    needwriter:need_writer,
+                                    needheight:need_height,
+                                    needweight:need_weight,
+                                    needbody:need_body,
+                                    needmental:need_mental,
+                                    needfamily:need_family,
+                                    needguardtarget:need_guard_target,
+                                    needchildrencnt:need_children_cnt,
+                                    needwithlive:need_with_live,
+                                    needhaveproduct:need_have_product,
+                                    needwantproduct:need_want_product,
+                                    need_result:need_result,
+                                    company:"<%=company%>",
+                                    name:'<%=name%>',
+                                    number:'<%=number%>'
+                                }
+                            }).then(res=>{
+                                const data = res.data;
+                                if(data.code == 200){
+                                    Swal.fire(
+                                        '작성완료',
+                                        '',
+                                        'success'
+                                    ).then(result=>{
+                                        location.reload();
+                                    })
+                                }else{
+                                    Swal.fire(
+                                        '작성실패',
+                                        '',
+                                        'error'
+                                    )
+                                }
+                            })
+                        }
+                    });
+                }
+                function need_get_data_click(x){
+                    
+                    axios({
+                        method:'post',
+                        url:'/need_get_data_num',
+                        data:{
+                            company:"<%=company%>",
+                            name:'<%=name%>',
+                            number:'<%=number%>',
+                            key:x
+                        }
+                    }).then(res_data=>{
+                        const need_data = res_data.data;
+                        if(need_data.code==200){
+                            Swal.fire({
+                                width: '95%',
+                                fontsize: '23px',
+                                didOpen: () => {
+                                    $( "#need_datepicker_modify" ).datepicker({
+                                        changeMonth: true,
+                                        changeYear: true,
+                                        timeFormat:'HH:mm:ss',
+                                        dateFormat: 'yy-mm-dd',
+                                        controlType:'select',
+                                        oneLine:true,
+                                    });
+                                    $( "#need_datepicker_modify" ).datepicker( "option", "showAnim", "slide" );
+                                    let now = new Date();
+                                    let year= now.getFullYear();
+                                    let mon = (now.getMonth()+1)>9 ? ''+(now.getMonth()+1) : '0'+(now.getMonth()+1);
+                                    let day = now.getDate()>9 ? ''+now.getDate() : '0'+now.getDate();
+                                    let chan_val = year +'-'+ mon +'-'+ day;
+                                    axios({
+                                        method:'post',
+                                        url:'/needgetclient',
+                                        data:{
+                                            company:"<%=company%>",
+                                            number:'<%=number%>'
+                                        }
+                                    }).then(res=>{
+                                        const data = res.data.data;
+                                        console.log(data);
+                                        $('.need_address').text(data[0].address);
+                                        $('.need_target').text(data[0].target);
+                                        $('.need_sex').text(data[0].sex);
+                                        $('.need_regident').text(data[0].regident);
+                                        const today = new Date(need_data.data[0].date.split(' ')[0]);
+                                        const birthDate = new Date(data[0].regident);
+
+                                        let age = today.getFullYear() - birthDate.getFullYear();
+                                        const m = today.getMonth() - birthDate.getMonth();
+                                        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                                            age--;
+                                        }
+                                        $('.need_age').text(age);
+                                        $('.need_phone').text(data[0].phone1);
+                                    });
+                                    $('#need_datepicker_modify').val(need_data.data[0].date.split(' ')[0]);
+                                    $('.need_writer').text(need_data.data[0].manager);
+                                    $('.need_height').val(need_data.data[0].cm);
+                                    $('.need_weight').val(need_data.data[0].kg);
+                                    $('.need_body').val(need_data.data[0].body);
+                                    $('.need_mental').val(need_data.data[0].mental);
+                                    $('.need_guard_target').val(need_data.data[0].familytarget);
+                                    $('.need_children_cnt').val(need_data.data[0].childrencnt);
+                                    $('.need_have_product').val(need_data.data[0].haveproduct);
+                                    $('.need_want_product').val(need_data.data[0].wantproduct);
+                                    $('.need_result').val(need_data.data[0].resulttext);
+                                    $('.family_chkbox').each(function(){
+                                        if(this.value==need_data.data[0].family){
+                                            this.checked =true;
+                                        }
+                                    });
+                                    $('.with_chkbox').each(function(){
+                                        if(this.value==need_data.data[0].withlive){
+                                            this.checked =true;
+                                        }
+                                    });
+                                },
+                                title: '',
+                                html:
+                                `
+                                <div style="height:650px; overflow-y:scroll;">
+                                    <table class="tg">
+                                    <thead>
+                                        <tr>
+                                        <th class="tg-c3ow" colspan="4" rowspan="2" style="font-size:28px;">욕구사정 기록지</th>
+                                        <th class="tg-0pky">작성일</th>
+                                        <th class="tg-0pky need_date" colspan="2"><input type="text" readonly class="need_date" id="need_datepicker_modify"></th>
+                                        </tr>
+                                        <tr>
+                                        <th class="tg-0pky">작성자</th>
+                                        <th class="tg-0pky" colspan="2"><div class="need_writer"></div>&nbsp;&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="pdfsign_span"><image style="width:60px; -webkit-user-drag: none; position:absolute; left:15px; top:-30px;" src="/companystamp/<%=company.replace(/#/g,"%23").replace(/ /g,"%20")%>" onerror="this.style.display=\'none\'">서명 또는 (인)</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                        <td class="tg-0pky need_colum">수급자성명</td>
+                                        <td class="tg-0pky" colspan="2"><%=name%></td>
+                                        <td class="tg-0pky need_colum">키</td>
+                                        <td class="tg-0pky"><input type="text" class="need_height" style="width:40px; height:20px;">cm</td>
+                                        <td class="tg-0pky need_colum">생년월일</td>
+                                        <td class="tg-0pky need_regident"></td>
+                                        </tr>
+                                        <tr>
+                                        <td class="tg-0pky need_colum">인정번호/등급</td>
+                                        <td class="tg-0pky" colspan="2"><div class="flex"><%=number%>&nbsp;&nbsp;/&nbsp;&nbsp;<div class="need_target"></div></div></td>
+                                        <td class="tg-0pky need_colum">체중</td>
+                                        <td class="tg-0pky"><input type="text" class="need_weight" style="width:40px; height:20px;">kg</td>
+                                        <td class="tg-0pky need_colum">성별/연령</td>
+                                        <td class="tg-0pky "><div class="flex"><div class="need_sex"></div>&nbsp;&nbsp;/&nbsp;&nbsp;<div class="need_age">60</div></div></td>
+                                        </tr>
+                                        <tr>
+                                        <td class="tg-0pky need_colum">주소</td>
+                                        <td class="tg-0pky need_address" colspan="4"></td>
+                                        <td class="tg-0pky need_colum">전화번호</td>
+                                        <td class="tg-0pky need_phone"></td>
+                                        </tr>
+                                        <tr>
+                                        <td class="tg-0pky need_colum" colspan="7">1. 신체상태(일상생활 동작 수행능력)</td>
+                                        </tr>
+                                        <tr>
+                                        <td class="tg-0pky" colspan="7">
+                                            <textarea class="need_write_textarea need_body"></textarea>
+                                        </td>
+                                        </tr>
+                                        <tr>
+                                        <td class="tg-0pky need_colum" colspan="7">2. 인지상태(정신상태, 감정)</td>
+                                        </tr>
+                                        <tr>
+                                        <td class="tg-0pky" colspan="7">
+                                            <textarea class="need_write_textarea need_mental"></textarea>
+                                        </td>
+                                        </tr>
+                                        <tr>
+                                        <td class="tg-0pky need_colum" colspan="7">3. 가족 및 환경 상태</td>
+                                        </tr>
+                                        <tr>
+                                        <td class="tg-0pky need_colum">구분</td>
+                                        <td class="tg-0pky need_colum" colspan="6">확인</td>
+                                        </tr>
+                                        <tr>
+                                        <td class="tg-0pky need_colum">주수발자</td>
+                                        <td class="tg-0pky" colspan="2"><input type="checkbox" class="need_write_chkbox family_chkbox" value="y"> 유&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" class="need_write_chkbox family_chkbox" value="n"> 무</td>
+                                        <td class="tg-0pky need_colum" colspan="2">관계</td>
+                                        <td class="tg-0pky" colspan="2"><input type="text" class="need_guard_target" style="height:20px;"></td>
+                                        </tr>
+                                        <tr>
+                                        <td class="tg-0pky need_colum">자녀수</td>
+                                        <td class="tg-0pky" colspan="6"><input type="text" class="need_children_cnt" style="height:20px;"></td>
+                                        </tr>
+                                        <tr>
+                                        <td class="tg-0pky need_colum">동거인</td>
+                                        <td class="tg-0pky" colspan="6"><input type="checkbox" class="need_write_chkbox with_chkbox" value="0"> 독거&nbsp;&nbsp;&nbsp;<input type="checkbox" class="need_write_chkbox with_chkbox" value="1">부부&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" class="need_write_chkbox with_chkbox" value="2"> 부모&nbsp;&nbsp;&nbsp;<input type="checkbox" class="need_write_chkbox with_chkbox" value="3"> 자녀&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" class="need_write_chkbox with_chkbox" value="4"> 손자녀 <input type="checkbox" class="need_write_chkbox with_chkbox" value="5"> 친척&nbsp;&nbsp;<input type="checkbox" class="need_write_chkbox with_chkbox" value="6"> 친구,이웃</td>
+                                        </tr>
+                                        <tr>
+                                        <td class="tg-0pky need_colum" colspan="7">4. 희망급여</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tg-0pky need_colum" colspan="3">보유중인 품목</td>
+                                            <td class="tg-0pky need_colum" colspan="4">희망 품목</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tg-0pky" colspan="3"><textarea class="need_write_textarea need_have_product"></textarea></td>
+                                            <td class="tg-0pky" colspan="4"><textarea class="need_write_textarea need_want_product"></textarea></td>
+                                        </tr>
+                                        <tr>
+                                        <td class="tg-0lax need_colum" colspan="7">5. 총평</td>
+                                        </tr>
+                                        <tr>
+                                        <td class="tg-0lax" colspan="7">
+                                            <textarea class="need_write_textarea need_result"></textarea>
+                                        </td>
+                                        </tr>
+                                    </tbody>
+                                    </table>
+                                </div>
+                                `,
+                            //icon: 'info',
+                            showCancelButton: true,
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: '수정',
+                            cancelButtonText: '취소',
+                            allowOutsideClick: false,
+                            
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    const need_date = $('#need_datepicker_modify').val();
+                                    const need_writer = '<%=managername%>';
+                                    const need_height = document.querySelector('.need_height').value;
+                                    const need_weight = document.querySelector('.need_weight').value;
+                                    const need_body = document.querySelector('.need_body').value;
+                                    const need_mental = document.querySelector('.need_mental').value;
+                                    let need_family_val = '';
+                                    $.each($('.family_chkbox'),function(i){
+                                        if ($('.family_chkbox').eq(i).is(":checked")) {
+                                            need_family_val = $('.family_chkbox').eq(i).val();
+                                        }
+                                    });
+                                    let need_with_live_val = '';
+                                    $.each($('.with_chkbox'),function(i){
+                                        if ($('.with_chkbox').eq(i).is(":checked")) {
+                                            need_with_live_val = $('.with_chkbox').eq(i).val();
+                                        }
+                                    });
+                                    const need_family = need_family_val;
+                                    const need_guard_target = document.querySelector('.need_guard_target').value;
+                                    const need_children_cnt = document.querySelector('.need_children_cnt').value;
+                                    const need_with_live = need_with_live_val;
+                                    const need_have_product = document.querySelector('.need_have_product').value;
+                                    const need_want_product = document.querySelector('.need_want_product').value;
+                                    const need_result = document.querySelector('.need_result').value;
+
+                                    axios({
+                                        method:'post',
+                                        url:'/need_modify',
+                                        data:{
+                                            needdate:need_date,
+                                            needwriter:'<%=managername%>',
+                                            needheight:need_height,
+                                            needweight:need_weight,
+                                            needbody:need_body,
+                                            needmental:need_mental,
+                                            needfamily:need_family,
+                                            needguardtarget:need_guard_target,
+                                            needchildrencnt:need_children_cnt,
+                                            needwithlive:need_with_live,
+                                            needhaveproduct:need_have_product,
+                                            needwantproduct:need_want_product,
+                                            need_result:need_result,
+                                            company:"<%=company%>",
+                                            name:'<%=name%>',
+                                            number:'<%=number%>',
+                                            key:x
+                                        }
+                                    }).then(res=>{
+                                        const data = res.data;
+                                        if(data.code == 200){
+                                            Swal.fire(
+                                                '수정완료',
+                                                '',
+                                                'success'
+                                            ).then((result) => {
+                                                location.reload();
+                                            });
+                                        }else{
+                                            Swal.fire(
+                                                '수정실패',
+                                                '',
+                                                'error'
+                                            )
+                                        }
+                                    })
+                                }
+                            });
+                        }
+                        
+                    })
+                }
+                function need_get_data(){
+                    axios({
+                        method:'post',
+                        url:'/need_get_data',
+                        data:{
+                            company:'<%=company%>',
+                            name:'<%=name%>',
+                            number:'<%=number%>'
+                        }
+                    }).then(res=>{
+                        const data = res.data;
+                        let str = '';
+                        if(data.code==200){
+                            data.data.forEach(function(obj,index){
+                                str += `
+                                <div class="flex need_tr" onclick="need_get_data_click(${obj.num})"><div class="need_date">${obj.date.split(' ')[0]}</div><div class="need_result_txt">${obj.resulttext}</div></div>
+                                `;
+                            });
+                            $('.need_th').append(str);
+                        }else{
+
+                        }
+                    })
+                }
+                var cmsfilechk = 'n';
+                $(document).ready(function(){
+                    if(cmschk2=='cms'){
+                        toptab($('.toptab').children('div').eq(1),'cms');
+                        $('.toptab').children('div').eq(0).hide();
+                    }
+                    $.ajax({
+                        url:'/cmsclientup',
+                        data:'chk=g&number=<%=number%>&name=<%=name%>&name='+$('.bankname').val()+'&banknum='+$('.banknum').val()+'&bankregident='+$('.bankregident').val()+'&bankphone='+$('.bankphone').val()+'&thebillid=<%=thebillid%>&thebillapikey=<%=thebillapikey%>',
+                        type: 'post',
+                        dataType: 'JSON',
+                        async:true,
+                        success: function(result){
+                            if(result){
+                            }
+                        }
+                    });
+                    var today = new Date();
+                    var year = today.getFullYear();
+                    var month = ('0' + (today.getMonth() + 1)).slice(-2);
+                    var day2 = $('.bankdate').val() > 9 ? '' + $('.bankdate').val() : '0' + $('.bankdate').val();
+                    $.ajax({
+                        url:'/cmspayresult',
+                        data:'number=<%=number%>&name=<%=name%>&company=<%=company%>&msgno='+tablemsgno,
+                        type: 'post',
+                        dataType: 'JSON',
+                        async:true,
+                        success: function(result){
+                            if(result){
+                                let sortedData = '';
+                                var resultarr = result.result;
+                                if(result.result2!=''&&result.result2!=undefined){
+                                    resultarr = result.result.concat(result.result2);
+                                }
+                                if(resultarr!=''){
+                                    if(result.result!=''){
+                                            sortedData = resultarr.sort((a, b) => {
+                                            const dateA = new Date(`${a.date.slice(0, 4)}-${a.date.slice(4, 6)}-${a.date.slice(6, 8)}`);
+                                            const dateB = new Date(`${b.date.slice(0, 4)}-${b.date.slice(4, 6)}-${b.date.slice(6, 8)}`);
+                                            return dateA - dateB;
+                                        });
+                                    }else{
+                                        sortedData = result.result2;
+                                    }
+                                    var str = '';
+                                    var state = '출금완료';
+                                    var color = '#2F9D27';
+                                    $.each(sortedData,function(i){
+                                        if(sortedData[i].hasOwnProperty('state')){
+                                            if(sortedData[i].state!=''&&sortedData[i].state==2){
+                                                color = '#ff0000';
+                                                state = '잔액부족';
+                                            }
+                                        }else{
+                                            state = '출금완료';
+                                            color = '#2F9D27';
+                                        }
+                                        if(sortedData[i].hasOwnProperty('state')){
+                                            if(sortedData[i].state!=0)str +='<tr><td>'+sortedData[i].date+'</td><td>'+sortedData[i].money+'원</td><td>'+sortedData[i].name+'</td><td style="color:'+color+';">'+state+'</td></tr>';
+                                        }else{
+                                            str +='<tr><td>'+sortedData[i].date+'</td><td>'+sortedData[i].money+'원</td><td>'+sortedData[i].name+'</td><td style="color:'+color+';">'+state+'</td></tr>';
+
+                                        }
+                                    });
+                                }
+                                
+                                $('.cmspay').append(str);
+                            }
+                        }
+                    });
+                    
+                    need_get_data();
+                    cmsrent().then(cmsrent_res=>{
+                        let cmsrent_start = new Date($(".cmsrent_rentstart").eq(0).text());
+                        let cmsrent_end = new Date(chan_val);
+                        let cmsrent_month_price = 0;
+                        $('.cmsrent_month_price').each(function(index){
+                            cmsrent_month_price += parseInt($(this).text().replace(/[^0-9]/g,''));
+                        });
+                        console.log(cmsrent_start,cmsrent_end,cmsrent_month_price);
+                        const cal_data = calculateRentalCost(cmsrent_start,cmsrent_end,cmsrent_month_price);
+                        console.log(totalrent,"cmsrent_res")
+                        order_pay_history_get().then(res=>{
+                            let remain_price = 0;
+                            if(res.code==200){
+                                let str = ``;
+                                res.data.forEach(function(obj,index){
+                                    console.log(obj.price,cal_data)
+                                    console.log(obj.price-cal_data);
+                                    //미수금
+                                    
+                                    remain_price -= totalrent-parseInt(obj.price);
+                                    str += `<tr><td>${obj.date}</td><td>${obj.type==0?"현금":obj.type==1?"카드":"이체"}</td><td>${parseInt(obj.price).toLocaleString()}원</td><td>${obj.rentproduct!=''?"대여":"판매"}</td><td>${obj.rentproduct!=''?"~"+obj.rentdate:""}</td><td>${obj.rentproduct!=''?parseInt(obj.price-cal_data)<0?0:parseInt(obj.price-cal_data).toLocaleString()+'원':''}</td></tr>`;
+                                });
+                                $('.cmspay_total').text(parseInt(remain_price).toLocaleString()+'원');
+                                $('.orderpay').append(str);
+                                
+                            }
+                        });
+                        cmsbuy(new Date().getFullYear()-1, new Date().getMonth()+1,new Date().getFullYear(),new Date().getMonth()+1);
+                    });
+                });
+                
+                const cmsdate = '<%=cmsdate%>';
+                const cmsxdate = '<%=cmsxdate%>';
+                
+                if(target=='기초'||target=='의료급여'){
+                    zerostatetable();
+                }
+
+                $('.cmsrenttxt').text(ymon+'월 대여품목 입력정보');
+                $('.cmsbuytxt').html(
+                    "<select class='cms_buy_select_year_start' style='height:30px; font-size:18px; font-weight:bold;' onchange='cmsbuy(this.value,$(\".cms_buy_select_month_start\").val(),$(\".cms_buy_select_year_end\").val(),$(\".cms_buy_select_month_end\").val())'>" +
+                        "<option value='2025'>2025</option>" +
+                        "<option value='2024'>2024</option>" +
+                        "<option value='2023'>2023</option>" +
+                        "<option value='2022'>2022</option>" +
+                        "<option value='2021'>2021</option>" +
+                        "<option value='2020'>2020</option>" +
+                        "<option value='2019'>2019</option>" +
+                        "<option value='2018'>2018</option>" +
+                        "<option value='2017'>2017</option>" +
+                        "<option value='2016'>2016</option>" +
+                        "<option value='2015'>2015</option>" +
+                        "<option value='2014'>2014</option>" +
+                        "<option value='2013'>2013</option>" +
+                        "<option value='2012'>2012</option>" +
+                        "<option value='2011'>2011</option>" +
+                        "<option value='2010'>2010</option>" +
+                        "<option value='2009'>2009</option>" +
+                        "<option value='2008'>2008</option>" +
+                        "<option value='2007'>2007</option>" +
+                        "<option value='2006'>2006</option>" +
+                        "<option value='2005'>2005</option>" +
+                        "<option value='2004'>2004</option>" +
+                        "<option value='2003'>2003</option>" +
+                        "<option value='2002'>2002</option>" +
+                        "<option value='2001'>2001</option>" +
+                        "<option value='2000'>2000</option>" +
+                    "</select>년" +
+                    "<select class='cms_buy_select_month_start' style='height:30px; font-size:18px; font-weight:bold;' onchange='cmsbuy($(\".cms_buy_select_year_start\").val(),this.value,$(\".cms_buy_select_year_end\").val(),$(\".cms_buy_select_month_end\").val())'>" +
+                        "<option value='1'"+(new Date().getMonth()+1==1?" selected":"")+">1월</option>" +
+                        "<option value='2'"+(new Date().getMonth()+1==2?" selected":"")+">2월</option>" +
+                        "<option value='3'"+(new Date().getMonth()+1==3?" selected":"")+">3월</option>" +
+                        "<option value='4'"+(new Date().getMonth()+1==4?" selected":"")+">4월</option>" +
+                        "<option value='5'"+(new Date().getMonth()+1==5?" selected":"")+">5월</option>" +
+                        "<option value='6'"+(new Date().getMonth()+1==6?" selected":"")+">6월</option>" +
+                        "<option value='7'"+(new Date().getMonth()+1==7?" selected":"")+">7월</option>" +
+                        "<option value='8'"+(new Date().getMonth()+1==8?" selected":"")+">8월</option>" +
+                        "<option value='9'"+(new Date().getMonth()+1==9?" selected":"")+">9월</option>" +
+                        "<option value='10'"+(new Date().getMonth()+1==10?" selected":"")+">10월</option>" +
+                        "<option value='11'"+(new Date().getMonth()+1==11?" selected":"")+">11월</option>" +
+                        "<option value='12'"+(new Date().getMonth()+1==12?" selected":"")+">12월</option>" +
+                    "</select>월 ~ " +
+                    "<select class='cms_buy_select_year_end' style='height:30px; font-size:18px; font-weight:bold;' onchange='cmsbuy($(\".cms_buy_select_year_start\").val(),$(\".cms_buy_select_month_start\").val(),this.value,$(\".cms_buy_select_month_end\").val())'>" +
+                        "<option value='2025'>2025</option>" +
+                        "<option value='2024'"+(new Date().getFullYear()==2024?" selected":"")+">2024</option>" +
+                        "<option value='2023'>2023</option>" +
+                        "<option value='2022'>2022</option>" +
+                        "<option value='2021'>2021</option>" +
+                        "<option value='2020'>2020</option>" +
+                        "<option value='2019'>2019</option>" +
+                        "<option value='2018'>2018</option>" +
+                        "<option value='2017'>2017</option>" +
+                        "<option value='2016'>2016</option>" +
+                        "<option value='2015'>2015</option>" +
+                        "<option value='2014'>2014</option>" +
+                        "<option value='2013'>2013</option>" +
+                        "<option value='2012'>2012</option>" +
+                        "<option value='2011'>2011</option>" +
+                        "<option value='2010'>2010</option>" +
+                        "<option value='2009'>2009</option>" +
+                        "<option value='2008'>2008</option>" +
+                        "<option value='2007'>2007</option>" +
+                        "<option value='2006'>2006</option>" +
+                        "<option value='2005'>2005</option>" +
+                        "<option value='2004'>2004</option>" +
+                        "<option value='2003'>2003</option>" +
+                        "<option value='2002'>2002</option>" +
+                        "<option value='2001'>2001</option>" +
+                        "<option value='2000'>2000</option>" +
+                    "</select>년" +
+                    "<select class='cms_buy_select_month_end' style='height:30px; font-size:18px; font-weight:bold;' onchange='cmsbuy($(\".cms_buy_select_year_start\").val(),$(\".cms_buy_select_month_start\").val(),$(\".cms_buy_select_year_end\").val(),this.value)'>" +
+                        "<option value='1'"+(new Date().getMonth()+1==1?" selected":"")+">1월</option>" +
+                        "<option value='2'"+(new Date().getMonth()+1==2?" selected":"")+">2월</option>" +
+                        "<option value='3'"+(new Date().getMonth()+1==3?" selected":"")+">3월</option>" +
+                        "<option value='4'"+(new Date().getMonth()+1==4?" selected":"")+">4월</option>" +
+                        "<option value='5'"+(new Date().getMonth()+1==5?" selected":"")+">5월</option>" +
+                        "<option value='6'"+(new Date().getMonth()+1==6?" selected":"")+">6월</option>" +
+                        "<option value='7'"+(new Date().getMonth()+1==7?" selected":"")+">7월</option>" +
+                        "<option value='8'"+(new Date().getMonth()+1==8?" selected":"")+">8월</option>" +
+                        "<option value='9'"+(new Date().getMonth()+1==9?" selected":"")+">9월</option>" +
+                        "<option value='10'"+(new Date().getMonth()+1==10?" selected":"")+">10월</option>" +
+                        "<option value='11'"+(new Date().getMonth()+1==11?" selected":"")+">11월</option>" +
+                        "<option value='12'"+(new Date().getMonth()+1==12?" selected":"")+">12월</option>" +
+                    "</select>월 구입품목 주문서 입력정보"
+                );
+                
+                // 기본값 설정 - 1년전~현재달
+                $('.cms_buy_select_year_start').val(new Date().getFullYear()-1);
+                $('.cms_buy_select_month_start').val(new Date().getMonth()+1);
+                if(cmschk==1){
+                    var cmsdate2 = new Date(new Date(cmsdate).setDate(new Date(cmsdate).getDate()+1));
+                    if(cmsdate2 >= new Date(chan_val)){
+                        $('.cmsfiledelete').show();
+                    }else{
+                        $('.cmsfiledelete').hide();
+                    }
+                    $('.cmsfilestate').html('신규전송완료');
+                    $('.cmsfilestate').parent().css({background:'#5abe6b'});
+                }else if(cmschk==2){
+                    var cmsxdate2 = new Date(new Date(cmsxdate).setDate(new Date(cmsxdate).getDate()+1));
+                    if(cmsxdate2 >= new Date(chan_val)){
+                        
+                        $('.cmsfiledelete').show();
+                    }else{
+                        $('.cmsfiledelete').hide();
+                    }
+                    $('.cmsfilestate').html('취소전송완료');
+                    $('.cmsfilestate').parent().css({background:'#5abe6b'});
+                }else{
+                    $('.cmsdeletetr').hide();
+                    $('.cmsfiledelete').hide();
+                    $('.cmsfilestate').html('미전송');
+                    $('.cmsfilestate').parent().css({});
+                }
+
+                function cmsfileup(){
+                    if($('.banknum').val()==''||$('.bankadmin').val()==''||$('.bankphone').val()==''||$('.bankregident').val()==''||$('.bankdate').val()=='') {
+                        Swal.fire('미입력정보가있습니다.','','error');
+                    }else{
+                        $.ajax({
+                            url:'/cmschk',
+                            data:'bankname='+$('.bankname').val()+'&banknum='+$('.banknum').val(),
+                            type: 'POST',
+                            dataType: 'JSON',
+                            async:true,
+                            success: function(result){
+                                if(result){
+                                    if(result.code=='0105')Swal.fire('은행코드오류','（미참가은행코드임）','error');
+                                    if(result.code=='0125')Swal.fire('수취인 계좌 없음','','error');
+                                    if(result.code=='0000'){
+                                        if(result.name==$('.bankadmin').val()){
+                                            Swal.fire({
+                                                title: '<strong>CMS신청서</strong>',
+                                                width: 900,
+                                                padding: '0em',
+                                                icon: '',
+                                                html:'<iframe style="width:100%; height:700px;" id="print1" name="print1" src="//xn--9o7b95g.com/cmsfile" frameborder="0"></iframe>',
+                                                showCloseButton: true,
+                                                showCancelButton: true,
+                                                showDenyButton: true,
+                                                focusConfirm: false,
+                                                denyButtonColor: "#86E57F",
+                                                cancelButtonColor: "#DD6B55",
+                                                confirmButtonText:
+                                                    '<i class="fa fa-thumbs-up"></i> 내려받기',
+                                                confirmButtonAriaLabel: 'Thumbs up, great!',
+                                                cancelButtonText:
+                                                    '<i class="fa fa-thumbs-down"></i> 취소',
+                                                cancelButtonAriaLabel: 'Thumbs down',
+                                                denyButtonText: '증빙전송하기',
+                                                didOpen:()=>{
+                                                    $('#print1').load( function(){
+                                                        $('#print1').contents().find('.company').html(company);
+                                                        $('#print1').contents().find('.ceo').html(ceo);
+                                                        $('#print1').contents().find('.name').html('<%=name%>');
+                                                        $('#print1').contents().find('.guardtarget').html('<%=guardtarget%>');
+                                                        $('#print1').contents().find('.phone').html($('.bankphone').val());
+                                                        $('#print1').contents().find('.phone2').html($('.bankphone').val());
+                                                        $('#print1').contents().find('.ibankname').html($('.bankname option:checked').text());
+                                                        $('#print1').contents().find('.ibanknum').text($('.banknum').val());
+                                                        $('#print1').contents().find('.ibankadmin').text($('.bankadmin').val());
+                                                        $('#print1').contents().find('.ibankphone').text($('.bankphone').val());
+                                                        $('#print1').contents().find('.ibankregident').text($('.bankregident').val());
+                                                        $('#print1').contents().find('.addr').text(bankaddr);
+                                                        $('#print1').contents().find('.companynum').text('<%=bankcompanynum%>');
+                                                        $('#print1').contents().find('.n1').text(result.msgno[0]);
+                                                        $('#print1').contents().find('.n2').text(result.msgno[1]);
+                                                        $('#print1').contents().find('.n3').text(result.msgno[2]);
+                                                        $('#print1').contents().find('.n4').text(result.msgno[3]);
+                                                        $('#print1').contents().find('.n5').text(result.msgno[4]);
+                                                        $('#print1').contents().find('.n6').text(result.msgno[5]);
+                                                        if('<%=guardname%>'=='본인'||'<%=guardname%>'==''){
+                                                            $('#print1').contents().find('.guardname').text('<%=name%>');
+                                                        }else{
+                                                            $('#print1').contents().find('.guardname').text('<%=guardname%>');
+                                                        }
+                                                    });
+                                                    //alert($('iframe[name="print1"]').contents().find('.name').text());
+                                                    //$('iframe[name="print1"]').contents().find('.name').html('<%=name%>');
+                                                }
+                                            }).then((result2) => {
+                                                if (result2.isConfirmed) {
+                                                    imgchange();
+                                                } else if (result2.isDenied) {
+                                                    imgcmspost($('.bankname').val(),$('.banknum').val(),$('.bankadmin').val(),$('.bankphone').val(),$('.bankregident').val(),chan_val,result.msgno,cmsfilechk,$('.bankdate').val()); 
+                                                }
+                                            });
+                                        }else{
+                                            Swal.fire('예금주 불일치','조회 계좌 예금주:'+result.name,'error');
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            
+                function orderpagechange(){
+                    window.parent.orderpagepopup('<%=number%>');
+                }
+            </script>
+            
+            <!--div class="signbox">
+                <div style="width:300px; height:300px;">
+                <canvas id="canvas" style="border:1px solid black"></canvas>
+                </div>
+                <div>
+                
+                <button id="save">save</button>
+            </div-->
+            <div id="submitorder" class="material-icons" style="margin-top:30px; height:50px; display:flex; justify-content:center; align-items: center;" onclick="orderpagechange();"><span style="color:#1465b1; font-size:30px;">rocket</span>&nbsp;&nbsp;<span style="font-size:18px; font-weight: bold;">주문서입력</span></div>
+            <div id="submit" class="material-icons" style="margin-top:30px; height:50px; display:flex; justify-content:center; align-items: center;"><span style="color:#009113; font-size:30px;">how_to_reg</span>&nbsp;&nbsp;<span style="font-size:18px; font-weight: bold;">수정하기</span></div>
+            <div id="bsubmit" class="material-icons" style="margin-top:30px; height:50px; display:flex; justify-content:center; align-items: center;"><span style="color:#009113; font-size:30px;">currency_exchange</span>&nbsp;&nbsp;<span style="font-size:18px; font-weight: bold;">수정하기</span></div>
+            <div id="submit2" class="material-icons" onclick="deleteclient();" style="margin-top:30px; height:50px; display:flex; justify-content:center; align-items: center;"><span style="color:#ff0000; font-size:30px;">delete_forever</span>&nbsp;&nbsp;<span style="font-size:18px; font-weight: bold;">삭제하기</span></div>
+        </div>
+    </div>
+
+    <div id="layer" style="display:none;position:fixed;overflow:hidden;z-index:1;-webkit-overflow-scrolling:touch;">
+        <img src="//t1.daumcdn.net/postcode/resource/images/close.png" id="btnCloseLayer" style="cursor:pointer;position:absolute;right:-3px;top:-3px;z-index:1" onclick="closeDaumPostcode()" alt="닫기 버튼">
+    </div>
+
+    <script>
+        
+        // 우편번호 찾기 화면을 넣을 element
+        var element_layer = document.getElementById('layer');
+    
+        function closeDaumPostcode() {
+            // iframe을 넣은 element를 안보이게 한다.
+            element_layer.style.display = 'none';
+        }
+    
+        function sample2_execDaumPostcode() {
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    // 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+    
+                    // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                    // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                    var addr = ''; // 주소 변수
+                    var extraAddr = ''; // 참고항목 변수
+    
+                    //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                    if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                        addr = data.roadAddress;
+                    } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                        addr = data.jibunAddress;
+                    }
+    
+                    // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+                    if(data.userSelectedType === 'R'){
+                        // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+                        // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+                        if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                            extraAddr += data.bname;
+                        }
+                        // 건물명이 있고, 공동주택일 경우 추가한다.
+                        if(data.buildingName !== '' && data.apartment === 'Y'){
+                            extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                        }
+                        // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+                        if(extraAddr !== ''){
+                            extraAddr = ' (' + extraAddr + ')';
+                        }
+                        // 조합된 참고항목을 해당 필드에 넣는다.
+                        document.getElementById("sample2_extraAddress").value = extraAddr;
+                        //if(document.getElementById("addresschk").checked) document.getElementById("sample3_extraAddress").value = extraAddr;
+                    } else {
+                        document.getElementById("sample2_extraAddress").value = '';
+                    }
+    
+                    // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                    document.getElementById('sample2_postcode').value = data.zonecode;
+                    if(document.getElementById("addresschk").checked) document.getElementById("sample3_postcode").value = data.zonecode;
+                    document.getElementById("sample2_address").value = addr;
+                    if(document.getElementById("addresschk").checked) document.getElementById("sample3_address").value = addr;
+                    // 커서를 상세주소 필드로 이동한다.
+                    document.getElementById("sample2_detailAddress").value = extraAddr;
+
+                    document.getElementById("sample2_detailAddress").focus();
+                    if(document.getElementById("addresschk").checked) document.getElementById("sample3_detailAddress").focus();
+    
+                    // iframe을 넣은 element를 안보이게 한다.
+                    // (autoClose:false 기능을 이용한다면, 아래 코드를 제거해야 화면에서 사라지지 않는다.)
+                    element_layer.style.display = 'none';
+                },
+                width : '100%',
+                height : '100%',
+                maxSuggestItems : 5
+            }).embed(element_layer);
+    
+            // iframe을 넣은 element를 보이게 한다.
+            element_layer.style.display = 'block';
+    
+            // iframe을 넣은 element의 위치를 화면의 가운데로 이동시킨다.
+            initLayerPosition();
+        }
+    
+        // 브라우저의 크기 변경에 따라 레이어를 가운데로 이동시키고자 하실때에는
+        // resize이벤트나, orientationchange이벤트를 이용하여 값이 변경될때마다 아래 함수를 실행 시켜 주시거나,
+        // 직접 element_layer의 top,left값을 수정해 주시면 됩니다.
+        function initLayerPosition(){
+            var width = 300; //우편번호서비스가 들어갈 element의 width
+            var height = 400; //우편번호서비스가 들어갈 element의 height
+            var borderWidth = 5; //샘플에서 사용하는 border의 두께
+    
+            // 위에서 선언한 값들을 실제 element에 넣는다.
+            element_layer.style.width = width + 'px';
+            element_layer.style.height = height + 'px';
+            element_layer.style.border = borderWidth + 'px solid';
+            // 실행되는 순간의 화면 너비와 높이 값을 가져와서 중앙에 뜰 수 있도록 위치를 계산한다.
+            element_layer.style.left = (((window.innerWidth || document.documentElement.clientWidth) - width)/2 - borderWidth) + 'px';
+            element_layer.style.top = (((window.innerHeight || document.documentElement.clientHeight) - height)/2 - borderWidth) + 'px';
+        }
+    </script>
+    
+    <script>
+        // 우편번호 찾기 화면을 넣을 element
+        var element_layer = document.getElementById('layer');
+    
+        function closeDaumPostcode() {
+            // iframe을 넣은 element를 안보이게 한다.
+            element_layer.style.display = 'none';
+        }
+    
+        function sample3_execDaumPostcode() {
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    // 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+    
+                    // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                    // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                    var addr = ''; // 주소 변수
+                    var extraAddr = ''; // 참고항목 변수
+    
+                    //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                    if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                        addr = data.roadAddress;
+                    } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                        addr = data.jibunAddress;
+                    }
+    
+                    // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+                    if(data.userSelectedType === 'R'){
+                        // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+                        // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+                        if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                            extraAddr += data.bname;
+                        }
+                        // 건물명이 있고, 공동주택일 경우 추가한다.
+                        if(data.buildingName !== '' && data.apartment === 'Y'){
+                            extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                        }
+                        // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+                        if(extraAddr !== ''){
+                            extraAddr = ' (' + extraAddr + ')';
+                        }
+                        // 조합된 참고항목을 해당 필드에 넣는다.
+                        document.getElementById("sample3_extraAddress").value = extraAddr;
+                    
+                    } else {
+                        document.getElementById("sample3_extraAddress").value = '';
+                    }
+    
+                    // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                    document.getElementById('sample3_postcode').value = data.zonecode;
+                    document.getElementById("sample3_address").value = addr;
+                    // 커서를 상세주소 필드로 이동한다.
+                    document.getElementById("sample3_detailAddress").focus();
+    
+                    // iframe을 넣은 element를 안보이게 한다.
+                    // (autoClose:false 기능을 이용한다면, 아래 코드를 제거해야 화면에서 사라지지 않는다.)
+                    element_layer.style.display = 'none';
+                },
+                width : '100%',
+                height : '100%',
+                maxSuggestItems : 5
+            }).embed(element_layer);
+    
+            // iframe을 넣은 element를 보이게 한다.
+            element_layer.style.display = 'block';
+    
+            // iframe을 넣은 element의 위치를 화면의 가운데로 이동시킨다.
+            initLayerPosition();
+        }
+    
+        // 브라우저의 크기 변경에 따라 레이어를 가운데로 이동시키고자 하실때에는
+        // resize이벤트나, orientationchange이벤트를 이용하여 값이 변경될때마다 아래 함수를 실행 시켜 주시거나,
+        // 직접 element_layer의 top,left값을 수정해 주시면 됩니다.
+        function initLayerPosition(){
+            var width = 300; //우편번호서비스가 들어갈 element의 width
+            var height = 400; //우편번호서비스가 들어갈 element의 height
+            var borderWidth = 5; //샘플에서 사용하는 border의 두께
+    
+            // 위에서 선언한 값들을 실제 element에 넣는다.
+            element_layer.style.width = width + 'px';
+            element_layer.style.height = height + 'px';
+            element_layer.style.border = borderWidth + 'px solid';
+            // 실행되는 순간의 화면 너비와 높이 값을 가져와서 중앙에 뜰 수 있도록 위치를 계산한다.
+            element_layer.style.left = (((window.innerWidth || document.documentElement.clientWidth) - width)/2 - borderWidth) + 'px';
+            element_layer.style.top = (((window.innerHeight || document.documentElement.clientHeight) - height)/2 - borderWidth) + 'px';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,4922 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<script  src="//code.jquery.com/jquery-latest.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="/axios/dist/axios.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
+<script src="/js/ajax_before_send.js"></script>
+
+<head>
+    <title><%= title %></title>
+</head>
+<script>
+    function Mobile() { return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent); }
+  </script>
+<style>
+    .label_area{
+        width: 794px;
+        height: 700px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        align-items: flex-start;
+    }
+    .product_label {
+        width: 580px;
+        height: 380px;
+        border: 2px solid #FBB03B;
+        padding: 15px;
+        box-sizing: border-box;
+        position: relative;
+        font-family: Arial, sans-serif;
+        margin:5px 7px 5px 7px;
+        overflow:hidden;
+    }
+
+    .product_label .title {
+        width: 200px;
+        color: #0340d0;
+        font-weight: bold;
+        font-size: 18px;
+        line-height: 1.4em;
+    }
+
+    .product_label .price {
+        position: absolute;
+        top: 95px;
+        right: 10px;
+        /* background-color: #F7931E; */
+        /* color: white; */
+        border-top-right-radius: 0;
+        border-top-left-radius: 50%;
+        border-bottom-left-radius: 50%;
+        border-bottom-right-radius: 50%;
+        width: 200px;
+        height: 80px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: flex-end;
+        font-size: 28px;
+        font-weight: bold;
+        text-align: right;
+    }
+
+    .product_label .price span {
+        font-size: 11px;
+        display: block;
+    }
+
+    .product_label .image {
+        text-align: left;
+        margin-top: 10px;
+    }
+
+    .product_label .barcode {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+    }
+
+    .product_label .product-code {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        font-size: 23px;
+        color: #333;
+    }
+
+
+    @font-face { 
+            font-family: 'Material Icons'; 
+            font-style: normal; 
+            font-weight: 400; 
+            src: url(path/to/MaterialIcons-Regular.eot); 
+            /* For IE6-8 */ 
+            src: 
+            local('Material Icons'), 
+            local('MaterialIcons-Regular'), 
+        }
+    .material-icons { 
+            font-family: 'Material Icons'; 
+            font-weight: normal; 
+            font-style: normal; 
+            font-size: 16px; /* Preferred icon size */ 
+            display: inline-block; 
+            line-height: 1; 
+            text-transform: none; 
+            letter-spacing: normal; 
+            word-wrap: normal; 
+            white-space: nowrap; 
+            direction: ltr; /* Support for all WebKit browsers. */ 
+            -webkit-font-smoothing: antialiased; /* Support for Safari and Chrome. */ 
+            text-rendering: optimizeLegibility; /* Support for Firefox. */ 
+            -moz-osx-font-smoothing: grayscale; /* Support for IE. */ 
+            font-feature-settings: 'liga'; }
+    .title {
+        display:flex;
+        align-items: center;
+        font-size:20px;
+        font-weight: bold;
+    }
+    .title span{
+        font-size:30px;
+    }
+    .search-form{
+        display: flex;
+        justify-content: center;
+        padding:20px;
+    }
+    .search-form input:nth-child(1){
+        width:250px;
+        border:1px solid #000000;
+        background:#ffffff;
+        border-radius: 5px;
+        height:40px;
+    }
+    .search-form input:nth-child(2){
+        background:#ffffff;
+        border-radius: 5px;
+        border:2px solid #000000;
+        width:60px;
+        margin-left: 5px;
+    }
+    .search-form input:nth-child(2):hover{
+        border:2px solid #CC414D;
+        background:#dcffff;
+        width:60px;
+    }
+    .maincontainer{
+        display:flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width:100%;
+        position: relative;
+        padding-top:50px;
+        padding-left:50px;
+        padding-right:50px;
+        padding-bottom:50px;
+    }
+    /*.maincontainer::before{
+        content : "";
+        display: block;
+        position: absolute;
+        background-size: cover;
+        top: 0;
+        left: 0;
+        background-image: url( "/img3" );
+        width: 100%;
+        height: 100%;
+        opacity : 0.1;
+        z-index: -1;
+    }*/
+    .topmenu,.topmenu2{
+        width:100%;
+        font-size:15px;
+    }
+    .topmenu tr td,.topmenu2{
+        padding-bottom:15px;
+    }
+    .topmenu tr:nth-child(1) td:nth-child(1) span{
+        width:100px;
+        padding:10px;
+        border:1px solid #000000;
+        border-radius: 5px;
+        background:#001247;
+        color:#ffffff;
+        font-weight:bold;
+        cursor: pointer;
+    }
+    .topmenu tr:nth-child(1) td:nth-child(1) span:hover{
+        border:1px solid #CC414D;
+        background:#fff;
+        color:#000000;
+    }
+
+    .topmenu tr:nth-child(1) td:nth-child(2) div{
+        width:200px;
+        border-radius: 5px;
+        /* background:#ffffff; */
+        font-weight:bold;
+        text-align: center;
+        height: 40px;
+        line-height: 40px;
+        font-size: 17px;
+        cursor:pointer;
+        box-shadow: 0 8px 9px -4px rgba(0, 0, 0, 0.3), 0 4px 18px 0 rgba(0, 0, 0, 0.2);
+    
+    }
+
+    
+
+    .topmenu tr:nth-child(1) td:nth-child(2) span:nth-child(2){
+        border:1px solid #006426;
+    }
+    .topmenu tr:nth-child(1) td:nth-child(2) span:nth-child(3){
+        border:1px solid #0004ee;
+    }
+    .topmenu tr:nth-child(1) td:nth-child(2) span:nth-child(4){
+        border:1px solid #006426;
+    }
+    .topmenu tr:nth-child(1) td:nth-child(2) span:nth-child(5){
+        border:1px solid #8d0000;
+    }
+    .topmenu tr:nth-child(1) td:nth-child(2){
+        display:flex;
+        justify-content:flex-end;
+        font-weight: bold;
+    }
+    
+    .table{
+        
+        border:2px solid #000000;
+    }
+    .center td{
+        text-align: center;
+        font-weight:bold;
+    }
+    .table tr:nth-child(1){
+        font-size:20px;
+        background: #1a2136;
+    }
+    .table tr:nth-child(2){
+        font-size:16px;
+    }
+    .pagingnum{
+        border:1px solid #ffffff;
+        padding:5px;
+        border-radius: 4px;
+        background:#ffffff;
+    }
+    .table tr:nth-child(1),.table tr:nth-child(2){
+        border:2px solid #000000;
+        font-weight: bold;
+    }
+    .table>tbody>tr>td{
+        padding:6px;
+    }
+    .topline{
+        position: fixed;
+        top:0;
+        width:100%;
+        height:32px;
+        background: #122459;
+        z-index: 999;
+    }
+    /* 미리보기 스타일 셋팅 */
+    #preview{
+        z-index: 9999;
+        position:absolute;
+        border:0px solid #ccc;
+        background:#333;
+        padding:1px;
+        display:none;
+        color:#fff;
+    }
+</style>
+<style>
+    /* Outer */
+.popup {
+	width:100%;
+	height:100%;
+	display:none;
+	position:fixed;
+	top:0px;
+	left:0px;
+	background:rgba(0,0,0,0.3);
+}
+
+/* Inner */
+.popup-inner {
+	max-width:800px;
+    height:400px;
+	width:100%;
+	/*padding:40px;*/
+	position:absolute;
+	top:50%;
+	left:50%;
+	-webkit-transform:translate(-50%, -50%);
+	transform:translate(-50%, -50%);
+	box-shadow:0px 2px 6px rgba(0,0,0,1);
+	border-radius:3px;
+	background:#fff;
+}
+
+/* Close Button */
+.popup-close {
+	width:30px;
+	height:30px;
+	padding-top:4px;
+	display:inline-block;
+	position:absolute;
+	top:0px;
+	right:0px;
+	transition:ease 0.25s all;
+	-webkit-transform:translate(50%, -50%);
+	transform:translate(50%, -50%);
+	border-radius:1000px;
+	background:rgba(0,0,0,0.8);
+	font-family:Arial, Sans-Serif;
+	font-size:20px;
+	text-align:center;
+	line-height:100%;
+	color:#fff;
+}
+
+.popup-close:hover {
+	-webkit-transform:translate(50%, -50%) rotate(180deg);
+	transform:translate(50%, -50%) rotate(180deg);
+	background:rgba(0,0,0,1);
+	text-decoration:none;
+}
+
+
+    /* Outer */
+.popup2, .popup3 {
+    z-index:99999999;
+    width:100%;
+    height:100%;
+    display:none;
+    position:fixed;
+    top:0px;
+    left:0px;
+    background:rgba(0,0,0,0.3);
+}
+
+/* Inner */
+.popup2-inner {
+    z-index:999;
+	max-width:1200px;
+    height:630px;
+	width:100%;
+	/*padding:40px;*/
+	position:absolute;
+	top:50%;
+	left:50%;
+	-webkit-transform:translate(-50%, -50%);
+	transform:translate(-50%, -50%);
+	box-shadow:0px 2px 6px rgba(0,0,0,1);
+	border-radius:3px;
+	background:#fff;
+}
+.popup3-inner {
+    z-index:999;
+	max-width:90%;
+    height:800px;
+	width:100%;
+	/*padding:40px;*/
+	position:absolute;
+	top:50%;
+	left:50%;
+	-webkit-transform:translate(-50%, -50%);
+	transform:translate(-50%, -50%);
+	box-shadow:0px 2px 6px rgba(0,0,0,1);
+	border-radius:3px;
+	background:#fff;
+}
+
+/* Close Button */
+.popup2-close,.popup3-close {
+	width:30px;
+	height:30px;
+	padding-top:4px;
+	display:inline-block;
+	position:absolute;
+	top:0px;
+	right:0px;
+	transition:ease 0.25s all;
+	-webkit-transform:translate(50%, -50%);
+	transform:translate(50%, -50%);
+	border-radius:1000px;
+	background:rgba(0,0,0,0.8);
+	font-family:Arial, Sans-Serif;
+	font-size:20px;
+	text-align:center;
+	line-height:100%;
+	color:#fff;
+}
+
+.popup2-close:hover, .popup3-close:hover {
+	-webkit-transform:translate(50%, -50%) rotate(180deg);
+	transform:translate(50%, -50%) rotate(180deg);
+	background:rgba(0,0,0,1);
+	text-decoration:none;
+}
+
+
+iframe{
+    z-index:999;
+    width:100%;
+    height:100%;
+}
+
+.square{
+  border:0;
+  width:30px;
+  padding:0px;
+  background:#ffffff;
+  font-weight: bold;
+}
+.spin {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  border:dashed 5px rgb(72, 184, 72);
+  animation-name: spin;
+  -webkit-animation-name: spin;
+  animation-duration: 1.5s;
+  -webkit-animation-duration: 1.5s;
+  animation-iteration-count: infinite;
+  -webkit-animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  -webkit-animation-timing-function: linear;
+}
+@keyframes spin {
+  from   {  -webkit-transform: rotate(0deg); }
+  to   {  -webkit-transform: rotate(360deg); }
+}
+@-webkit-keyframes spin {
+  from   {  -webkit-transform: rotate(0deg); }
+  to   {  -webkit-transform: rotate(360deg); }
+}
+
+.flex{
+    width:100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.flexcloumn{
+    width:100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.listdash{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height:50px;
+    /*border:1px solid #000000;*/
+    border-radius: 3px;
+    width:100%;
+}
+
+.listdash div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width:100%;
+    height:45px;
+    border:1px solid #a3a3a3;
+    border-radius: 3px;
+    margin:3px;
+    color:#ffffff;
+    font-weight: bold;
+    font-size:16px;
+    text-align: center;
+    cursor: pointer;
+}
+.listdash div:hover{
+    border:2px solid #CC414D;
+}
+.listdash div span:nth-child(2){
+    font-size:30px;
+    padding-left:15px;
+}
+.listdashon{
+    background: #1a2136;
+}
+.listdashoff{
+    background: #b0b4c2f3;
+}
+.plist, .pdash{
+    width:100%;
+}
+
+.topmenu2{
+    margin-top:15px;
+    display: flex;
+    flex-direction: column;
+}
+.topmenu2 tr{
+    display:flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+.topmenu2 tr td span{
+    border-radius: 4px;
+    padding:8px;
+    font-weight:bold;
+    cursor:pointer;
+    box-shadow: 0 8px 9px -4px rgba(0, 0, 0, 0.3), 0 4px 18px 0 rgba(0, 0, 0, 0.2);
+}
+
+.topmenu2 tr td span:hover{
+    border:1px solid #CC414D;
+}
+.topmenu2 tbody tr td{
+    height:35px;
+    margin-right: 20px;
+    margin-top: 7px;
+}
+
+.product_btn_area{
+    display:flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.product_up_btn, .bcode_up_btn{
+    font-size:18px;
+    text-align:center;
+    width:200px;
+    color:#fff;
+    background:#333;
+    border-radius: 4px;
+    padding:8px;
+    font-weight:bold;
+    cursor:pointer;
+    box-shadow: 0 8px 9px -4px rgba(0, 0, 0, 0.3), 0 4px 18px 0 rgba(0, 0, 0, 0.2);
+    margin:10px;
+}
+
+.pon{
+    background:#1a2136;
+    color:#ffffff;
+}
+
+.st_on{
+    background:#1a2136;
+    color:#ffffff;
+}
+.topmenuright{
+        color:#ffffff;
+    }
+
+    .topmenuright div span{
+        font-size:16px;
+        font-weight: bold;
+        padding-right:10px;
+    }
+    .menu1 {
+  display: block;
+  position: relative;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 18px;
+ 
+}
+/* Hide the browser's default checkbox */
+.menu1 input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+ 
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: -7px;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+}
+ 
+/* On mouse-over, add a grey background color */
+.menu1:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+ 
+/* When the checkbox is checked, add a "red" background */
+.menu1 input:checked ~ .checkmark {
+  background-color: #e91b00e8;
+}
+ 
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+ 
+/* Show the checkmark when checked */
+.menu1 input:checked ~ .checkmark:after {
+  display: block;
+}
+ 
+/* Style the checkmark/indicator */
+.menu1 .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 6px;
+  height: 11px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+.tablemenutop{
+        width:100%;
+        display:flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .tablemenutop div{
+        width:100%;
+        display:flex;
+        justify-content: center;
+    }
+    .tablemenutop ul{
+        width:50%;
+        display:flex;
+        justify-content: center;
+    }
+.tablemenutop{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.swal2-popup{
+    font-size:2rem;
+}
+@media (max-width: 600px) {
+    body {
+      font-size: 10px;
+    }
+
+    .search-form input:nth-child(1) {
+      width: 140px;
+    }
+
+    .popup-inner {
+      height: 520px;
+      width: 98%;
+    }
+
+    .popup2-inner {
+      max-width: 560px;
+      height: 680px;
+    }
+
+    .popup-close {
+      right: 20px;
+    }
+
+    .topmenu {
+      font-size: 10px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .datepickerall {
+      width: 20%;
+    }
+
+    .table tr:nth-child(1) {
+      font-size: 15px;
+    }
+
+    .table tr:nth-child(2) {
+      font-size: 10px;
+    }
+
+    .deliverytxtm {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .maincontainer {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+    .topmenutr{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .topmenu tr:nth-child(1) td:nth-child(2) span{
+        width:150px;
+        border:1px solid #000000;
+        border-radius: 5px;
+        background:#ffffff;
+        font-weight:bold;
+        text-align: center;
+    }
+    .table>tbody>tr>td{
+        padding:5px;
+    }
+  }
+  @media (max-width: 1450px) {
+        .popup-inner{
+          width:80%;
+            height:600px;
+        }
+        .popup2-inner {
+          width: 90%;
+          height: 600px;
+        }
+
+    }
+    @media (max-width: 1400px) {
+        .popup2-inner {
+            max-width:92%;
+            height:600px;
+        }
+        .popup-inner{
+            max-width:92%;
+            height:600px;
+        }
+    }
+  .excelbutton{
+    width:150px;
+    height:50px;
+    border:1px solid #000;
+    font-size:18px;
+    font-weight:bold;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+  .excelbutton:hover{
+    border:1px solid #CC414D;
+    background:#1a2136;
+    color:#fff;
+  }
+  .statetable{
+    width:100%;
+  }
+  .statetable tbody{
+    width:100%;
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-start;
+  }
+  .statetable tr td input{
+    height:40px;
+  }
+  .statetable tr td select{
+    width:100%;
+    height:40px;
+  }
+  .statetable tr td:nth-child(1){
+    width:200px;
+  }
+
+  .product_info_td{
+    background:#333;
+    font-size: 15px;
+    font-weight:bold;
+    color:#fff;
+    padding:5px 15px 5px 15px;
+  }
+
+  .product_info_title{
+    width:100%;
+    background:#333;
+    color:#fff;
+    text-align:center;
+    height:30px;
+    line-height:30px;
+  }
+
+
+   .product_info_td_data{
+    padding:5px 15px 5px 15px;
+    font-size: 13px;
+    font-weight:bold;
+  }
+
+  .product_bcode_type_table{
+    display:flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width:34%;
+  }
+
+  .product_bcode_type_table_scroll{
+    table-layout: fixed;
+  }
+
+  .product_bcode_info_thead{
+    font-size:14px;
+    display:block;
+    padding-bottom:20px;
+  }
+
+  .product_bcode_info_thead tr th{
+    width:160px;
+    text-align: center;
+  }
+
+  .product_bcode_info_body{
+    display:block;
+    height:300px;
+    overflow-y: scroll;
+    position: relative;
+  }
+
+  .product_bcode_info_body tr{
+    height:35px;
+    /* line-height: 35px; */
+  }
+
+  .product_bcode_info_body tr td{
+    font-weight:bold;
+    font-size:14px;
+  }
+
+  .product_bcode_info_body tr td:nth-child(1) input{
+    width:120px;
+    height:25px;
+    font-size:16px;
+  }
+
+  .bcode_add_btn{
+    margin:0px 0px 0px 5px;
+    border-radius: 4px;
+    padding:8px;
+    font-weight:bold;
+    box-shadow: 0 8px 9px -4px rgba(0, 0, 0, 0.3), 0 4px 18px 0 rgba(0, 0, 0, 0.2);
+    cursor:pointer;
+  }
+
+  .bcode_cnt_box{
+    margin:0px 0px 0px 5px;
+    border-radius: 4px;
+    padding:8px;
+    font-weight:bold;
+    box-shadow: 0 8px 9px -4px rgba(0, 0, 0, 0.3), 0 4px 18px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .bcode_modify_btn{
+    background:#0493da;
+    color:#fff;
+    height:20px;
+    font-size:11px;
+    margin:0px 5px 0px 5px;
+    border-radius: 4px;
+    padding:8px;
+    font-weight:bold;
+    box-shadow: 0 8px 9px -4px rgba(0, 0, 0, 0.3), 0 4px 18px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .bcode_lookup_input_pcode, .bcode_lookup_input_bcode{
+    height:30px;
+    font-weight:bold;
+    font-size:16px;
+    width:150px;
+  }
+
+  .bcode_lookup_btn{
+    background:#333;
+    color:#fff;
+    height:20px;
+    font-size:11px;
+    margin:0px 5px 0px 5px;
+    border-radius: 4px;
+    padding:8px 10px;
+    font-weight:bold;
+    box-shadow: 0 8px 9px -4px rgba(0, 0, 0, 0.3), 0 4px 18px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .bcode_lookup_btn:hover{
+    background:#fff;
+    color:#333;
+    cursor:pointer;
+  }
+  .product_bcode_search_area{
+    margin:0px 0px 10px 0px;
+  }
+
+  .product_bcode_search_box{
+    border-radius: 5px;
+    height:30px;
+  }
+
+  .bcode_add_input{
+    border-radius: 5px;
+    height:40px;
+    width:100%;
+  }
+
+  .bcode_delete{
+    color:#ff0000;
+    font-weight:bold;
+    font-size:20px;
+    cursor: pointer;
+  }
+  input::-webkit-inner-spin-button {
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+}
+.bcode_color_txt{
+    font-size:12px;
+    font-weight:bold;
+}
+.flexstart{
+    display:flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+.flexend{
+    display:flex;
+    justify-content: flex-end;
+    align-items: center;
+    width:100%;
+}
+.batch_excel_btn{
+    font-size:18px;
+    text-align:center;
+    width:200px;
+    color:#fff;
+    background:#333;
+    border-radius: 4px;
+    padding:8px;
+    font-weight:bold;
+    cursor:pointer;
+    box-shadow: 0 8px 9px -4px rgba(0, 0, 0, 0.3), 0 4px 18px 0 rgba(0, 0, 0, 0.2);
+    margin:10px;
+}
+.bcode_batch_end_tr td, .bcode_batch_error_tr td{
+    padding:5px;
+    width:200px;
+    font-size:14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.end_thead,.error_thead{
+    display:block;
+}
+
+.end_tbody,.error_tbody{
+    display:block;
+    overflow-y: scroll;
+    height:500px;
+
+}
+
+.bcode_input_tr{
+    border-bottom: 5px solid #fff;
+}
+
+.bcode_input_tr td{
+    padding:3px;
+}
+
+.ptype_on{
+    background:#333;
+    color:#fff;
+}
+
+.product_obj_tr:hover{
+    cursor:pointer;
+    opacity:0.6;
+}
+
+.pagination{
+    cursor:pointer;
+}
+
+.product_info_label_area div{
+    padding:5px;
+}
+
+.dragging-over {
+    background: #8ceb8f; /* 드래그 중인 테이블의 경계 선 색상 */
+}
+
+.bcode_td{
+    background: #acf384;
+    color:#000;
+    font-size:15px !important;
+    border-radius: 5px;
+    width:130px;
+}
+
+.bcode_dt input{
+    width:75px;
+}
+
+.bcode_input_tr:hover{
+    cursor:all-scroll;
+    user-select: text;
+    /* opacity:0.8; */
+}
+.bcode_add_return_txt{
+    height:50px;
+    line-height:50px;
+    font-size:18px;
+    font-weight:bold;
+}
+.summury{
+    font-weight:bold;
+    font-size:20px;
+}
+
+
+/* General Container */
+.clean_none-container {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+/* Field Group Styles */
+.clean_none-field-group {
+    margin-bottom: 15px;
+}
+
+/* Label Styles */
+.clean_none-label {
+    display: inline-block;
+    margin-right: 10px;
+    width: 80px;
+    font-weight: bold;
+}
+
+/* Input and Select Styles */
+.clean_none-input, .clean_none-select {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 200px; /* Adjusted for padding and border */
+    box-sizing: border-box;
+}
+
+.clean_none-input.clean_none-time {
+    width: 50px;
+}
+
+/* Time Input Group Styles */
+.clean_none-time-input-group {
+    display: flex;
+    align-items: center;
+}
+
+.clean_none-time-input-group .clean_none-input {
+    width: 40px;
+    margin: 0 5px;
+}
+
+.clean_none-time-input-group ~ .clean_none-time-input-group {
+    margin: 0 10px;
+}
+
+/* Table Styles */
+.clean_none-clean-none-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.clean_none-clean-none-table th, .clean_none-clean-none-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.clean_none-clean-none-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.target_btn{
+    background: #5ad26f;
+    font-weight: bold;
+    font-size: 15px;
+    color: #fff;
+    text-align: center;
+    cursor:pointer;
+}
+
+.target_btn:hover{
+    opacity:0.7;
+}
+
+.clean_target_tr{
+    font-size:14px;
+    font-weight:bold;
+}
+
+.clean_none_tr{
+    font-size:16px;
+    font-weight:bold;
+}
+
+.clean_medi_btn{
+    border-radius:5px;
+    padding:5px;
+    text-align: center;
+    box-shadow:0 8px 9px -4px rgba(0, 0, 0, 0.3), 0 4px 18px 0 rgba(0, 0, 0, 0.2);
+}
+
+.clean_medi_btn:hover{
+    cursor:pointer;
+    opacity:0.7;
+}
+
+.loader {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3; /* Light grey */
+    border-top: 5px solid #3498db; /* Blue */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.product_up_tbody tr{
+    height:50px;
+}
+
+.product_up_tbody tr td:nth-child(1){
+    width:150px;
+}
+
+.product_up_tbody tr td{
+    font-size:15px;
+    font-weight:bold;
+}
+
+.product_up_tbody tr td input{
+    height:40px;
+    border-radius: 5px;
+    width:200px;
+    border:1px solid #a9a9a9;
+}
+
+.product_up_tbody tr td select{
+    height:40px;
+    width:200px;
+    border-radius: 5px;
+    border:1px solid #a9a9a9;
+}
+
+.pimg{
+    background:#f1f1f1;
+    color:rgb(0, 0, 0);
+    border:none;
+    box-shadow:0 8px 9px -4px rgba(0, 0, 0, 0.3), 0 4px 18px 0 rgba(0, 0, 0, 0.2);
+}
+
+.pimg:hover{
+    opacity:0.5;
+}
+
+.buy_summury,.rent_summruy{
+    height: 65px;
+}
+
+.buy_summury td,.rent_summury td{
+    position:relative;
+}
+
+.badge {
+    position: absolute; /* 절대 위치 */
+    top: -18px; /* 위로 약간 이동하여 우측 상단에 배치 */
+    right: -20px; /* 오른쪽으로 약간 이동하여 우측 상단에 배치 */
+    background-color: #ec9732; /* 배경색 설정 */
+    color: white; /* 글자색 설정 */
+    border-radius: 70%; /* 동그라미 모양을 위한 경계 반경 설정 */
+    width: 30px; /* 너비 설정 */
+    height: 20px; /* 높이 설정 */
+    display: flex; /* 내부 요소들을 가로로 정렬 */
+    justify-content: center; /* 가운데 정렬 */
+    align-items: center; /* 가운데 정렬 */
+    font-size: 15px; /* 글자 크기 설정 */
+}
+
+.product_has_cnt_area{
+    font-weight: bold;
+    font-size:18px;
+}
+
+.product_has_cnt{
+    color: #fff;
+    background: #ec9732;
+    border-radius: 5px;
+    width: 50px;
+    text-align: center;
+    padding:0px 10px;
+    font-size:22px;
+}
+
+.bcode_td {
+    position: relative;
+}
+
+.hint-button {
+    display: none;
+    width: 89px;
+    height: 36px;
+    position: fixed;
+    transform: translate(-100%, -72%);
+    z-index: 10;
+    background-color: #ffe458;
+    color: #333;
+    padding: 8px 0px;
+    border-radius: 4px;
+    /* box-shadow: 0 8px 9px -4px rgba(0, 0, 0, 0.3), 0 4px 18px 0 rgba(0, 0, 0, 0.2); */
+    font-size: 13px;
+    /* white-space: nowrap; */
+}
+
+.hint-button ::after {
+    /* content: '';
+    position: fixed;
+    transform: translateX(-50%);
+    border-width: 8px;
+    border-style: solid;
+    border-color: #ffe458 transparent transparent transparent; */
+}
+
+.bcode_td:hover .hint-button {
+    display: block;
+    cursor:pointer;
+}
+
+.bocode_lookup_result_ok{
+    background: #59c54f;
+    font-weight: bold;
+    color: #fff;
+    font-size: 18px;
+    padding: 3px 10px;
+    border-radius: 5px;
+}
+
+.bocode_lookup_result_fail{
+    background: #c5604f;
+    font-weight: bold;
+    color: #fff;
+    font-size: 16px;
+    padding: 3px 10px;
+    border-radius: 5px;
+}
+
+.swal-button {
+  padding: 7px 19px;
+  border-radius: 2px;
+  background-color: #4962B3;
+  font-size: 12px;
+  border: 1px solid #3e549a;
+  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .clean_none-field-group {
+        display: block;
+    }
+
+    .clean_none-label, .clean_none-input-container {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .clean_none-time-input-group {
+        display: block;
+    }
+
+    .clean_none-input {
+        width: calc(100% - 12px); /* Full width for small screens */
+    }
+
+    .clean_none-time-input-group .clean_none-input {
+        width: calc(100% - 12px);
+        margin: 5px 0;
+    }
+}
+</style>
+<%- include('alert2') %>
+<% if(firstData=="zoa"){%>
+    <%- include('webtopmenu_w') %>
+<% }else{ %>
+    <%- include('webtopmenu') %>
+<% } %>
+<script>
+    var bcodeprev = [];
+    //socket.emit('disconnect2', {'name': uid});
+    //socket.emit('login', {'name': uid});
+
+    // socket.on('barcodeinput', function(data) {
+    //     //socket.emit('disconnect2', {'name': uid});
+    //     //socket.emit('login', {'name': uid});
+    //     datasplit = data.split('|');
+    //     if(datasplit[2]=='error'){
+    //         const Toast = Swal.mixin({
+    //         toast: true,
+    //         position: 'middle',
+    //         showConfirmButton: false,
+    //         timer: 2500,
+    //         timerProgressBar: true,
+    //         didOpen: (toast) => {
+    //         toast.addEventListener('mouseenter', Swal.stopTimer)
+    //         toast.addEventListener('mouseleave', Swal.resumeTimer)
+    //         }
+    //         });
+
+    //         Toast.fire({
+    //         icon: 'error',
+    //         title: '현재 재고에 등록된 바코드입니다 '+datasplit[1],
+    //         });
+    //     }else if(bcodeprev.indexOf(datasplit[1])==-1){
+    //         bcodeprev.push(datasplit[1]);
+    //         confirmchk(datasplit[0]);
+    //     }else if(bcodeprev.indexOf(datasplit[1])!=-1){
+    //         const Toast = Swal.mixin({
+    //         toast: true,
+    //         position: 'middle',
+    //         showConfirmButton: false,
+    //         timer: 1500,
+    //         timerProgressBar: true,
+    //         didOpen: (toast) => {
+    //         toast.addEventListener('mouseenter', Swal.stopTimer)
+    //         toast.addEventListener('mouseleave', Swal.resumeTimer)
+    //         }
+    //         });
+
+    //         Toast.fire({
+    //         icon: 'error',
+    //         title: '동일한 바코드 입력'
+    //         });
+    //     }
+    //     //socket.emit('disconnect2', {'name': uid});
+    // });
+
+    var has='<%=has%>';
+
+    function today(){
+        var now = new Date();
+        var year= now.getFullYear();
+        var mon = (now.getMonth()+1)>9 ? ''+(now.getMonth()+1) : '0'+(now.getMonth()+1);
+        var day = now.getDate()>9 ? ''+now.getDate() : '0'+now.getDate();
+        var chan_val = year +'-'+ mon +'-'+ day;
+        return chan_val;
+    }
+
+    $(document).ready(function () {
+        if(Mobile()==true){
+            $('.mobile').css("display","none");
+            $('.pc').css("display","");
+        }else{
+            $('.pc').css("display","none");
+            $('.mobile').css("display","");
+        }
+
+        // if(has=='ok')$('.menu1').eq(0).children('input').prop('checked',false);
+
+        // var tr_length = $('.table tr td').length;
+        // var tab_td = $('.table tr td');//tb 테이블의 td들 불러오기
+        // for (var i = 0; i < tr_length; i++) {
+        //         var td2 = tab_td.eq(i).text();
+        //         if(td2=="일반") $(".table tr td:eq("+i+")").parent().addClass('success');
+        //         if(td2=="의료급여") $(".table tr td:eq("+i+")").parent().addClass('info');
+        //         if(td2=="감경") $(".table tr td:eq("+i+")").parent().addClass('warning');
+        //         if(td2=="기초") $(".table tr td:eq("+i+")").parent().addClass('danger');
+        // }
+        // var tr_length = $('.table tr td').length;
+        // var tab_td = $('.table tr td');//tb 테이블의 td들 불러오기
+        
+        // $(tab_td).click(function(){
+        //     if($(this).parent().hasClass('tablemenu')!=1){
+        //         window.frames['clientmodify'].location.reload();
+        //         $('.clientmodify').attr('src',"//localhost:802/productlookup?username=<%=username%>&chk=program&number="+$(this).parent().children('td:eq(4)').text()+"&target="+$(this).parent().children('td:eq(1)').text());
+        //         window.frames['clientmodify'].src="//localhost:802/productlookup?username=<%=username%>&chk=program&number="+$(this).parent().children('td:eq(4)').text()+"&target="+$(this).parent().children('td:eq(1)').text();
+        //         console.log(window.frames['clientmodify'].src);
+        //         var targeted_popup_class = $('[data-popup-open2]').attr('data-popup-open2');
+        //         $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+        //         //e.preventDefault();
+        //     }
+        // });
+                
+        // $(tab_td).hover(function(){
+        //     if($(this).parent().hasClass('tablemenu')!=1)$(this).parent().css({'border':'2px solid #000000',"cursor":"pointer","opacity":"0.5"});
+        // }, function() {
+        //     $(this).parent().css({'border':'1px solid #bebebe',"opacity":"1"});
+        // });
+
+        // for (var i = 0; i < tr_length; i++) {
+        //     var td2 = tab_td.eq(i);
+        // }
+        
+        $(".table").hide();
+        $(".table").fadeIn(500);
+        var pagen='<%=page%>';
+        $(".pagingnum").eq(pagen-1).css("background","#000000");
+        // $(".clientup span").eq(0).click(function(){
+        //     Swal.fire({
+        //         width: '750px',
+        //         fontsize:'13px',
+        //         title: '품목 등록',
+        //         text: "",
+        //         html:
+        //         '<table class="statetable">'+
+        //             '<tr>'+
+        //                 '<td>품목명</td><td><input class="name" type="text" placeholder=""></td>'+
+        //             '</tr>'+
+        //             '<tr>'+
+        //                 '<td>품목코드</td><td><input class="code" type="text" value="" readonly></td>'+
+        //             '</tr>'+
+        //             '<tr>'+
+        //                 '<td>구입/대여</td><td><select class="target"><option value="구입">구입</option><option value="대여">대여</option></select></td>'+
+        //             '</tr>'+
+        //             '<tr>'+
+        //                 '<td>급여/비급여</td><td><select class="pay"><option value="비급여">비급여</option></select></td>'+
+        //             '</tr>'+
+        //             '<tr>'+
+        //                 '<td>소비자금액</td><td><input class="money" type="text" placeholder=""></td>'+
+        //             '</tr>'+
+        //             '<tr>'+
+        //                 '<td>보유재고</td><td><input class="cnt" type="text" placeholder=""></td>'+
+        //             '</tr>'+
+        //         '</table>',
+        //         icon: 'info',
+        //         showCancelButton: true,
+        //         confirmButtonColor: '#3085d6',
+        //         cancelButtonColor: '#d33',
+        //         confirmButtonText: '등록',
+        //         cancelButtonText: '취소',
+        //         allowOutsideClick: false,
+                
+        //     }).then((result) => {
+        //         if (result.isConfirmed) {
+        //             $.ajax({ 
+        //                 url: "/productup", 
+        //                 data: "name=" + $(".name").val() +"&code=" + $(".code").val() +
+        //                 "&target=" + $(".target").val()+"&pay=" + $(".pay").val()+
+        //                 "&money=" + $(".money").val()+"&cnt=" + $(".cnt").val()+
+        //                 "&company=" + company,
+        //                 type: 'POST',
+        //                 dataType: "JSON", 
+        //                 success: function (result) { 
+        //                     location.reload();
+        //                 } 
+        //             });
+        //         }
+        //     });
+        //     // $.ajax({ 
+        //     //         url: "/productlist2", 
+        //     //         data: "company=" + company,
+        //     //         type: 'POST',
+        //     //         dataType: "JSON", 
+        //     //         success: function (result) { 
+        //     //             $('.code').val("B"+result.result[0].num);
+        //     //         } 
+        //     //     });
+        // });
+
+        /*
+        window.frames['clientup'].location.reload();
+        var targeted_popup_class = $('[data-popup-open]').attr('data-popup-open');
+        $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+        e.preventDefault();
+        */
+
+
+        
+        //----- OPEN
+        $('[data-popup-open]').on('click', function(e) {
+            var targeted_popup_class = jQuery(this).attr('data-popup-open');
+            $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+
+            e.preventDefault();
+        });
+
+        //----- CLOSE
+        $('[data-popup-close]').on('click', function(e) {
+            var targeted_popup_class = jQuery(this).attr('data-popup-close');
+            $('[data-popup="' + targeted_popup_class + '"]').fadeOut(350);
+            if(targeted_popup_class=='popup-3'){
+                let num = $(this).data('num');
+                let info_type = $(this).data('info-type');
+                let index = $(this).data('index');
+                $('[data-popup="' + targeted_popup_class + '"]')
+                product_bcode_get(num,info_type,index).then(res=>{
+                    
+                });
+            }
+            e.preventDefault();
+        });
+        
+
+        $(".movewater").click(function(){
+            console.log($('.mainlist td').eq(1).text());
+            if($(".movewater").is(":checked")==true){
+                for(var i=0; i<$('.mainlist td').length; i++){
+                    if($('.mainlist td').eq(i).text()=="이동욕조")$('.mainlist td').eq(i).parent().hide();
+                }
+                
+            }
+        });
+
+        listdash('list');
+    });
+
+function listdash(x){
+    if(x=='list'){
+        $('.listdash div').eq(1).removeClass('listdashon').addClass('listdashoff');
+        $('.listdash div').eq(0).addClass('listdashon').removeClass('listdashoff');
+        $('.plist').show();
+        $('.pdash').hide();
+    }else if(x=='dash'){
+        $('.listdash div').eq(1).addClass('listdashon').removeClass('listdashoff');
+        $('.listdash div').eq(0).removeClass('listdashon').addClass('listdashoff');
+        $('.plist').hide();
+        $('.pdash').show();
+    }
+}
+function productview_old(x,y){  
+    if("<%=has%>"=='none'){
+        $.each($('.mainlist'),function(i){
+            console.log($(this).children('td').eq(1).text())
+            if(!$(this).children('td').eq(1).text().includes(x)){
+                $(this).hide();
+            }else{
+                $(this).show();
+            }
+        });
+    }
+    
+    if(x=="all"){
+        location.reload();
+    }else{
+        $(y).addClass('pon');
+        $('span').not($(y)).removeClass('pon');
+        if("<%=has%>"!='none'){ $('.mainlist').remove();}
+        $('.numnavi').hide();
+        var str='';
+        $.ajax({ 
+            url: "/productview", 
+            data: "username=<%=username%>&pname=" + x +"&has=<%=has%>",
+            type: 'POST',
+            dataType: "JSON", 
+            success: function (result) { 
+                $.each(result.result,function(i){
+                    
+                    
+                    if(result.result[i].target=="대여" || obj_data.target == "구입 또는 대여"){
+                        var listmoney = result.result[i].rentprice;
+                    }else{
+                        var listmoney = result.result[i].buyprice;
+                    }
+                    str +='<tr class="active center mainlist"><td style="display:none;">'+result.result[i].num+'</td><td class="productname">'+result.result[i].name+'</td><td><img class="thumbnail" src="/img/products/p'+result.result[i].code+'.jpg" onerror="this.src=\'/img/icon2.png\'" style="width:100%;"></td><td class="'+result.result[i].name2+'">'+result.result[i].name2+'</td><td>'+result.result[i].code+'</td><td>'+result.result[i].target+'</td><td class="paychk">급여</td><td>'+listmoney+'원</td>';
+                    
+                    var bcodecnt = '';
+                    var pmemo = '';
+                    var buym = '';
+                    $.each(result.result2,function(x){
+                            if(result.result[i].code==result.result2[x].productkey){
+                                if(result.result2[x].bcode!=''&&result.result2[x].bcode!=null){
+                                    if(result.result2[x].bcode.length>0){
+                                        console.log('bcodelength:'+result.result2[x].bcode);
+                                        bcodecnt = result.result2[x].bcode.split(',').length-1; 
+                                        pmemo = result.result2[x].memo;
+                                        if(pmemo==null)pmemo = '';
+                                    }
+                                }
+                            }
+                    });
+                    $.each(result.resultbuy,function(x){
+                        if(result.resultbuy.length>0){
+                            if(result.result[i].code==result.resultbuy[x].code){
+                                if(result.resultbuy[x].money.length>0){
+                                    buym = result.resultbuy[x].money; 
+                                }
+                            }
+                        }
+                    
+                    });
+                    str += '<td>'+buym+'</td><td class="productcount">'+bcodecnt+'</td><td class="productcount">'+pmemo+'</td></tr>';
+                });
+                if("<%=has%>"!='none')$('.table').append(str);
+                var tr_length = $('.table tr td').length;
+                var tab_td = $('.table tr td');//tb 테이블의 td들 불러오기
+                
+                $(tab_td).click(function(){
+                    if($(this).parent().hasClass('tablemenu')!=1){
+                        window.frames['clientmodify'].location.reload();
+                        $('.clientmodify').attr('src',"//localhost:802/productlookup?username=<%=username%>&chk=program&number="+$(this).parent().children('td:eq(4)').text());
+                        window.frames['clientmodify'].src="//localhost:802/productlookup?username=<%=username%>&chk=program&number="+$(this).parent().children('td:eq(4)').text();
+                        console.log(window.frames['clientmodify'].src);
+                        var targeted_popup_class = $('[data-popup-open2]').attr('data-popup-open2');
+                        $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+                        //e.preventDefault();
+                    }
+                });
+                        
+                $(tab_td).hover(function(){
+                    if($(this).parent().hasClass('tablemenu')!=1)$(this).parent().css({'border':'2px solid #000000',"cursor":"pointer","opacity":"0.5"});
+                        }, function() {
+                        $(this).parent().css({'border':'1px solid #bebebe',"opacity":"1"});
+                    });
+                for (var i = 0; i < tr_length; i++) {
+                    var td2 = tab_td.eq(i);
+                }
+ 
+                }
+                });
+        }
+}
+
+function optionchk(x){
+    var has = 'none';
+    var allchk = 'none';
+    var inputchk = []; 
+    $.each($('.menu1'),function(i){
+        if($('.menu1').eq(i).children('input').prop('checked')) inputchk.push(i);
+    });
+    console.log(inputchk);
+    if(!inputchk.includes(0)) has = 'ok'; else has = 'none';
+    console.log("has:"+has);
+    location.href='//localhost:802/productlist/1/'+uid+'?has='+has;
+}
+
+const productview = {
+    buy : (x,y)=>{
+        if(!$('.st_on').parents('tr').hasClass("buy_summury")){
+            $('span').removeClass('st_on');
+        }
+        $('.rent_summury').css({"opacity":"0.5"});
+        $('.buy_summury').css({"opacity":"1"});
+        
+        $(y).addClass('pon');
+        $('span').not($(y)).removeClass('pon');
+        let st_on = '';
+        if($('.st_on').data('st')){
+            st_on = $('.st_on').data('st');
+        }
+        console.log("ston",st_on)
+        if(x=="욕창예방 매트리스"){
+            product_list_get(1,x,ptype_on_chk(),st_on,"구입 또는 대여");
+        }else{
+            product_list_get(1,x,ptype_on_chk(),st_on,"구입");
+        }
+    },
+    rent : (x,y)=>{
+        if(!$('.st_on').parents('tr').hasClass("rent_summury")){
+            $('span').removeClass('st_on');
+        }
+        $('.buy_summury').css({"opacity":"0.5"});
+        $('.rent_summury').css({"opacity":"1"});
+        
+        $(y).addClass('pon');
+        $('span').not($(y)).removeClass('pon');
+
+        let st_on = '';
+        if($('.st_on').data('st')){
+            st_on = $('.st_on').data('st');
+        }
+        if(x=="욕창예방 매트리스"){
+            product_list_get(1,x,ptype_on_chk(),st_on,"구입 또는 대여");
+        }else{
+            product_list_get(1,x,ptype_on_chk(),st_on,"대여");
+        }
+    },
+    all : (x,y)=>{
+        $('span').removeClass('st_on');
+        $('.buy_summury').css({"opacity":"1"});
+        $('.rent_summury').css({"opacity":"1"});
+        
+        $(y).addClass('pon');
+        $('span').not($(y)).removeClass('pon');
+        product_list_get(1,x,ptype_on_chk());
+    },
+}
+
+const productview_st =  {
+    
+    buy : (x,y)=>{
+        if($('.pon').hasClass("p_view_all")){
+            $('span').removeClass('pon');
+        }
+        if(!$('.pon').parents('tr').hasClass("buy_summury")){
+            $('span').removeClass('pon');
+        }
+        $('.rent_summury').css({"opacity":"0.5"});
+        $('.buy_summury').css({"opacity":"1"});
+        
+        $(y).addClass('st_on');
+        $('span').not($(y)).removeClass('st_on');
+
+        let pon = '';
+        if($('.pon').data('type')){
+            pon = $('.pon').data('type');
+        }
+        console.log("ston",pon)
+        if(pon=="욕창예방 매트리스"){
+            product_list_get(1,pon,ptype_on_chk(),x,"구입 또는 대여");
+        }else{
+            product_list_get(1,pon,ptype_on_chk(),x,"구입");
+        }
+    },
+    rent : (x,y)=>{
+        if($('.pon').hasClass("p_view_all")){
+            $('span').removeClass('pon');
+        }
+        if(!$('.pon').parents('tr').hasClass("rent_summury")){
+            $('span').removeClass('pon');
+        }
+        $('.buy_summury').css({"opacity":"0.5"});
+        $('.rent_summury').css({"opacity":"1"});
+        
+        $(y).addClass('st_on');
+        $('span').not($(y)).removeClass('st_on');
+
+        let pon = '';
+        if($('.pon').data('type')){
+            pon = $('.pon').data('type');
+        }
+        console.log("ston",pon)
+        if(pon=="욕창예방 매트리스"){
+            product_list_get(1,pon,ptype_on_chk(),x,"구입 또는 대여");
+        }else{
+            product_list_get(1,pon,ptype_on_chk(),x,"대여");
+        }
+    }
+}
+
+function bcode_option_modify(num,obj,type){
+    let option_obj ={
+        size:'',
+        color:'',
+    }
+    if(type=="size")option_obj.size= $(obj).val();
+    if(type=="color")option_obj.color= $(obj).val();
+    axios({
+        method:"post",
+        url:"/BcodeOptionModify",
+        data:{
+            num:num,
+            size:option_obj.size,
+            color:option_obj.color
+        }
+    }).then(res=>{
+        const data = res.data;
+        if(data.code==300){
+            alert("변경실패");
+        }else{
+            console.log("OK")
+        }
+    })
+}
+
+function bcode_moidify_click(type,obj){
+    let td_obj ={
+        size_td:$('.'+type).children('tr').children('.bcode_size_txt'),
+        color_td:$('.'+type).children('tr').children('.bcode_color_txt'),
+        delete_btn:$('.'+type).children('tr').children('td').children('.bcode_delete')
+    }
+    if($(obj).data("state")==0){
+        $(obj).text('취소');
+        $(obj).css({"background":"#ef5050","color":"#fff"});
+        $(obj).data("state",1);
+        
+        let sizeChildren = td_obj.size_td.children('select');
+        console.log("$('.'+type).children('tr').children('.bcode_size_txt')",$('.'+type).children('tr').children('.bcode_size_txt'),type)
+        console.log("sizeChildren",$(sizeChildren).length)
+        for (let i = 0; i < sizeChildren.length; i++) {
+            if (sizeChildren.eq(i).data('orderkey') === "") {
+                sizeChildren.eq(i).attr('disabled',false);
+            }
+        }
+
+        let colorChildren = td_obj.color_td.children('select');
+        console.log("$('.'+type).children('tr').children('.bcode_size_txt')",$('.'+type).children('tr').children('.bcode_size_txt'),type)
+        console.log("sizeChildren",$(colorChildren).length)
+        for (let i = 0; i < colorChildren.length; i++) {
+            if (colorChildren.eq(i).data('orderkey') === "") {
+                colorChildren.eq(i).attr('disabled',false);
+            }
+        }
+        td_obj.delete_btn.show();
+    }else if($(obj).data("state")==1){
+        $(obj).text('수정');
+        $(obj).css({"background":"#0493da","color":"#fff"});
+        $(obj).data("state",0);
+        td_obj.size_td.children('select').attr("disabled",true);
+        td_obj.color_td.children('select').attr("disabled",true);
+        td_obj.delete_btn.hide();
+    }
+    
+}
+
+function bcode_add(index, info_type){
+    const obj_data = productlist_obj.data[index];
+    const num = obj_data.num;
+    const size = ($("input[name='size_radio']:checked").val())?$("input[name='size_radio']:checked").val():'';
+    const color = ($("input[name='color_radio']:checked").val())?$("input[name='color_radio']:checked").val():'';
+    let bcode_type = '';
+    if(info_type=="대여" || obj_data.target == "구입 또는 대여"){
+        bcode_type = ($("input[name='bcode_type']:checked").val())?$("input[name='bcode_type']:checked").val():'';
+    }else if(info_type=="구입"){
+        bcode_type = ($("input[name='bcode_type_buy']:checked").val())?$("input[name='bcode_type_buy']:checked").val():'';
+    }
+    
+    const bcode = $('.bcode_add_input').val();
+    if(bcode!=''){
+        console.log({
+                company:company,
+                num:num,
+                size:size,
+                color:color,
+                bcodetype:bcode_type
+            }
+        )
+        axios({
+            method:'post',
+            url:'/BcodeAddNew',
+            data:{
+                company:company,
+                num:num,
+                size:size,
+                color:color,
+                bcode:bcode,
+                bcodetype:bcode_type
+            }
+        }).then(res=>{
+            const data = res.data;
+            if(data.code==300){
+                $('.bcode_add_return_txt').html(`<span style='color:#ff0000'>바코드 중복등록 ${bcode}</span>`);
+            }else{
+                $('.bcode_add_return_txt').html(`<span style='color:#64a74a'>바코드 등록완료 ${bcode}</span>`);
+                $('.bcode_add_input').val('');
+                product_bcode_get(num,info_type,index).then(res=>{
+                    
+                });
+            }
+            
+        });
+        
+    }else{
+        $('.bcode_add_return_txt').html("<span style='color:#ff0000'>바코드 미입력</span>");
+        $('.bcode_add_input').attr("placeholder","바코드를입력해주세요")
+    }
+    
+}
+
+// function bcode_del(num, pnum,info_type){
+//     console.log(pnum)
+//     axios({
+//         method:'post',
+//         url:'/BcodeDel',
+//         data:{
+//             num:num
+//         }
+//     }).then(res=>{
+//         const data = res.data;
+//         if(data.code==200){
+//             product_bcode_get(pnum).then(res=>{
+//                 let stock_st_restock_obj = res.stock_st_restock;
+//                 let stock_st_as = res.stock_st_as;
+//                 let stock_st_discard = res.stock_st_discard;
+//                 let stock_st_faulty = res.stock_st_faulty;
+//                 let stock_st_return = res.stock_st_return;
+//                 let stock_st_used = res.stock_st_used;
+//                 let stock_st_clean_none = res.stock_st_clean_none;
+//                 let str_obj = {
+//                     stock_st_restock:'',
+//                     stock_st_as:'',
+//                     stock_st_discard:'',
+//                     stock_st_faulty:'',
+//                     stock_st_return:'',
+//                     stock_st_used:'',
+//                     stock_st_clean_none:'',
+//                 }
+//                 console.log(res)
+//                 Object.keys(res).forEach(function(obj,index){
+//                     console.log(res[obj].length)
+//                     if(obj!='code'){
+//                         $('.'+obj+'_cnt').text(res[obj].length)
+//                         res[obj].forEach(function(res_obj,res_index){
+//                             let display = 'none';
+//                             if(info_type=="구입"){
+//                                 if($('.'+obj+'_btn_buy').data("state")==1){
+//                                     display = 'block';
+//                                 }
+//                             }else if(info_type=="대여" || obj_data.target == "구입 또는 대여"){
+//                                 if($('.'+obj+'_btn_rent').data("state")==1){
+//                                     display = 'block';
+//                                 }
+//                             }
+//                             str_obj[obj] += `
+//                             <tr class="bcode_input_tr" data-stock_id = "${res_obj.stock_id}" data-item_id = "${res_obj.item_id}" data-info_type = "${info_type}">
+//                                 <td class="flexstart">
+//                                     ${res_obj.bcode}
+//                                 </td>
+//                                 <td class="bcode_color_txt">${color_obj[res_obj.item_color_id] || ''}</td>
+//                                 <td class="bcode_size_txt">${res_obj.item_size_id || ''}</td>
+//                                 <td class="bcode_dt"><input type="text" style="background:#fff; border:none;" value="${res_obj.restock_dt || ''}" disabled></td>
+//                                 <td>
+//                                     <span class="bcode_delete material-icons" onclick="bcode_method.bcode_del(${res_obj.stock_id},${res_obj.item_id},'${info_type}')" style="display:${display};">close</span>
+//                                 </td>
+//                             </tr>
+//                             `;
+//                         });
+//                     }
+//                 });
+
+//                 Object.keys(str_obj).forEach(function(obj,index){
+//                     $('.'+obj).append(str_obj[obj]);
+//                 });
+//             });
+//         }
+//     })
+// }
+
+const ordermodify_iframe = {
+    open : async (orderkey,number,num,info_type,product_index)=>{
+        console.log(num,info_type,product_index);
+        $('.popup3-close').data("num",num);
+        console.log($('.popup3-close').data("num"))
+        $('.popup3-close').data("info-type",info_type);
+        $('.popup3-close').data("index",product_index);
+        let targeted_popup_class = $('[data-popup-open3]').attr('data-popup-open3');
+        $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+        await $('.ordermodify').attr('src',"//localhost:802/ordermodify/1/"+uid+"/"+number+"/"+orderkey+"?relid="+uid);
+        window.frames['ordermodify'].src="//localhost:802/ordermodify/1/"+uid+"/"+number+"/"+orderkey+"?relid="+uid;
+    }
+}
+
+var productlist_obj = {};
+
+async function product_bcode_get(num, info_type, product_index) {
+    console.log("pget:", num)
+    $('.bcode_input_tr').remove();
+    
+    // 로딩 인디케이터 추가
+    const loadingHTML = `<tr class="loading-indicator"><td colspan="5" style="text-align:center">데이터 로딩 중...<div class="spinner"></div></td></tr>`;
+    Object.keys({
+        stock_st_restock: '',
+        stock_st_as: '',
+        stock_st_discard: '',
+        stock_st_faulty: '',
+        stock_st_return: '',
+        stock_st_used: '',
+        stock_st_clean_none: '',
+        stock_st_release: '',
+    }).forEach(key => {
+        $('.' + key).append(loadingHTML);
+    });
+    
+    return axios({
+        method: 'post',
+        url: '/ProductBcodeGet',
+        data: {
+            company: company,
+            num: num
+        }
+    }).then(res => {
+        const data = res.data;
+        if (data.code == 200) {
+            // 로딩 인디케이터 제거
+            $('.loading-indicator').remove();
+            
+            // 전역 데이터 저장소 초기화
+            if (!window.bcode_data) {
+                window.bcode_data = {};
+            }
+            
+            // 각 카테고리별 데이터 저장 및 초기 렌더링
+            Object.keys(data).forEach(function(obj, index) {
+                if (obj != 'code') {
+                    // 카운터 업데이트
+                    $('.' + obj + '_cnt').text(data[obj].length);
+                    
+                    // 데이터 저장
+                    window.bcode_data[obj] = {
+                        allData: data[obj],
+                        renderedCount: 0,
+                        isLoading: false
+                    };
+                    
+                    // 스크롤 컨테이너 설정
+                    setupInfiniteScroll(obj, info_type, product_index, num);
+                    
+                    // 초기 데이터 로드
+                    loadMoreItems(obj, info_type, product_index, num);
+                }
+            });
+            
+            return data;
+        }
+    }).catch(error => {
+        console.error('데이터 로딩 오류:', error);
+        $('.loading-indicator').html('<td colspan="5" style="color:red">데이터 로딩 실패</td>');
+    });
+}
+
+// 무한 스크롤 설정
+function setupInfiniteScroll(objName, info_type, product_index, num) {
+    // 스크롤 컨테이너 찾기
+    const container = $(`.${objName}`).closest('.product_bcode_type_table_scroll').parent();
+    
+    // 스크롤 이벤트 리스너 추가
+    container.off('scroll').on('scroll', function() {
+        const scrollTop = $(this).scrollTop();
+        const scrollHeight = $(this)[0].scrollHeight;
+        const clientHeight = $(this).height();
+        
+        // 스크롤이 하단에 도달했는지 확인 (하단에서 50px 전에 로드 시작)
+        if (scrollHeight - scrollTop - clientHeight < 50) {
+            if (!window.bcode_data[objName].isLoading && 
+                window.bcode_data[objName].renderedCount < window.bcode_data[objName].allData.length) {
+                loadMoreItems(objName, info_type, product_index, num);
+            }
+        }
+    });
+    
+    // 초기 스크롤 이벤트 트리거
+    container.trigger('scroll');
+}
+
+// 추가 아이템 로드
+function loadMoreItems(objName, info_type, product_index, num) {
+    // 이미 로딩 중이면 중복 로드 방지
+    if (window.bcode_data[objName].isLoading) return;
+    
+    // 로딩 상태 설정
+    window.bcode_data[objName].isLoading = true;
+    
+    // 로딩 인디케이터 추가
+    if (window.bcode_data[objName].renderedCount < window.bcode_data[objName].allData.length) {
+        $(`.${objName}`).append(`<tr class="loading-more"><td colspan="5" style="text-align:center">추가 데이터 로딩 중...<div class="spinner"></div></td></tr>`);
+    }
+    
+    // 비동기 처리로 UI 블로킹 방지
+    setTimeout(() => {
+        // 현재 렌더링된 아이템 수
+        const startIndex = window.bcode_data[objName].renderedCount;
+        // 한 번에 로드할 아이템 수
+        const batchSize = 50;
+        // 종료 인덱스 계산
+        const endIndex = Math.min(startIndex + batchSize, window.bcode_data[objName].allData.length);
+        
+        // 로딩 인디케이터 제거
+        $(`.${objName} .loading-more`).remove();
+        
+        // 추가 아이템이 없으면 종료
+        if (startIndex >= window.bcode_data[objName].allData.length) {
+            window.bcode_data[objName].isLoading = false;
+            return;
+        }
+        
+        // HTML 생성
+        let html = '';
+        
+        for (let i = startIndex; i < endIndex; i++) {
+            const res_obj = window.bcode_data[objName].allData[i];
+            
+            // 표시 여부 결정
+            let display = 'none';
+            if (info_type == "구입") {
+                if ($(`.${objName}_btn_buy`).data("state") == 1) {
+                    display = 'block';
+                }
+            } else if (info_type == "대여" || info_type == "구입 또는 대여") {
+                if ($(`.${objName}_btn_rent`).data("state") == 1) {
+                    display = 'block';
+                }
+            }
+            
+            // 색상 및 사이즈 선택 HTML 생성
+            let color_str = '';
+            if (productlist_obj.data[product_index].color != null && productlist_obj.data[product_index].color != '') {
+                color_str += `<select style="height:30px;" data-orderkey="${res_obj.orderkey || ""}" onchange="bcode_option_modify(${res_obj.num},this,'color')" disabled>`;
+                productlist_obj.data[product_index].color.split(',').forEach(function(c_obj, index) {
+                    color_str += `
+                        <option value='${c_obj}' ${res_obj.item_color_id == c_obj ? "selected" : ""}>
+                            ${color_obj[c_obj]}
+                        </option>
+                    `;
+                });
+                color_str += `</select>`;
+            }
+
+            let size_str = '';
+            if (productlist_obj.data[product_index].size != null && productlist_obj.data[product_index].size != '') {
+                size_str += `<select style="height:30px;" data-orderkey="${res_obj.orderkey || ""}" onchange="bcode_option_modify(${res_obj.num},this,'size')" disabled>`;
+                productlist_obj.data[product_index].size.split(',').forEach(function(c_obj, index) {
+                    size_str += `
+                        <option value='${c_obj}' ${String(res_obj.item_size_id) == String(c_obj) ? "selected" : ""}>
+                            ${c_obj}
+                        </option>
+                    `;
+                });
+                size_str += '</select>';
+            }
+            
+            // 행 HTML 생성
+            if (objName == "stock_st_release") {
+                html += `
+                <tr class="bcode_input_tr" data-stock_id="${res_obj.num}" data-item_id="${res_obj.item_id}" data-info_type="${info_type}" data-bcode="${res_obj.bcode}" data-bcode_type="${objName}" data-num="${res_obj.num}" data-index="${product_index}">
+                    <td class="bcode_td" ${res_obj.orderkey ? "style='background:#ffe458; cursor:pointer;' data-orderkey='true'" : "style='cursor:pointer;'"}>
+                        ${res_obj.bcode}
+                        ${res_obj.orderkey ? `<div class='hint-button' onclick='ordermodify_iframe.open(${res_obj.orderkey},"${res_obj.number}",${num},"${info_type}",${product_index})'>주문서 보기</div>` : ""}
+                    </td>
+                    <td class="bcode_color_txt">
+                        ${color_str}
+                    </td>
+                    <td class="bcode_size_txt">
+                        ${size_str}
+                    </td>
+                    <td class="bcode_dt"><input type="text" style="background:#fff; border:none;" value="${res_obj.dt || ''}" disabled></td>
+                </tr>
+                `;
+            } else {
+                html += `
+                <tr class="bcode_input_tr" data-stock_id="${res_obj.num}" data-item_id="${res_obj.item_id}" data-info_type="${info_type}" data-bcode="${res_obj.bcode}" data-bcode_type="${objName}" data-num="${res_obj.stock_id}" data-index="${product_index}">
+                    <td class="bcode_td" ${res_obj.orderkey ? "style='background:#ffe458;' data-orderkey='true'" : ""}>
+                        ${res_obj.bcode}
+                        ${res_obj.orderkey ? `<div class='hint-button' onclick='ordermodify_iframe.open(${res_obj.orderkey},"${res_obj.number}",${num},"${info_type}",${product_index})'>주문서 보기</div>` : ""}
+                    </td>
+                    <td class="bcode_color_txt">
+                        ${color_str}
+                    </td>
+                    <td class="bcode_size_txt">
+                        ${size_str}
+                    </td>
+                    <td class="bcode_dt"><input type="text" style="background:#fff; border:none;" value="${res_obj.last_restock_dt ? res_obj.last_restock_dt.split(" ")[0] : (res_obj.restock_dt || '')}" disabled></td>
+                    <td class="bcode_del_btn" data-orderkey="${res_obj.orderkey}" style="display:${res_obj.orderkey != '' && res_obj.orderkey != null ? 'none' : 'block'};">
+                        <span class="bcode_delete material-icons" onclick="bcode_method.bcode_del(${res_obj.num},${res_obj.item_id},'${info_type}',${product_index})" style="display:${display};">close</span>
+                    </td>
+                </tr>
+                `;
+            }
+        }
+        
+        // HTML 추가
+        $(`.${objName}`).append(html);
+        
+        // 렌더링된 아이템 수 업데이트
+        window.bcode_data[objName].renderedCount = endIndex;
+        
+        // 힌트 버튼 이벤트 설정
+        setupHintButtons();
+        
+        // 드래그 기능 활성화
+        drag_on();
+        
+        // 로딩 상태 해제
+        window.bcode_data[objName].isLoading = false;
+        
+        // 데이터가 적어서 스크롤이 생기지 않는 경우 추가 로드
+        const container = $(`.${objName}`).closest('.product_bcode_type_table_scroll').parent();
+        if (container[0].scrollHeight <= container.height() && 
+            window.bcode_data[objName].renderedCount < window.bcode_data[objName].allData.length) {
+            loadMoreItems(objName, info_type, product_index, num);
+        }
+    }, 10); // 약간의 지연으로 UI 렌더링 시간 확보
+}
+
+// 힌트 버튼 이벤트 설정
+function setupHintButtons() {
+    $('.bcode_td[data-orderkey="true"]').each(function() {
+        const td = $(this);
+        const hintButton = td.find('.hint-button');
+        
+        td.off('mouseenter mouseleave')
+          .on('mouseenter', function() {
+            if (hintButton.length) {
+                hintButton.show();
+                const rect = this.getBoundingClientRect();
+                hintButton.css({
+                    'top': (rect.top + (rect.height - 12)) + 'px',
+                    'left': (rect.left) + 'px'
+                });
+            }
+        }).on('mouseleave', function() {
+            hintButton.hide();
+        });
+    });
+}
+
+var product_obj ={
+    pcode:{},
+    pname:{},
+    pname2:{}
+};
+function product_pcode_get(){
+    axios({
+        method:'post',
+        url:'/ProductPcodeGet',
+        data:{}
+    }).then(res=>{
+        const data = res.data;
+        if(data.code==200){
+            data.data.forEach(function(obj,index){
+                product_obj.pcode[obj.code]=obj.num;
+                product_obj.pname[obj.code]=obj.name;
+                product_obj.pname2[obj.code]=obj.name2;
+            });
+        }
+    })
+}
+
+function bcode_batch_end(end_obj,error_obj){
+    Swal.fire({
+        width:'90%',
+        title:"재고등록완료 알림",
+        icon:"success",
+        html:`
+            <div class='flex'>
+                <div style="margin:20px;">
+                    <div style="font-size:20px; font-weight:bold; margin:15px; color:#4fab5a;">등록완료 [&nbsp;&nbsp;<span class="batch_end_cnt"></span>&nbsp;&nbsp;]개</div>
+                    <table class="" style="width:100%;">
+                        <thead class="end_thead">
+                            <tr class="bcode_batch_end_tr"><td>품목</td><td>품목명</td><td>바코드</td><td>색상</td><td>사이즈</td></tr>
+                        </thead>
+                        <tbody class="end_tbody">
+
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin:20px;">
+                    <div style="font-size:20px; font-weight:bold;  margin:15px; color:#ff0000;">등록실패(품목코드오류) [&nbsp;&nbsp;<span class="batch_error_cnt"></span>&nbsp;&nbsp;]개</div>
+                    <table class="" style="width:100%;">
+                        <thead class="error_thead">
+                            <tr class="bcode_batch_error_tr"><td>품목코드</td><td>바코드</td><td>색상</td><td>사이즈</td></tr>
+                        </thead>
+                        <tbody class="error_tbody">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `,
+        confirmButtonText:"확인",
+        didOpen:()=>{
+            console.log("end_obj,error_obj",end_obj,error_obj)
+            let str_obj = {
+                end_str : '',
+                error_str :''
+            };
+            end_obj.forEach(function(obj,index){
+                str_obj.end_str += `
+                    <tr class="bcode_batch_end_tr"><td>${obj.pname}</td><td>${obj.pname2}</td><td>${obj.bcode}</td><td></td><td></td></tr>
+                `;
+            });
+
+            error_obj.forEach(function(obj,index){
+                str_obj.error_str += `
+                    <tr class="bcode_batch_error_tr"><td>${obj.pcode}</td><td>${obj.bcode}</td><td></td><td></td></tr>
+                `;
+            });
+            $('.batch_end_cnt').text(end_obj.length);
+            $('.batch_error_cnt').text(error_obj.length);
+            $('.end_tbody').append(str_obj.end_str);
+            $('.error_tbody').append(str_obj.error_str);
+        }
+    }).then(result=>{
+        product_list_get(1,'',ptype_on_chk());
+    });
+}
+
+async function bcode_batch_excel(obj){
+    return axios({
+        method:'post',
+        url:'/BcodeBatchExcel',
+        data:{
+            company:company,
+            obj: obj
+        }
+    }).then(res=>{
+        const data = res.data;
+        if(data.code==200){
+            return obj;
+        }else{
+            return "error";
+        }
+    })
+}
+
+function readExcel() {
+    let obj = [];
+    let error_obj = [];
+    let end_obj = [];
+    let input = event.target;
+    let reader = new FileReader();
+    var str = '';
+    reader.onload = function () {
+        let data = reader.result;
+        let workBook = XLSX.read(data, { type: 'binary' });
+        workBook.SheetNames.forEach(function (sheetName) {
+            console.log('SheetName: ' + sheetName);
+            if(sheetName=="Sheet1"){
+                let rows = XLSX.utils.sheet_to_json(workBook.Sheets[sheetName]);
+                $.each(rows,function(i){
+                    let bcode = rows[i]['바코드']||'';
+                    if(product_obj.pcode[rows[i]['품목코드']]){
+                        obj.push({
+                            num:product_obj.pcode[rows[i]['품목코드']]||'',
+                            pname:product_obj.pname[rows[i]['품목코드']]||'',
+                            pname2:product_obj.pname2[rows[i]['품목코드']]||'',
+                            pcode:rows[i]['품목코드']||'',
+                            bcode:parseInt(bcode.toString().replace(/\D/g, '')),
+                            color:rows[i]['색상']||'',
+                            size:rows[i]['사이즈']||'',
+                            dt:today()
+                        });
+                    }else{
+                        error_obj.push({
+                            num:rows[i]['품목코드']||'',
+                            pcode:rows[i]['품목코드']||'',
+                            bcode:parseInt(bcode.toString().replace(/\D/g, '')),
+                            color:rows[i]['색상']||'',
+                            size:rows[i]['사이즈']||'',
+                        });
+                    }
+                    
+                });
+                console.log("error_obj",error_obj);
+                console.log("obj",obj.length);
+                let batch_cnt = 0;
+                obj.forEach(function(obj_obj,index_obj){
+                    bcode_batch_excel(obj_obj,index_obj).then(res=>{
+                        batch_cnt++;
+                        console.log(batch_cnt,obj.length);
+
+                        if(res=='error'){
+                            error_obj.push({
+                                num:obj_obj.num||'',
+                                pcode:obj_obj.pcode||'',
+                                bcode:parseInt(obj_obj.bcode.toString().replace(/\D/g, '')),
+                                color:obj_obj.color||'',
+                                size:obj_obj.size||'',
+                            });
+                        }else{
+                            end_obj.push(res);
+                        }
+                        if(obj.length==batch_cnt){
+                            bcode_batch_end(end_obj,error_obj);
+                        }
+                    });
+                });
+
+                
+            }else if(sheetName=="Sheet2"){
+                
+            }else{
+                Swal.fire("시트이름을 변경하지마세요","","warning");
+            }
+            
+            console.log(obj)
+            // $.ajax({ 
+            //     url: "/excelbcode", 
+            //     data: "code=" +"&bcode=" + bcodelist+"&company=",
+            //     type: 'POST',
+            //     dataType: "JSON", 
+            //     success: function (result) { 
+            //         alert(result.message);
+            //         location.reload();
+            //     } 
+            // });
+        });
+    };
+    reader.readAsBinaryString(input.files[0]);
+}
+
+function table_search(x,tr){
+    console.log($(x)[0].value);
+    var data = $(x)[0].value.split(" ");
+    if ($(x)[0].value == "") {
+        $("."+tr).show();
+        return;
+    }
+    $("."+tr).hide();
+    
+    $("."+tr).filter(function (i, v) {
+        var $t = $(this);
+        for (var d = 0; d < data.length; ++d) {
+            if ($t.is(":contains('" + data[d] + "')")||$t.is(":contains('" + data[d].toUpperCase() + "')")||$t.is(":contains('" + data[d].toLowerCase() + "')")) {
+                return true;
+            }
+        }
+        return false;
+    }).show();
+}
+
+function date_now(){
+    var now = new Date();
+    var year= now.getFullYear();
+    var mon = (now.getMonth()+1)>9 ? ''+(now.getMonth()+1) : '0'+(now.getMonth()+1);
+    var day = now.getDate()>9 ? ''+now.getDate() : '0'+now.getDate();
+    var time = now.getHours()+':'+now.getMinutes()+':'+now.getSeconds();
+    var chan_val = year+'-'+mon+'-'+day;
+    return chan_val
+}
+
+socket.on('go_lookup_buy_product_res', function(data) {
+    console.log(data);
+    if(data.name!="fail"){
+        let pcode = data.pcode;
+        let bcode = data.bcode;
+        let resultcompany = data.resultcompany;
+        let str = '<div class="flex bocode_lookup_result_fail"><div style="font-weight:bold">업체명 : '+resultcompany+'</div>&nbsp;&nbsp;'+
+            '<div style="font-weight:bold">등록일 : '+data.resultdate+'</div>&nbsp;&nbsp;'+
+            '<div style="font-weight:bold">연락처 : '+data.resulttel+'</div></div>';
+        if(resultcompany == ''){
+            resultcompany = '[정상]미계약된 바코드';
+            str = '<div class="bocode_lookup_result_ok">'+resultcompany+'</div>';
+        }
+        $('.bcode_lookup_result').html(str);
+    }else{
+        $('.bcode_lookup_result').html('<div class="flex bocode_lookup_result_fail">바코드 조회 불가</div>');
+    }
+});
+
+const bcode_lookup_method = {
+    client_lookup: (pcode,bcode)=>{
+        axios({
+            method:'post',
+            url:"/ClientLookupGet",
+            data:{
+                company:company,
+            }
+        }).then(res=>{
+            const data = res.data;
+            if(data.code==200){
+                let data_obj = {
+                    pcode : pcode,
+                    bcode : bcode,
+                    name : data.data[0].name,
+                    number : data.data[0].number
+                };
+                bcode_lookup_method.bcode_lookup(data_obj);
+            }
+        });
+    },
+    bcode_lookup : (data_obj)=>{
+        console.log(data_obj);
+        socket.emit('disconnect2', {'name': uid});
+        socket.emit('login', {'name': uid});
+        socket.emit('go_lookup_buy_product_req', { 'name': uid, 'cname': data_obj.name, 'cnumber': data_obj.number, 'company': company, 'date': date_now(), 'pcode': data_obj.pcode, 'bcode': data_obj.bcode });
+    }
+}
+
+function product_list_click(index,page,search,st_st,type_type){
+    
+    const obj_data = productlist_obj.data[index];
+    Swal.fire({
+        width: '95%',
+        fontsize:'15px',
+        title: `${obj_data.name}(${obj_data.name2})`,
+        html: `
+            <div style="display:flex; justify-content:center; align-items:flex-start;">
+                <div style="width:28%">
+                    <table class="product_info">
+                        <thead>
+                            
+                        </thead>
+                        <tbody>
+                            <tr class="product_info_tr">
+                                <td class="product_info_td">이미지</td><td class="product_info_td_data"><img src="/productsfiles/${obj_data.code}" onerror="this.src=\'/img/icon2.png\'" style="width:150px; max-height: 370px;"></td>
+                            </tr>
+                            <tr class="product_info_tr">
+                                <td class="product_info_td">품목</td><td class="product_info_td_data">${obj_data.name}</td>
+                            </tr>
+                            <tr class="product_info_tr">
+                                <td class="product_info_td">품목명</td><td class="product_info_td_data">${obj_data.name2}</td>
+                            </tr>
+                            <tr class="product_info_tr">
+                                <td class="product_info_td">품목코드</td><td class="product_info_td_data">${obj_data.code}</td>
+                            </tr>
+                            <tr class="product_info_tr">
+                                <td class="product_info_td">구입/대여</td><td class="product_info_td_data">${obj_data.target}</td>
+                            </tr>
+                            <tr class="product_info_tr">
+                                <td class="product_info_td">출고단가</td><td class="product_info_td_data">${(obj_data.target=="대여")?parseInt(obj_data.rentprice).toLocaleString():parseInt(obj_data.buyprice).toLocaleString()}원</td>
+                            </tr>
+                            <tr class="product_info_tr">
+                                <td class="product_info_td">입고단가</td><td class="product_info_td_data"></td>
+                            </tr>
+                            <tr class="product_info_tr">
+                                <td class="product_info_td">본인부담금</td><td class="product_info_td_data"></td>
+                            </tr>
+                            <tr class="product_info_tr">
+                                <td class="product_info_td">생산유무</td><td class="product_info_td_data">${obj_data.usechk}</td>
+                            </tr>
+                            <!--tr class="product_info_tr">
+                                <td class="product_info_td">재고메모</td><td class="product_info_td_data"><textarea></textarea></td>
+                            </tr-->
+                            <tr class="product_info_tr">
+                                <td class="product_info_td">입고등록</td>
+                                <td class="product_info_td_data">
+                                    <div class="product_rent_info">
+                                        <div class="product_info_title">재고구분</div>
+                                        <div class="flex product_info_label_area">
+                                            <div>
+                                                <label for="clean">소독</label>
+                                                <input type="radio" id="clean" name="bcode_type" value="clean" checked>
+                                            </div>
+                                            <div>
+                                                <label for="clean_none">미소독</label>
+                                                <input type="radio" id="clean_none" name="bcode_type" value="clean_none">
+                                            </div>
+                                            <div>
+                                                <label for="as">A/S</label>
+                                                <input type="radio" id="as" name="bcode_type" value="as">
+                                            </div>
+                                            <div>
+                                                <label for="used">중고</label>
+                                                <input type="radio" id="used" name="bcode_type" value="used">
+                                            </div>
+                                            <div>
+                                                <label for="faulty">불량</label>
+                                                <input type="radio" id="faulty" name="bcode_type" value="faulty">
+                                            </div>
+                                            <div>
+                                                <label for="discard">자진신고</label>
+                                                <input type="radio" id="discard" name="bcode_type" value="discard">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="product_buy_info" style="display:none;">
+                                        <div class="product_info_title">재고구분</div>
+                                        <div class="flex product_info_label_area">
+                                            <div>
+                                                <label for="clean_buy">미출고</label>
+                                                <input type="radio" id="clean_buy" name="bcode_type_buy" value="clean" checked>
+                                            </div>
+                                            <div>
+                                                <label for="as_buy">A/S</label>
+                                                <input type="radio" id="as_buy" name="bcode_type_buy" value="as">
+                                            </div>
+                                            <div>
+                                                <label for="used_buy">중고</label>
+                                                <input type="radio" id="used_buy" name="bcode_type_buy" value="used">
+                                            </div>
+                                            <div>
+                                                <label for="faulty_buy">불량</label>
+                                                <input type="radio" id="faulty_buy" name="bcode_type_buy" value="faulty">
+                                            </div>
+                                            <div>
+                                                <label for="discard_buy">자진신고</label>
+                                                <input type="radio" id="discard_buy" name="bcode_type_buy" value="discard">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="product_info_color" style="display:none;">
+                                        <div class="product_info_title">색상</div>
+                                        
+                                    </div>
+                                    <div class="product_info_size" style="display:none;">
+                                        <div class="product_info_title">사이즈</div>
+                                        
+                                    </div>
+                                    <div class="bcode_add_return_txt"></div>
+                                    <div>
+                                        <input type="number" class="bcode_add_input" placeholder="바코드를 입력해주세요">
+                                    </div>
+                                    <div class="bcode_add_btn" onclick="bcode_add(${index},'${obj_data.target}');">바코드 등록</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                
+                </div>
+                <div class="product_rent_info flexcloumn" style="width:60%; margin-right:10px;">
+                    <div style="font-size:18px; font-weight:bold; background:#333; color:#fff; height:30px; width:100%; padding:5px; margin-bottom:10px; border-radius:5px;">재고현황</div>
+                    <div class="product_bcode_search_area"><span style="font-size:15px; font-weight:bold;">바코드 검색: </span><input type="text" style="font-size:15px; font-weight:bold;" class="product_bcode_search_box" onkeyup="table_search(this,'bcode_input_tr')"></div>
+                    <div class="flexcolumn">
+                        <div class="flex" style="justify-content:space-around;">
+                        
+                            <table class="product_bcode_type_table drag-table">
+                                <thead class="product_bcode_info_thead">
+                                    <tr class="flex"><th>소독<span class="bcode_cnt_box stock_st_restock_cnt">0</span>개 <span class="bcode_modify_btn stock_st_restock_btn_rent" onclick="bcode_moidify_click('stock_st_restock',this);" data-state="0">수정</span></th></tr>
+                                </thead>
+                                <tbody class="product_bcode_info_body clean_new stock_st_restock" data-bcode_type = "clean">
+                                    <tr><td>바코드</td><td></td><td></td><td>입고일</td></tr>
+                                </tbody>
+                            </table>
+                            <table class="product_bcode_type_table drag-table">
+                                <thead class="product_bcode_info_thead">
+                                    <tr class="flex"><th>미소독<span class="bcode_cnt_box stock_st_clean_none_cnt">0</span>개 <span class="bcode_modify_btn stock_st_clean_none_btn_rent" onclick="bcode_moidify_click('stock_st_clean_none',this);" data-state="0">수정</span></th><th>소독내역 등록</th></tr>
+                                </thead>
+                                <tbody class="product_bcode_info_body clean_none stock_st_clean_none" data-bcode_type = "clean_none">
+                                    <tr><td>바코드</td><td></td><td></td><td>입고일</td></tr>
+                                </tbody>
+                            </table>
+                            <table class="product_bcode_type_table drag-table">
+                                <thead class="product_bcode_info_thead">
+                                    <tr class="flex"><th>A/S<span class="bcode_cnt_box stock_st_as_cnt">0</span>개 <span class="bcode_modify_btn stock_st_as_btn_rent" onclick="bcode_moidify_click('stock_st_as',this);" data-state="0">수정</span></th></tr>
+                                </thead>
+                                <tbody class="product_bcode_info_body stock_st_as" data-bcode_type = "as">
+                                    <tr><td>바코드</td><td></td><td></td><td>입고일</td></tr>
+                                </tbody>
+                            </table>
+                            
+                        </div>
+                        <div class="flex" style="justify-content:space-around;">
+                            <table class="product_bcode_type_table drag-table">
+                                <thead class="product_bcode_info_thead">
+                                    <tr class="flex"><th>중고<span class="bcode_cnt_box stock_st_used_cnt">0</span>개 <span class="bcode_modify_btn stock_st_used_btn_rent" onclick="bcode_moidify_click('stock_st_used',this);" data-state="0">수정</span></th></tr>
+                                </thead>
+                                <tbody class="product_bcode_info_body stock_st_used" data-bcode_type = "used">
+                                    <tr><td>바코드</td><td></td><td></td><td>입고일</td></tr>
+                                </tbody>
+                            </table>
+                            <table class="product_bcode_type_table drag-table">
+                                <thead class="product_bcode_info_thead">
+                                    <tr class="flex"><th>불량<span class="bcode_cnt_box stock_st_faulty_cnt">0</span>개 <span class="bcode_modify_btn stock_st_faulty_btn_rent" onclick="bcode_moidify_click('stock_st_faulty',this);" data-state="0">수정</span></th></tr>
+                                </thead>
+                                <tbody class="product_bcode_info_body stock_st_faulty" data-bcode_type = "faulty">
+                                    <tr><td>바코드</td><td></td><td></td><td>입고일</td></tr>
+                                </tbody>
+                            </table>
+                            <table class="product_bcode_type_table drag-table">
+                                <thead class="product_bcode_info_thead">
+                                    <tr class="flex"><th>자진신고<span class="bcode_cnt_box stock_st_discard_cnt">0</span>개 <span class="bcode_modify_btn stock_st_discard_btn_rent" onclick="bcode_moidify_click('stock_st_discard',this);" data-state="0">수정</span></th></tr>
+                                </thead>
+                                <tbody class="product_bcode_info_body stock_st_discard" data-bcode_type = "discard">
+                                    <tr><td>바코드</td><td></td><td></td><td>입고일</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+
+
+                <div class="product_buy_info flexcloumn" style="width:80%; margin-right:10px;">
+                    <div style="font-size:18px; font-weight:bold; background:#333; color:#fff; height:30px; width:100%; padding:5px; margin-bottom:10px; border-radius:5px;">재고현황</div>
+                    <div class="product_bcode_search_area"><span style="font-size:15px; font-weight:bold;">바코드 검색: </span><input type="text" style="font-size:15px; font-weight:bold;" class="product_bcode_search_box" onkeyup="table_search(this,'bcode_input_tr')"></div>
+                    <div class="flexcolumn">
+                        <div class="flex" style="justify-content:space-around;">
+                            <table class="product_bcode_type_table drag-table product_bcode_type_table_scroll">
+                                <thead class="product_bcode_info_thead">
+                                    <tr class="flex">
+                                        <th>
+                                            미출고
+                                            <span class="bcode_cnt_box stock_st_restock_cnt">0</span>개 
+                                            <span class="bcode_modify_btn stock_st_restock_btn_buy" onclick="bcode_moidify_click('stock_st_restock',this);" data-state="0">수정</span>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="product_bcode_info_body stock_st_restock" data-bcode_type = "clean">
+                                    <tr><td>바코드</td><td class="color_td"></td><td class="size_td"></td><td>입고일</td></tr>
+                                </tbody>
+                            </table>
+                            <table class="product_bcode_type_table drag-table product_bcode_type_table_scroll">
+                                <thead class="product_bcode_info_thead">
+                                    <tr class="flex"><th>A/S<span class="bcode_cnt_box stock_st_as_cnt">0</span>개 <span class="bcode_modify_btn stock_st_as_btn_buy" onclick="bcode_moidify_click('stock_st_as',this);" data-state="0">수정</span></th></tr>
+                                </thead>
+                                <tbody class="product_bcode_info_body stock_st_as" data-bcode_type = "as">
+                                    <tr><td>바코드</td><td class="color_td"></td><td class="size_td"></td><td>입고일</td></tr>
+                                </tbody>
+                            </table>
+                            <table class="product_bcode_type_table drag-table product_bcode_type_table_scroll">
+                                <thead class="product_bcode_info_thead">
+                                    <tr class="flex"><th>중고<span class="bcode_cnt_box stock_st_used_cnt">0</span>개 <span class="bcode_modify_btn stock_st_used_btn_buy" onclick="bcode_moidify_click('stock_st_used',this);" data-state="0">수정</span></th></tr>
+                                </thead>
+                                <tbody class="product_bcode_info_body stock_st_used" data-bcode_type = "used">
+                                    <tr><td>바코드</td><td class="color_td"></td><td class="size_td"></td><td>입고일</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        &nbsp;
+                        <div class="flex" style="justify-content:space-around;">
+                            <table class="product_bcode_type_table drag-table product_bcode_type_table_scroll">
+                                <thead class="product_bcode_info_thead">
+                                    <tr class="flex"><th>불량<span class="bcode_cnt_box stock_st_faulty_cnt">0</span>개 <span class="bcode_modify_btn stock_st_faulty_btn_buy" onclick="bcode_moidify_click('stock_st_faulty',this);" data-state="0">수정</span></th></tr>
+                                </thead>
+                                <tbody class="product_bcode_info_body stock_st_faulty" data-bcode_type = "faulty">
+                                    <tr><td>바코드</td><td class="color_td"></td><td class="size_td"></td><td>입고일</td></tr>
+                                </tbody>
+                            </table>
+                            <table class="product_bcode_type_table drag-table product_bcode_type_table_scroll">
+                                <thead class="product_bcode_info_thead">
+                                    <tr class="flex"><th>자진신고<span class="bcode_cnt_box stock_st_discard_cnt">0</span>개 <span class="bcode_modify_btn stock_st_discard_btn_buy" onclick="bcode_moidify_click('stock_st_discard',this);" data-state="0">수정</span></th></tr>
+                                </thead>
+                                <tbody class="product_bcode_info_body stock_st_discard" data-bcode_type = "discard">
+                                    <tr><td>바코드</td><td class="color_td"></td><td class="size_td"></td><td>입고일</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="flexcloumn" style="width:15%;">
+                    <div style="font-size:18px; font-weight:bold; background:#333; color:#fff; height:30px; width:100%; padding:5px; margin-bottom:10px; border-radius:5px;">출고현황</div>
+                    <div class="product_bcode_search_area"><!--span style="font-size:15px; font-weight:bold;">바코드 검색: </span><input type="text" class="product_bcode_search_box"--></div>
+                    <table class="product_bcode_type_table_scroll">
+                        <thead class="product_bcode_info_thead">
+                            <tr><td style="width:100px; font-weight:bold;">바코드</td><td class="color_td" style="width:50px; font-weight:bold; display:none;"></td><td class="size_td" style="width:50px; font-weight:bold; display:none;"></td><td style="width:100px; font-weight:bold;">출고일</td></tr>
+                        </thead>
+                        <tbody class="product_bcode_info_body stock_st_release" style="height:700px;">
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `,
+        showCancelButton: false,
+        showConfirmButton: false,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '바코드검사',
+        cancelButtonText: '취소',
+        allowOutsideClick: false,
+        showDenyButton:true,
+        denyButtonText:"닫기",
+        // preConfirm:()=>{
+        //     Swal.showValidationMessage(`
+        //         <div class='flex'>
+        //             <div><input type="text" class="bcode_lookup_input_pcode" placeholder="품목코드" value="${obj_data.code}"> - <input type="text" class="bcode_lookup_input_bcode" placeholder="바코드"></div>
+        //             <div><span class="bcode_lookup_btn" onclick="bcode_lookup_method.client_lookup($('.bcode_lookup_input_pcode').val(),$('.bcode_lookup_input_bcode').val());">조회</span></div>
+        //             <div class="bcode_lookup_result"></div>
+        //         </div>
+        //     `);
+        //     return 0;
+        // },
+        didOpen:()=>{
+            Swal.showLoading();
+            Swal.showValidationMessage(`
+                <div class='flex'>
+                    <div style="font-weight:bold; font-size:17px;">바코드 검사 : </div>
+                    <div><input type="text" class="bcode_lookup_input_pcode" placeholder="품목코드" value="${obj_data.code}"> - <input type="text" class="bcode_lookup_input_bcode" placeholder="바코드"></div>
+                    <div><span class="bcode_lookup_btn" onclick="bcode_lookup_method.client_lookup($('.bcode_lookup_input_pcode').val(),$('.bcode_lookup_input_bcode').val());">조회</span></div>
+                    <div class="bcode_lookup_result"></div>
+                </div>
+            `);
+            console.log(obj_data.target)
+            if(obj_data.target == "구입"){
+                
+                $('.product_buy_info').show();
+                $('.product_rent_info').hide();
+            }else if(obj_data.target == "대여" || obj_data.target == "구입 또는 대여"){
+                $('.product_rent_info').show();
+                $('.product_buy_info').hide();
+            }
+            if(obj_data.color!=null){
+                $('.color_td').show();
+                $('.color_td').text('색상');
+                $('.product_info_color').show();
+                let str = '<div class="flex">';
+                obj_data.color.split(',').forEach(function(c_obj,index){
+                    str += `
+                        <div style="padding:10px;">
+                            <label for="color_${c_obj}">${color_obj[c_obj]}</label>
+                            <input type="radio" name="color_radio" id="color_${c_obj}" value="${c_obj}" ${(index==0)?'checked':''}>
+                        </div>
+                    `;
+                });
+                str += '</div>';
+                $('.product_info_color').append(str);
+            }
+            if(obj_data.size!=null){
+                $('.size_td').show();
+                $('.size_td').text('사이즈');
+                $('.product_info_size').show();
+                let str = '<div class="flex">';
+                obj_data.size.split(',').forEach(function(size_obj,index){
+                    console.log(size_obj)
+                    
+                    str += `
+                        <div style="padding:10px;">
+                            <label for="size_${size_obj}">${size_obj}</label>
+                            <input type="radio" name="size_radio" id="size_${size_obj}" value="${size_obj}" ${(index==0)?'checked':''}>
+                        </div>
+                    `;
+                });
+                
+                str += '</div>';
+                $('.product_info_size').append(str);
+                
+            }
+            product_bcode_get(obj_data.num,obj_data.target,index).then(res=>{
+                Swal.hideLoading();
+                
+                
+            });
+
+            
+        }
+        
+        
+    }).then((result) => {
+        if (result.isDenied) {
+            product_list_get(page,search,ptype_on_chk(),st_st,type_type);
+        }
+    });
+}
+
+
+//=======================================================================================
+// tr 요소 드래그 이벤트
+//=======================================================================================
+var draggedElement = null;
+function drag_on(){
+    console.log("drag_start");
+    
+
+    // 모든 테이블의 tbody에 대해 드래그 가능한 요소로 설정
+    const tables = document.querySelectorAll('.drag-table tbody');
+    tables.forEach(tbody => {
+        Array.from(tbody.children).forEach(tr => {
+            tr.draggable = true;
+            tr.addEventListener('dragstart', dragStart);
+            tr.addEventListener('dragend', dragEnd);
+        });
+    });
+
+    // 테이블의 드래그 관련 이벤트 처리
+    tables.forEach(tbody => {
+        // 드래그 가능한 요소가 들어왔을 때
+        tbody.addEventListener('dragenter', function(e) {
+            e.preventDefault();
+            this.classList.add('dragging-over');
+        });
+
+        // 드래그 가능한 요소가 나갔을 때
+        tbody.addEventListener('dragleave', function() {
+            this.classList.remove('dragging-over');
+        });
+
+        // 드래그 가능한 요소가 이동 중일 때
+        tbody.addEventListener('dragover', function(e) {
+            e.preventDefault();
+        });
+
+        // 드롭될 때
+        tbody.addEventListener('drop', function(e) {
+            console.log(e)
+            e.preventDefault();
+            if (draggedElement) {
+                const draggedHtml = draggedElement.outerHTML;
+                const targetTable = this.closest('.drag-table').querySelector('tbody');
+                //targetTable.insertAdjacentHTML('beforeend', draggedHtml);
+
+                // 드롭된 후 원래 테이블에서 해당 행 삭제
+                draggedElement.parentNode.removeChild(draggedElement);
+                this.classList.remove('dragging-over');
+                console.log($(draggedHtml).data("num"),$(draggedHtml).data("stock_id"),$(draggedHtml).data("bcode_type").replace("stock_st_",""),$(targetTable).data("bcode_type"),$(draggedHtml).data("item_id"),$(draggedHtml).data("info_type"),$(draggedHtml).data("index"))
+                bcode_method.bcode_update($(draggedHtml).data("num"),$(draggedHtml).data("stock_id"),$(draggedHtml).data("bcode_type").replace("stock_st_",""),$(targetTable).data("bcode_type"),$(draggedHtml).data("item_id"),$(draggedHtml).data("info_type"),$(draggedHtml).data("index"))
+                tables.forEach(tbody => {
+                    Array.from(tbody.children).forEach(tr => {
+                        tr.draggable = true;
+                        tr.addEventListener('dragstart', dragStart);
+                        tr.addEventListener('dragend', dragEnd);
+                    });
+                });
+            }
+        });
+    });
+}
+
+
+// 드래그 시작 이벤트
+function dragStart(e) {
+    draggedElement = this;
+    e.dataTransfer.setData('text/plain', ''); // Firefox에서 필요한 데이터 설정
+    this.classList.add('dragging');
+}
+
+// 드래그 종료 이벤트
+function dragEnd() {
+    draggedElement.classList.remove('dragging');
+    draggedElement = null;
+    // 드래그 가능한 속성을 다시 true로 설정하여 다시 드래그 가능하도록 만듦
+    setTimeout(() => {
+        document.querySelectorAll('.drag-table tbody tr').forEach(tr => {
+            tr.draggable = true;
+        });
+    }, 0);
+}
+
+
+
+var color_obj = {
+};
+function generateTable(obj, index,color_arr,size_arr,bcode_obj,page,search,st_st,type_type) {
+    let bcode_len = 0;
+    if(bcode_obj.length>0)bcode_len = bcode_obj.length;
+    let color_len = color_arr.length;
+    let size_len = size_arr.length;
+    let rowspan_basic = 1;
+    if(color_len>1&&size_len>1){
+        rowspan_basic = color_len*size_len;
+    }else if(color_len>1){
+        rowspan_basic = color_len;
+    }else if(size_len>1){
+        rowspan_basic = size_len;
+    }
+    if(color_len==0){
+        color_len = 1;
+    }
+    let rowspan_color = rowspan_basic/color_len;
+    let rowspan_size = 1;
+    let size_text = '';
+    if(size_len>0){
+        size_text = size_arr[0]=="0"?"":size_arr[0];
+
+    }
+    let color_text = '';
+    if(size_len>0){
+        color_text = color_obj[color_arr[0]]||"";
+        // 2024-08-26 if(bcode_obj.length>0)bcode_len = bcode_obj.filter(obj => obj.item_size_id == size_arr[0] && obj.item_color_id == color_arr[0]).length;
+        if(bcode_obj.length>0)bcode_len = bcode_obj.filter(obj => ((obj.item_size_id == "0"||obj.item_size_id == ""||obj.item_size_id == "undefined"||obj.item_size_id == "null")?"0":obj.item_size_id) == size_arr[0] && obj.item_color_id == color_arr[0]).length;
+
+    }
+
+    return `
+        <tr class="product_obj_tr active center mainlist" onclick="product_list_click(${index},${page},'${search}','${st_st}','${type_type}')">
+            <td rowspan="${rowspan_basic}">${obj.name}</td>
+            <td rowspan="${rowspan_basic}"><img src="/productsfiles/${obj.code}" onerror="this.src='/img/icon2.png'" style="width:100%;" class="thumbnail"></td>
+            <td rowspan="${rowspan_basic}">${obj.name2}</td>
+            <td rowspan="${rowspan_basic}">${obj.code}</td>
+            <td rowspan="${rowspan_basic}">${obj.target}</td>
+            <td rowspan="${rowspan_basic}"></td>
+            <td rowspan="${rowspan_basic}">${(obj.target=="대여") ? parseInt(obj.rentprice).toLocaleString() : parseInt(obj.buyprice).toLocaleString()}</td>
+            <td rowspan="${rowspan_basic}"></td>
+            <td rowspan="${rowspan_color}">${color_text}</td>
+            <td rowspan="${rowspan_size}">${size_text}</td>
+            <td rowspan="${rowspan_size}">${bcode_len}</td>
+        </tr>
+        ${(rowspan_basic>1)?generateSubRows(color_len,size_len,rowspan_color,rowspan_size,color_arr,size_arr,bcode_obj):''}
+
+    `;
+}
+
+function generateSubRows(color_len, size_len, rowspan_color, rowspan_size, color_arr, size_arr, bcode_obj) {
+    let len = color_len * size_len;
+    let rows = '';
+    let color_cnt = 0;
+    let size_cnt = 0;
+    let size_cnt_none_total = 0;
+    let size_bcode_cnt_total = 0;
+    for (let i = 1; i < len; i++) {
+        console.log("lenLL",len,i)
+        if(i%rowspan_color==0){
+            size_cnt=0;
+            color_cnt++;
+            let color_bcode_cnt = 0;
+            let size_bcode_cnt = 0;
+            let color_bcode_cnt_none = 0;
+            let size_bcode_cnt_none = 0;
+
+            if(bcode_obj.length>0){
+                console.log(typeof(size_arr[size_cnt]),size_arr[size_cnt],"???",bcode_obj,color_cnt,color_arr[color_cnt])
+                color_bcode_cnt = bcode_obj.filter(obj => obj.item_color_id == color_arr[color_cnt]).length;
+                size_bcode_cnt = bcode_obj.filter(obj => (obj.item_size_id == size_arr[size_cnt] && obj.item_color_id == color_arr[color_cnt])).length;
+            }
+
+            if(bcode_obj.length>0){
+                color_bcode_cnt_none = bcode_obj.filter(obj => color_arr[0]!="" && obj.item_color_id === 0).length;
+                //2024-08-26  size_bcode_cnt_none = bcode_obj.filter(obj => ((obj.item_size_id == "0" && obj.item_color_id ==0)||(size_arr[0]!="0"&&obj.item_size_id == "0" &&obj.item_color_id == color_arr[color_cnt]))).length;
+                size_bcode_cnt_none = bcode_obj.filter(obj => (((obj.item_size_id == "0"||obj.item_size_id == ""||obj.item_size_id == "undefined") && obj.item_color_id ==0)||(size_arr[0]!="0"&&(obj.item_size_id == ""||obj.item_size_id == "undefined"||obj.item_size_id == "null") &&obj.item_color_id == color_arr[color_cnt])||(size_arr[0]=="0"&&(obj.item_size_id == ""||obj.item_size_id == "undefined") &&obj.item_color_id == color_arr[color_cnt]))).length;
+            }
+            
+
+            
+            // console.log(color_bcode_cnt,size_bcode_cnt,bcode_obj.length,"bcode_obj.length,",size_cnt_none_total,size_bcode_cnt_total)
+            size_bcode_cnt_total = (color_bcode_cnt > 0)?size_bcode_cnt : 0;
+            size_cnt_none_total = (size_bcode_cnt_none==0?color_bcode_cnt_none:size_bcode_cnt_none);
+
+            if(i==len-1){
+                if(size_cnt_none_total>0)color_bcode_cnt = 1;
+                size_bcode_cnt += size_cnt_none_total;
+            }else if(color_obj[color_arr[color_cnt]]=="화이트"){
+                if(size_cnt_none_total>0)color_bcode_cnt = 1;
+                size_bcode_cnt += size_cnt_none_total;
+            }
+            rows += `
+            <tr class="product_obj_tr active center mainlist">
+                <td rowspan="${rowspan_color}">${color_obj[color_arr[color_cnt]]}</td>
+                <td>${size_arr[size_cnt]=="0"?"":size_arr[size_cnt]}</td>
+                <td>${(color_bcode_cnt > 0)?size_bcode_cnt : 0}</td>
+            </tr>
+            `;
+            
+        
+        }else{
+            size_cnt++;
+            let color_bcode_cnt = 0;
+            let size_bcode_cnt = 0;
+            let color_bcode_cnt_none = 0;
+            let size_bcode_cnt_none = 0;
+            
+            if(bcode_obj.length>0){
+                color_bcode_cnt = bcode_obj.filter(obj => obj.item_color_id == color_arr[color_cnt]).length;
+                size_bcode_cnt = bcode_obj.filter(obj => (obj.item_size_id == size_arr[size_cnt] && obj.item_color_id == color_arr[color_cnt])).length;
+            }
+
+
+            if(bcode_obj.length>0){
+                color_bcode_cnt_none = bcode_obj.filter(obj => color_arr[0]!="" && obj.item_color_id === 0).length;
+                //2024-08-26  size_bcode_cnt_none = bcode_obj.filter(obj => ((obj.item_size_id == "0" && obj.item_color_id ==0)||(obj.item_size_id == "0" &&obj.item_color_id == color_arr[color_cnt]))).length;
+                size_bcode_cnt_none = bcode_obj.filter(obj => (((obj.item_size_id == "0"||obj.item_size_id == ""||obj.item_size_id == "undefined"||obj.item_size_id == "null") && obj.item_color_id ==0)||((obj.item_size_id == "0"||obj.item_size_id == ""||obj.item_size_id == "undefined"||obj.item_size_id == "null") &&obj.item_color_id == color_arr[color_cnt]))).length;
+
+            }
+            
+            size_bcode_cnt_total = (color_bcode_cnt > 0)?size_bcode_cnt : 0;
+            size_cnt_none_total = (size_bcode_cnt_none==0?color_bcode_cnt_none:size_bcode_cnt_none);
+            if(i==len-1){
+                if(size_cnt_none_total>0)color_bcode_cnt = 1;
+                size_bcode_cnt += size_cnt_none_total;
+            }
+            rows += `
+            <tr class="product_obj_tr active center mainlist">
+                <td>${size_arr[size_cnt]=="0"?"":size_arr[size_cnt]}</td>
+                <td>${(color_bcode_cnt > 0)?size_bcode_cnt : 0}</td>
+            </tr>
+            `;
+            
+            
+        }
+        
+        //if(bcode_obj.length==size_cnt_total)break;
+    }
+    return rows;
+}
+
+function enterkey(x) {
+    if (window.event.keyCode == 13) {
+        product_list_get(1,x,ptype_on_chk())
+    }
+}
+
+function stock_cnt_map(cnt_obj){
+    console.log(cnt_obj);
+    const buy_el = document.querySelectorAll('.buy_summury_span');
+    const rent_el = document.querySelectorAll('.rent_summury_span');
+    const buy_total = Object.values(cnt_obj.buy).reduce((acc, currentValue) => acc + currentValue, 0);
+    const rent_total = Object.values(cnt_obj.rent).reduce((acc, currentValue) => acc + currentValue, 0);
+    buy_el.forEach(function(obj, index) {
+        let cnt = cnt_obj.buy[$(obj).data('st')];
+        if($(obj).data('st')=="all")cnt = buy_total;
+        $(obj).next().text(cnt);
+    });
+
+    rent_el.forEach(function(obj, index) {
+        let cnt = cnt_obj.rent[$(obj).data('st')];
+        if($(obj).data('st')=="all")cnt = rent_total;
+        $(obj).next().text(cnt);
+    });
+    // conosle.log()
+    // buyKeys.map((key) => {
+        
+    //     return `Key: ${key}, Value: ${cnt_obj.buy[key]}`;
+    // });
+}
+
+function product_list_get(page,search,has,st_st,type_type) {
+    Swal.fire();
+    Swal.showLoading();
+    let stock_st = {
+        st:st_st,
+        type:type_type
+    };
+    axios({
+        method: 'post',
+        url: '/ProductTableGet',
+        data: {
+            page: page,
+            company:company,
+            search:search,
+            has:has,
+            stockst:stock_st
+        }
+    }).then(res => {
+        Swal.close();
+        const data = res.data;
+        if (data.code == 200) {
+            stock_cnt_map(data.stock_cnt_obj);
+            
+            $('.pagination').remove();
+            $('.product_obj_tr').remove();
+            productlist_obj = {
+                data: data.rows,
+                articles: data.articles,
+                bcode_arr:data.bcode_arr,
+                has_product:data.has_product
+            };
+
+            let str = '';
+            productlist_obj.data.forEach(function(obj,index){
+                let bcode_obj_filter = '';
+                if(productlist_obj.bcode_arr.length>0){
+                    bcode_obj_filter = productlist_obj.bcode_arr.filter(b_obj => b_obj.item_id === obj.num);
+                }
+
+                str += generateTable(obj,index,(obj.color!=null?obj.color.split(",").reverse():[""]),(obj.size!=null?obj.size.split(",").reverse():["0"]),bcode_obj_filter,page,search,st_st,type_type);
+            });
+            let pagenation_str = `<ul class="pagination">
+                <li ${ (productlist_obj.articles.pageNum == 1) ? "class='disabled'" : "class='waves-effect'" }>
+                    <a onclick="${ (productlist_obj.articles.pageNum > 1) ? `product_list_get(${productlist_obj.articles.pageNum-1},'${search}',ptype_on_chk(),'${st_st}','${type_type}')` : '' }" >
+                        <i class="material-icons">chevron_left</i>
+                    </a>
+                </li>`;
+            for (let i = productlist_obj.articles.pnStart; i <= productlist_obj.articles.pnEnd; i++) {
+                pagenation_str += `<li ${ (i === productlist_obj.articles.pageNum) ? "class='active'" : "" }><span style="z-index:0;" onclick="product_list_get(${i},'${search}',ptype_on_chk(),'${st_st}','${type_type}')">${i}</span></li>`;
+            }
+            pagenation_str += `<li ${ (productlist_obj.articles.pageNum == productlist_obj.articles.pnTotal) ? "class='disabled'" : "class='waves-effect'" }>
+                    <a onclick="${ (productlist_obj.articles.pageNum < productlist_obj.articles.pnTotal) ? `product_list_get(${productlist_obj.articles.pageNum+1},'${search}',ptype_on_chk(),'${st_st}','${type_type}')` : '' }">
+                        <i class="material-icons">chevron_right</i>
+                    </a>
+                </li>
+            </ul>`;
+            $('.numnavi').append(pagenation_str);
+            $('.product_table_tbody').append(str);
+            $('.has_product').text(productlist_obj.has_product);
+        }
+    });
+}
+
+async function color_table_get(){
+    return axios({
+        method:'post',
+        url:'/ColorTableGet',
+        data:{}
+    }).then(res=>{
+        const data = res.data;
+        if(data.code==200){
+            data.data.forEach(function(obj,index){
+                color_obj[obj.num] = obj.name;
+            });
+            
+        }
+    })
+}
+
+
+function ptype_on_click(obj){
+    $(obj).addClass("ptype_on");
+    $('.ptype_span').not($(obj)).removeClass("ptype_on");
+    product_list_get(1,'',ptype_on_chk());
+    // if($(obj).hasClass('ptype_all')){
+    //     product_list_get(1,'',0);
+    // }else{
+    //     product_list_get(1,'',1);
+    // }
+}
+
+function ptype_on_chk(){
+    if($('.ptype_on').hasClass('ptype_has')){
+        return 1
+    }else{
+        return 0
+    }
+}
+
+async function stock_st_clean_none_get(){
+    return axios({
+        method:"post",
+        url:"/StockStCleanNoneGet",
+        data:{
+            company:company
+        }
+    }).then(res=>{
+        const data = res.data;
+        if(data.code==200){
+            return data;
+        }
+    });
+}
+
+var clean_company_obj = [];
+var rental_company_obj = [];
+var clean_company_info_obj = {};
+function clean_company_get(){
+    axios({
+        method:"post",
+        url:"/CleanCompanyGet",
+        data:{
+            company:company
+        }
+    }).then(res=>{
+        const data = res.data;
+        if(data.code==200){
+            clean_company_obj = data.clean;
+            rental_company_obj = data.rental;
+            clean_company_obj.forEach(function(obj,index){
+                clean_company_info_obj[obj.cleancompany] = obj.companynumber.replace(/[^0-9]/g,'');
+            });
+            rental_company_obj.forEach(function(obj,index){
+                clean_company_info_obj[obj.rentalcompany] = obj.companynumber.replace(/[^0-9]/g,'');;
+            });
+            console.log("clean_company_obj",clean_company_obj,rental_company_obj,clean_company_info_obj);
+        }
+    });
+}
+
+
+function clean_target_btn_state(index){
+    if($('.target_btn').eq(index).data("fl")==0){
+        $('.target_btn').eq(index).data("fl",1);
+        $('.target_btn').eq(index).text("취소 -");
+        $('.target_btn').eq(index).css({"background":"rgb(251, 62, 62)"});
+        return false;
+    }else{
+        $('.target_btn').eq(index).data("fl",0);
+        $('.target_btn').eq(index).text("추가 +");
+        $('.target_btn').eq(index).css({"background":"#5ad26f"});
+        return true;
+    }
+}
+
+function clean_medi_remove(target_index){
+    if($(".medi_type_"+target_index).children('div').length>1){
+        $(".medi_type_"+target_index).children('div').eq($(".medi_type_"+target_index).children('div').length-1).remove();
+        $(".medi_name_"+target_index).children('div').eq($(".medi_type_"+target_index).children('div').length-1).remove();
+        $(".medi_size_"+target_index).children('div').eq($(".medi_type_"+target_index).children('div').length-1).remove();
+    }
+}
+
+function clean_medi_add(target_index){
+    let clean_str = {
+        type:`
+        <div class="clean_none-input-container medi_type_${target_index}">
+            <select class="clean_none-select clean_medi_type_${target_index}" style="width:110px;">
+                <option>선택</option>
+                <option>약물소독</option>
+                <option>증기소독</option>
+                <option>일광소독</option>
+                <option>끓는물소독</option>
+            </select>
+        </div>
+        `,
+        medi_name:`
+        <div class="clean_none-input-container" medi_name_${target_index}">
+            <input type="text" class="clean_none-input clean_medi_input_${target_index}" style="width:150px;">
+        </div>
+        `,
+        size:`
+        <div class="clean_none-input-container" medi_size_${target_index}">
+            <input type="text" class="clean_none-input clean_size_input_${target_index}" style="width:110px;">
+        </div>
+        `
+    }
+    $(".medi_type_"+target_index).append(clean_str.type);
+    $(".medi_name_"+target_index).append(clean_str.medi_name);
+    $(".medi_size_"+target_index).append(clean_str.size);
+}
+
+
+
+function datepicker_event(arr){
+    console.log("\""+String(arr)+"\"")
+    
+    $(String(arr)).datepicker({
+        changeMonth: true,
+        changeYear: true,
+        timeFormat:'HH:mm:ss',
+        controlType:'select',
+        oneLine:true,
+    });
+    $(String(arr)).datepicker( "option", "showAnim", "slide" );
+}
+
+function clean_none_select(data,target_index){
+    console.log(data.value);
+    if(data.value=="self"){
+        $('.clean_num'+target_index).prop("readonly",true).prop("disabled",true);
+    }else{
+        console.log(clean_company_info_obj[data.value]);
+        $(data).data("companynumber",clean_company_info_obj[data.value]);
+        $('.clean_num'+target_index).prop("readonly",false).prop("disabled",false);
+    }
+}
+
+var target_obj = [];
+var clean_company_number = [];
+let datepicker_arr = [];
+function clean_target_add(obj,target_index,num,stockid){
+    
+    if(clean_target_btn_state(target_index)){
+        $(".clean_target_tr_"+target_index).remove();
+    }else{
+        let clean_company_str = '';
+        clean_company_obj.forEach(function(clean_obj,clean_index){
+            clean_company_str += `<option value="${clean_obj.cleancompany}">${clean_obj.cleancompany}</option>`;
+        });
+        rental_company_obj.forEach(function(rental_obj,clean_index){
+            clean_company_str += `<option value="${rental_obj.rentalcompany}">${rental_obj.rentalcompany}</option>`;
+        });
+        
+        datepicker_arr.push(`#datepicker${target_index}`);
+        let medi_time ={
+            h:'',
+            m:'',
+        };
+        for (let i = 0; i <= 23; i++) {
+            const hour = ('0' + i).slice(-2); 
+            const option = `<option value="${hour}">${hour}</option>`;
+            medi_time.h+=option;
+        }
+        for (let i = 0; i <= 50; i++) {
+            const hour = ('0' + i).slice(-2);
+            if(i%10==0){
+                const option = `<option value="${hour}">${hour}</option>`;
+                medi_time.m+=option;
+            }
+            
+        }
+        let str =`
+        <tr class="clean_target_tr clean_target_tr_${target_index}" data-target="${target_index}" data-num="${num}" data-stockid="${stockid}">
+            <td>${target_obj[target_index].pname}</td><td>${target_obj[target_index].pname2}</td><td>${target_obj[target_index].pcode}</td><td>${target_obj[target_index].bcode}</td>
+            <td>
+                <div class="clean_none-input-container">
+                    <select class="clean_none-select clean_type${target_index}" onchange="clean_none_select(this,${target_index})" data-companynumber="">
+                        <option value="self">자체</option>
+                        `+clean_company_str+`
+                    </select>
+                </div>
+            </td>
+            <td>
+                <div class="clean_none-input-container">
+                    <input type="text" class="clean_none-input" style="width:100px;" id="datepicker${target_index}" readonly>
+                </div>
+            </td>
+            <td>
+                <div class="clean_none-input-container">
+                    <input type="text" class="clean_none-input clean_num${target_index}" style="width:100px;" disabled>
+                </div>
+            </td>
+            <td>
+                <div class="clean_none-input-container flex">
+                    <div class="clean_none-time-input-group">
+                        <select class="clean_none-select clean_none-time clean_h_s${target_index}" style="width:50px;">${medi_time.h}</select>시
+                        <select class="clean_none-select clean_none-time clean_m_s${target_index}" style="width:50px;">${medi_time.m}</select>분
+                    </div>
+                    ~ 
+                    <div class="clean_none-time-input-group">
+                        <select class="clean_none-select clean_none-time clean_h_e${target_index}" style="width:50px;">${medi_time.h}</select>시
+                        <select class="clean_none-select clean_none-time clean_m_e${target_index}" style="width:50px;">${medi_time.m}</select>분
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="flexcolumn medi_type_${target_index}">
+                    <div class="clean_none-input-container">
+                        <select class="clean_none-select clean_medi_type_${target_index}" style="width:110px;">
+                            <option value="">선택</option>
+                            <option value="약물소독">약물소독</option>
+                            <option value="증기소독">증기소독</option>
+                            <option value="일광소독">일광소독</option>
+                            <option value="끓는물소독">끓는물소독</option>
+                        </select>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="flexcolumn medi_name_${target_index}">
+                    <div class="clean_none-input-container">
+                        <input type="text" class="clean_none-input clean_medi_input_${target_index}" style="width:150px;">
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="flexcolumn medi_size_${target_index}">
+                    <div class="clean_none-input-container">
+                        <input type="text" class="clean_none-input clean_size_input_${target_index}" style="width:110px;">
+                    </div>
+                </div>
+            </td>
+            <td class="clean_status clean_status_${target_index}" style="width:100px;">
+                <div onclick="clean_medi_add(${target_index})" class="clean_medi_btn">추가+</div>
+                <br/>
+                <div onclick="clean_medi_remove(${target_index})" class="clean_medi_btn">삭제-</div>
+            </td>
+        </tr>
+        `;
+        $('.clean_target_tbody').append(str);
+        datepicker_event(datepicker_arr);
+        
+    }
+    console.log(target_obj[target_index]);
+    
+    
+}
+
+function cleancontract_cef_re(obj){
+    console.log("cleancontract_cef_re",obj)
+    if(obj.code==100){
+        $('.clean_status_'+obj.target_index).html(`<div class="loader"></div>`)
+    }else if(obj.code==200){
+        $('.clean_target_tr_'+obj.target_index).css({'background':'#5ad26f'});
+    }else if(obj.code==300){
+        $('.clean_target_tr_'+obj.target_index).css({'background':'#ffa9a9'});
+    }else if(obj.code==201){
+        Swal.fire("소독완료","","success");
+    }else if(obj.code==301){
+        Swal.fire("소독실패","입력하신 바코드자리수를 확인하시기 바랍니다.","fail");
+    }
+    
+}
+
+function printDiv(divId) {
+    var printContent = document.getElementById(divId).innerHTML;
+    var originalContent = document.body.innerHTML;
+    document.body.innerHTML = `
+        <html>
+        <head>
+            <title>Print</title>
+            <style>
+                body{
+                    font-weight:bold;
+                    /*border:1px solid #000;*/
+                    width: 21cm;
+                    min-height: 29.7cm;
+                    padding: 0.5cm 2cm 2cm 1.5cm;
+                }
+                @page {
+                    size: A4;
+                }
+                @media print {
+                    #label_container {
+                        display: flex;
+                        flex-wrap: wrap;
+                        justify-content: space-between;
+                    }
+                    .product_label{
+                        break-inside: avoid !important; /* 페이지 중간에서 나누지 않도록 설정 */
+                        page-break-inside: avoid !important; /* 페이지 내부에서 나누지 않도록 설정 */
+                        page-break-after: auto; /* 페이지 끝에서 자동으로 나누도록 설정 */
+                        margin-bottom: 20px; /* 라벨 사이 여백 추가 */
+                        box-shadow: none !important; /* 인쇄 시 그림자 제거 */
+                        float: left; /* 좌측 정렬로 배치 */
+                        orphans: 3; /* 최소 3줄은 함께 유지 */
+                        widows: 3; /* 최소 3줄은 함께 유지 */
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            ${printContent}
+        </body>
+        </html>
+    `;
+    window.print();
+    location.reload();
+}
+
+function download(filename, filepath) {
+      var element = document.createElement('a');
+      element.setAttribute('href', filepath);
+      element.setAttribute('download', filename);
+      document.body.appendChild(element);
+      element.click();
+      //document.body.removeChild(element);
+    }
+  
+  function exceldown(){
+    download('(한큐)엑셀재고등록','/엑셀 일괄등록.xlsx');
+  }
+
+const product_btn_area = {
+    bcode_batch_up :()=>{
+        // Swal.fire('2024-08-16 18:00(금)<br/> 사용가능합니다.');
+        // return 0;
+        Swal.fire({
+            width: '55%',
+            fontsize:'15px',
+            title: `재고등록`,
+            html: `
+                <div class="flex">
+                    <div class="batch_excel_btn" onclick="exceldown()">엑셀양식 다운로드</div>
+                    <div class="batch_excel_btn"><label for="inputName">엑셀등록</label><input id="inputName" style="display:none;" type="file" onchange="readExcel()"></div>
+
+                </div>
+            `,
+            confirmButtonText:"확인",
+            didOpen:()=>{
+                
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                
+            }
+        });
+    },
+    product_info_print:()=>{
+        console.log("label",productlist_obj)
+        let label_str = ``;
+        productlist_obj.data.forEach(function(obj,index){
+            label_str += `
+            <div class="product_label">
+                <div class="title">${obj.name}<br>${obj.name2}</div>
+                <div class="price">
+                    ${obj.buyprice==0?'':""+parseInt(obj.buyprice).toLocaleString()+"원"}${obj.rentprice!=0&&obj.name!='욕창예방 매트리스'?"월"+parseInt(obj.rentprice).toLocaleString()+"원":""}
+                    ${obj.buyprice==0?'':"<div>15%:"+parseInt(obj.buyprice*0.15).toLocaleString()+"원</div>"}
+                    ${obj.buyprice==0?'':"<div>9%:"+parseInt(obj.buyprice*0.09).toLocaleString()+"원</div>"}
+                    ${obj.buyprice==0?'':"<div>6%:"+parseInt(obj.buyprice*0.06).toLocaleString()+"원</div>"}
+                    ${obj.rentprice!=0&&obj.name!='욕창예방 매트리스'?"<div>15%:"+parseInt(obj.rentprice*0.15).toLocaleString()+"원</div>":""}
+                    ${obj.rentprice!=0&&obj.name!='욕창예방 매트리스'?"<div>9%:"+parseInt(obj.rentprice*0.09).toLocaleString()+"원</div>":""}
+                    ${obj.rentprice!=0&&obj.name!='욕창예방 매트리스'?"<div>6%:"+parseInt(obj.rentprice*0.06).toLocaleString()+"원</div>":""}
+                </div>
+                <div class="image">
+                    <img src="/img/products/p${obj.code}.jpg" alt="Product Image" style="width:280px; height:280px;">
+                </div>
+                <!--div class="barcode">
+                    <img src="https://via.placeholder.com/50x50" alt="QR Code">
+                </div-->
+                <div class="product-code">${obj.code}</div>
+            </div>
+            `;
+        })
+        Swal.fire({
+            title:"품목 가격표 출력",
+            html:'<div style="width:100%; display:flex; justify-content:center; overflow-y:scroll;" id="label_container"><div class="label_area">'+label_str+'</div></div>',
+            width:"1000px",
+            confirmButtonText:"인쇄",
+            showCancelButton:true,
+            cancleButtonText:"닫기"
+        }).then(result=>{
+            if(result.isConfirmed){
+                printDiv("label_container");
+            }
+        })
+    },
+
+    rent_clean_up: ()=>{
+        // Swal.fire('2024-08-12(월)<br/> 사용가능합니다.');
+        Swal.fire({
+            width: '95%',
+            fontsize:'15px',
+            title: `소독내역 공단등록하기`,
+            html: `
+            <div class="clean_none-container">
+                <!--div class="flex">
+                    <div class="clean_none-field-group">
+                        <div class="clean_none-label">소독구분</div>
+                        <div class="clean_none-input-container">
+                            <select class="clean_none-select"><option>자체</option><option>위탁</option></select>
+                        </div>
+                    </div>
+                    <div class="clean_none-field-group">
+                        <div class="clean_none-label">소독일자</div>
+                        <div class="clean_none-input-container">
+                            <input type="text" class="clean_none-input">
+                        </div>
+                    </div>
+                    <div class="clean_none-field-group">
+                        <div class="clean_none-label">작업시간</div>
+                        <div class="clean_none-input-container flex">
+                            <div class="clean_none-time-input-group"><input type="text" class="clean_none-input clean_none-time">시<input type="text" class="clean_none-input clean_none-time">분</div>
+                            ~ 
+                            <div class="clean_none-time-input-group"><input type="text" class="clean_none-input clean_none-time">시<input type="text" class="clean_none-input clean_none-time">분</div>
+                        </div>
+                    </div>
+                    <div class="flexcolumn">
+                        <div class="clean_none-field-group flex">
+                            <div class="clean_none-label">소독종류</div>
+                            <div class="clean_none-input-container">
+                                <select class="clean_none-select">
+                                    <option>선택</option>
+                                    <option>약물소독</option>
+                                    <option>증기소독</option>
+                                    <option>일광소독</option>
+                                    <option>끓는물소독</option>
+                                </select>
+                            </div>
+                            <div class="clean_none-label">약품명</div>
+                            <div class="clean_none-input-container">
+                                <input type="text" class="clean_none-input">
+                            </div>
+                            <div class="clean_none-label">사용량</div>
+                            <div class="clean_none-input-container">
+                                <input type="text" class="clean_none-input">
+                            </div>
+                        </div>
+                        <div class="clean_none-field-group flex">
+                            <div class="clean_none-label">소독종류</div>
+                            <div class="clean_none-input-container">
+                                <select class="clean_none-select">
+                                    <option>선택</option>
+                                    <option>약물소독</option>
+                                    <option>증기소독</option>
+                                    <option>일광소독</option>
+                                    <option>끓는물소독</option>
+                                </select>
+                            </div>
+                            <div class="clean_none-label">약품명</div>
+                            <div class="clean_none-input-container">
+                                <input type="text" class="clean_none-input">
+                            </div>
+                            <div class="clean_none-label">사용량</div>
+                            <div class="clean_none-input-container">
+                                <input type="text" class="clean_none-input">
+                            </div>
+                        </div>
+                        <div class="clean_none-field-group flex">
+                            <div class="clean_none-label">소독종류</div>
+                            <div class="clean_none-input-container">
+                                <select class="clean_none-select">
+                                    <option>선택</option>
+                                    <option>약물소독</option>
+                                    <option>증기소독</option>
+                                    <option>일광소독</option>
+                                    <option>끓는물소독</option>
+                                </select>
+                            </div>
+                            <div class="clean_none-label">약품명</div>
+                            <div class="clean_none-input-container">
+                                <input type="text" class="clean_none-input">
+                            </div>
+                            <div class="clean_none-label">사용량</div>
+                            <div class="clean_none-input-container">
+                                <input type="text" class="clean_none-input">
+                            </div>
+                        </div>
+                        <div class="clean_none-field-group flex">
+                            <div class="clean_none-label">소독종류</div>
+                            <div class="clean_none-input-container">
+                                <select class="clean_none-select">
+                                    <option>선택</option>
+                                    <option>약물소독</option>
+                                    <option>증기소독</option>
+                                    <option>일광소독</option>
+                                    <option>끓는물소독</option>
+                                </select>
+                            </div>
+                            <div class="clean_none-label">약품명</div>
+                            <div class="clean_none-input-container">
+                                <input type="text" class="clean_none-input">
+                            </div>
+                            <div class="clean_none-label">사용량</div>
+                            <div class="clean_none-input-container">
+                                <input type="text" class="clean_none-input">
+                            </div>
+                        </div>
+                    </div>
+                </div-->
+                <div style="font-size:17px; font-weight:bold;">소독내역추가 제품</div>
+                <table class="clean_none-clean-none-table">
+                    <thead>
+                        <tr><th>품목</th><th>품목명</th><th>품목코드</th><th>바코드</th><th>소독구분</th><th>소독일자</th><th>필증번호</th><th>작업시간</th><th>소독종류</th><th>약품명</th><th>사용량</th><th>소독종류추가</th></tr>
+                    </thead>
+                    <tbody class="clean_target_tbody">
+                        
+                    </tbody>
+                </table>
+                <div style="height:30px;"></div>
+                <div style="font-size:17px; font-weight:bold;">미소독 제품</div>
+                <div class="flex" style="font-size:18px; margin:5px;">검색:<input type="text" class="clean_none-input" style="height:30px; width:150px;" placeholer="품목,품목명,품목코드,바코드 입력"></div>
+                <table class="clean_none-clean-none-table">
+                    <thead>
+                        <tr><th>품목</th><th>품목명</th><th>품목코드</th><th>바코드</th><th>추가/취소</th></tr>
+                    </thead>
+                    <tbody class="clean_none_tbody">
+
+                    </tbody>
+                </table>
+            </div>
+            `,
+            confirmButtonText:"&nbsp;&nbsp;소독진행&nbsp;&nbsp;",
+            cancelButtonText:"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;닫기&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",
+            showCancelButton:true,
+            allowOutsideClick:false,
+            didOpen:()=>{
+                datepicker_arr = [];
+                stock_st_clean_none_get().then(res=>{
+                    target_obj = [];
+                    const data = res.data;
+                    console.log(data);
+                    let str = '';
+                    data.forEach(function(obj,index){
+                        target_obj.push({
+                            num:obj.clean_none_num,
+                            pname:obj.name,
+                            pname2:obj.name2,
+                            pcode:obj.code,
+                            bcode:obj.bcode
+                        });
+                        str += `
+                        <tr class="clean_none_tr"><td>${obj.name}</td><td>${obj.name2}</td><td>${obj.code}</td><td>${obj.bcode}</td><td class="target_btn" onclick="clean_target_add(this,${index},${obj.clean_none_num},${obj.stock_id})" data-fl="0">추가 +</td></tr>
+                        `;
+                    });
+                    $('.clean_none_tbody').append(str);
+                });
+            },
+            preConfirm:()=>{
+                let fail_txt ={
+                    clean_date:"소독일자",
+                    clean_num:"소독필증번호",
+                    medi_name_arr:"약품명",
+                    medi_size_arr:"사용량",
+                    medi_type_arr:"소독종류",
+                    companynumber:"위탁업체 사업자등록번호",
+                    target_index:"인덱스"
+                }
+                let clean_target_obj=[];
+                let data_chk = [];
+                $('.clean_target_tr').each(function(index){
+                    let target_index = $(this).data("target");
+                    let num = $(this).data("num");
+                    let stock_id = $(this).data("stockid");
+                    let medi_obj = {
+                        type:[],
+                        name:[],
+                        size:[]
+                    }
+                    $(`.medi_type_${target_index}`).each(function(index){
+                        medi_obj.type.push($(`.clean_medi_type_${target_index}`).eq(index).val());
+                        medi_obj.name.push($(`.clean_medi_input_${target_index}`).eq(index).val());
+                        medi_obj.size.push($(`.clean_size_input_${target_index}`).eq(index).val());
+                    });
+                    clean_target_obj.push({
+                        target_index:target_index,
+                        stock_id:stock_id,
+                        num:num,
+                        pname:target_obj[target_index].pname,
+                        pname2:target_obj[target_index].pname2,
+                        pcode:target_obj[target_index].pcode,
+                        bcode:target_obj[target_index].bcode,
+                        clean_type:$(`.clean_type${target_index}`).val(),
+                        clean_date:$(`#datepicker${target_index}`).val(),
+                        clean_num:$(`.clean_num${target_index}`).val(),
+                        clean_h_s:$(`.clean_h_s${target_index}`).val(),
+                        clean_m_s:$(`.clean_m_s${target_index}`).val(),
+                        clean_h_e:$(`.clean_h_e${target_index}`).val(),
+                        clean_m_e:$(`.clean_m_e${target_index}`).val(),
+                        medi_type_arr:medi_obj.type,
+                        medi_name_arr:medi_obj.name,
+                        medi_size_arr:medi_obj.size,
+                        companynumber:$(`.clean_type${target_index}`).data("companynumber"),
+                    });
+                    let last_data = clean_target_obj[clean_target_obj.length-1];
+                    console.log("clean_target_obj",clean_target_obj)
+                    Object.keys(last_data).forEach(function(obj,index){
+                        if(obj=='clean_num'||obj=='companynumber'){
+                            if(last_data["clean_type"]!='self'){
+                                if(last_data[obj]==''){
+                                    data_chk.push(obj);
+                                }
+                            }
+                        }else if(obj=='medi_type_arr'||obj=='medi_name_arr'||obj=='medi_size_arr'){
+                            last_data[obj].forEach(function(arr,arr_index){
+                                if(arr==''){
+                                    data_chk.push(obj);
+                                }
+                            });
+                            
+                        }else{
+                            if(last_data[obj]==""&&obj!="target_index"){
+                                console.log("a",obj,last_data,last_data[obj])
+                                data_chk.push(obj);
+                            }
+                        }
+                    });
+                });
+                if(clean_target_obj.length>0){
+                    if(data_chk.length>0){
+                        let txt = ``;
+                        data_chk.forEach(function(obj,index){
+                            console.log("obj",obj)
+                            txt+=fail_txt[obj]+",";
+                        })
+                        Swal.showValidationMessage(`
+                            <div style="font-size:14px; font-weight:bold;">데이터 미입력: ${txt}</div>
+                        `);
+                        return false;
+                    }else{
+                        $('.target_btn').hide();
+                        cleancontract_cef(clean_target_obj,cleancontract_cef_re);
+                        return false;
+                    }
+                }else if(clean_target_obj.length<1){
+                    Swal.showValidationMessage(`
+                        <div style="font-size:14px; font-weight:bold;">소독내역없음:품목을 추가해주세요</div>
+                    `);
+                    return false;
+                }else{
+                    
+                }
+                console.log(clean_target_obj)
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                
+
+            }
+        });
+    }
+}
+
+function product_custum_up(p_obj){
+    console.log("p_obj",p_obj)
+    axios({
+        method:'post',
+        url:'/ProductCustumUp',
+        data:{
+            company:company,
+            pobj:p_obj,
+        }
+    });
+}
+
+function number_reg(val){
+    console.log($(val).val().replace(/[^0-9]/g,''));
+    $(val).val($(val).val().replace(/[^0-9]/g,''));
+}
+
+function target_select(obj){
+    let obj_val = $(obj).val();
+    if(obj_val=="구입"){
+        $('.buy_price_tr').show();
+        $('.rent_price_tr').hide();
+        $('.rent_price').val(0);
+    }else if(obj_val=="대여"){
+        $('.buy_price_tr').hide();
+        $('.rent_price_tr').show();
+        $('.buy_price').val(0);
+    }else if(obj_val=="구입 또는 대여"){
+        $('.buy_price_tr').show();
+        $('.rent_price_tr').show();
+    }
+}
+
+async function product_custum_get(){
+    return axios({
+        method:'post',
+        url:"/ProductCustumGet",
+        data:{
+            company:company
+        }
+    }).then(res=>{
+        const data = res.data;
+
+        return data;
+        
+    });
+}
+
+function increaseNumberInString(str) {
+    let numberPart = str.match(/\d+/)[0];
+    let number = parseInt(numberPart);
+    number++;
+    
+    let newNumberPart = number.toString().padStart(numberPart.length, '0');
+    let newStr = str.replace(numberPart, newNumberPart);
+    
+    return newStr;
+}
+
+function product_up(){
+    Swal.fire('2024-08-12(월)<br/> 사용가능합니다.');
+    return 0;
+    Swal.fire({
+        width: '35%',
+        fontsize:'15px',
+        title: `비급여 품목등록`,
+        html: `
+            <div class="flex">
+                <table>
+                    <thead></thead>
+                    <tbody class="product_up_tbody">
+                        <tr>
+                            <td>품목이미지</td><td><input type="button" value="이미지 선택" class="pimg"></td>
+                        </tr>
+                        <tr>
+                            <td>품목</td><td><input type="text" class="pname"></td>
+                        </tr>
+                        <tr>
+                            <td>제품명</td><td><input type="text" class="pname2"></td>
+                        </tr>
+                        <tr>
+                            <td>품목코드</td><td><input type="text" class="pcode" readonly disabled></td>
+                        </tr>
+                        <tr>
+                            <td>판매구분</td><td><select class="target" onchange="target_select(this)"><option value="구입">구입</option><option value="대여">대여</option><option value="구입 또는 대여">구입 또는 대여</option></select></td>
+                        </tr>
+                        <tr>
+                            <td>과세구분</td><td><select class="tax"><option value="0">과세</option><option value="1">면세</option><option value="2">영세</option></select></td>
+                        </tr>
+                        <tr>
+                            <td>입고단가</td><td><input type="text" class="restock_price" onchange="number_reg(this)" value="0"></td>
+                        </tr>
+                        <tr class="buy_price_tr">
+                            <td>판매가격</td><td><input type="text" class="buy_price" onchange="number_reg(this)" value="0"></td>
+                        </tr>
+                        <tr class="rent_price_tr" style="display:none;">
+                            <td>대여가격</td><td><input type="text" class="rent_price" onchange="number_reg(this)" value="0"></td>
+                        </tr>
+                        <tr>
+                            <td>제조사</td><td><input type="text" class="factory"></td>
+                        </tr>
+                        <tr>
+                            <td>색상</td><td><select class="color"><option value="0">없음</option></select></td>
+                        </tr>
+                        <tr>
+                            <td>사이즈</td><td><select class="size"><option value="0">없음</option></select></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        `,
+        confirmButtonText:"등록",
+        showCancelButton:true,
+        cancelButtonText:"닫기",
+        
+        didOpen:()=>{
+            product_custum_get().then(res=>{
+                console.log(res);
+                if(res.code==200){
+                    $('.product_up_tbody .pcode').val(increaseNumberInString(res.data[0].code));
+                }else{
+                    $('.product_up_tbody .pcode').val('HQ0000000001');
+                }
+            });
+        },
+        preConfirm:()=>{
+            let p_obj = {
+                pname:$('.pname').val(),
+                pname2:$('.pname2').val(),
+                pcode:$('.pcode').val(),
+                target:$('.target').val(),
+                restockprice:$('.restock_price').val(),
+                buyprice:$('.buy_price').val(),
+                rentprice:$('.rent_price').val(),
+                factory:$('.factory').val(),
+                color:$('.color').val(),
+                size:$('.size').val(),
+                tax:$('.tax').val()
+            };
+            Object.keys(p_obj).forEach(function(obj,index){
+                if(p_obj[obj]==''){
+                    $('.swal2-content').css({"display":"block"});
+                    Swal.showValidationMessage(`
+                        <div style='color:#ff0000;'>미입력란이 있습니다${obj}</div>
+                    `);
+                    return false;
+                }
+            });
+        },
+        allowOutsideClick:false,
+    }).then((result) => {
+        if (result.isConfirmed) {
+            let p_obj = {
+                pname:$('.pname').val(),
+                pname2:$('.pname2').val(),
+                pcode:$('.pcode').val(),
+                target:$('.target').val(),
+                restockprice:$('.restock_price').val(),
+                buyprice:$('.buy_price').val(),
+                rentprice:$('.rent_price').val(),
+                factory:$('.factory').val(),
+                color:$('.color').val(),
+                size:$('.size').val(),
+                tax:$('.tax').val()
+            }
+            product_custum_up(p_obj);
+        }
+    });
+}
+
+function stock_release_all(){
+    Swal.fire({
+        title:"전체출고 하시겠습니까?",
+        confirmButtonText:"확인",
+        showCancelButton:true,
+        cancelButtonText:"취소"
+    }).then(res=>{
+        if(res.isConfirmed){
+            axios({
+                method:"post",
+                url:"/StockReleaseAll",
+                data:{
+                    company:company
+                }
+            }).then(res=>{
+                const data = res.data;
+                if(data.code==200){
+                    Swal.fire("출고완료",data.company,"success");
+                }else if(data.code==300){
+                    Swal.fire("출고실패",data.company,"error");
+                }
+            })
+        }
+    })
+    
+}
+
+</script>
+<body>
+    <!-- <div class="topline mobile"></div> -->
+    <div class="pc" style="display:none;">
+      <%- include('mobilemenu') %>
+    </div>
+<a style="display:none;" class="btn" data-popup-open="popup-1" href="#">Open Popup #1</a>
+<a style="display:none;" class="btn" data-popup-open2="popup-2" href="#">Open Popup #1</a>
+<a style="display:none;" class="btn" data-popup-open3="popup-3" href="#">Open Popup #1</a>
+<div class="maincontainer">
+    <div class="listdash" style="display:none;">
+        <div class="" onclick="listdash('list')"><span>재고리스트</span><span class="material-icons">view_list</span></div>
+        <div class="" onclick="listdash('dash')"><span>재고대시보드</span><span class="material-icons">assessment</span></div>
+    </div>
+    <h1 class="title"><span class="material-icons">domain</span>&nbsp;&nbsp;&nbsp;&nbsp;<%= title %></h1>
+
+    <div class="plist">
+        <div class="flex">
+            <div style="font-weight: bold;">
+                바코드 스캔 감지중&nbsp;&nbsp;
+            </div>
+            <!--div class="square">
+                <div class="spin"></div>
+            </div-->
+        </div>
+        <div class="search-form">
+            <input type="text" class="search-bar" name="query" placeholder="품목명, 품목코드" onkeyup="enterkey(this.value)">
+            <input type="submit" class="search-button material-icons" value="search" onclick="product_list_get(1,''+$('.search-bar').val()+'',ptype_on_chk())">
+            <input type="hidden" name="has" value="<%=has%>"> 
+        </div>
+        <table class="topmenu">
+            <tr class="topmenutr">
+                <td class="clientup"><span class="" style="display:none;">품목 등록하기</span></td>
+                <td>&nbsp;<div class="ptype_on ptype_all ptype_span" onclick="ptype_on_click(this)">공단 총 품목:&nbsp;&nbsp;<span><%=totalcnt%></span>개</div>&nbsp;<div class="ptype_has ptype_span" onclick="">보유재고 품목: <span class="has_product"></span>개</div>&nbsp;</td>
+            </tr>
+        </table>
+        <table class="topmenu2 mobile">
+            <tbody>
+                
+                <tr>
+                    <td><span class="pon p_view_all" onclick="productview.all('',this)" data-type="">전체보기</span></td>
+                </tr>
+                <tr>
+                    <td class="summury">급여 품목</td>
+                </tr>
+                <tr class="buy_summury">
+                    <td>판매</td><td><span onclick="productview.buy('이동변기',this)" data-type="이동변기">이동변기</span></td><td><span onclick="productview.buy('목욕의자',this)" data-type="목욕의자">목욕의자</span></td><td><span onclick="productview.buy('성인용보행기',this)" data-type="성인용보행기">성인용보행기</span></td><td><span onclick="productview.buy('욕창예방방석',this)" data-type="욕창예방방석">욕창예방방석</span></td><td><span onclick="productview.buy('간이변기',this)" data-type="간이변기">간이변기</span></td><td><span onclick="productview.buy('자세변환용구',this)" data-type="자세변환용구">자세변환용구</span></td><td><span onclick="productview.buy('지팡이',this)" data-type="지팡이">지팡이</span></td><td><span onclick="productview.buy('욕창예방 매트리스',this)" data-type="욕창예방 매트리스">욕창예방 매트리스</span></td><td><span onclick="productview.buy('안전손잡이',this)" data-type="안전손잡이">안전손잡이</span></td><td><span onclick="productview.buy('요실금팬티',this)" data-type="요실금팬티">요실금팬티</span></td><td><span onclick="productview.buy('미끄럼 방지용품',this)" data-type="미끄럼 방지용품">미끄럼 방지용품</span></td><td><span onclick="productview.buy('경사로(실내용)',this)" data-type="경사로(실내용)">경사로(실내용)</span></td>
+                </tr>
+                <tr class="rent_summury">
+                    <td>대여</td><td><span onclick="productview.rent('전동침대',this)" data-type="전동침대">전동침대</span></td><td><span onclick="productview.rent('수동휠체어',this)" data-type="수동휠체어">수동휠체어</span></td><td><span onclick="productview.rent('경사로(실외용)',this)" data-type="경사로(실외용)">경사로(실외용)</span></td><td><span onclick="productview.rent('이동욕조',this)" data-type="이동욕조">이동욕조</span></td><td><span onclick="productview.rent('배회감지기',this)" data-type="배회감지기">배회감지기</span></td><td><span onclick="productview.rent('욕창예방 매트리스',this)" data-type="욕창예방 매트리스">욕창예방 매트리스</span></td>
+                </tr>
+                <tr style="height:20px;">
+                    
+                </tr>
+                <tr>
+                    <td class="summury">보유 재고 구분</td>
+                </tr>
+                <tr class="buy_summury">
+                    <td>판매</td><td><span onclick="productview_st.buy('all',this)" data-st="all" class="buy_summury_span">전체</span><span class="badge">0</span></td><td><span onclick="productview_st.buy('restock',this)" data-st="restock" class="buy_summury_span">미출고</span><span class="badge">0</span></td><td><span onclick="productview_st.buy('as',this)" data-st="as" class="buy_summury_span">A/S</span><span class="badge">0</span></td><td><span onclick="productview_st.buy('used',this)" data-st="used" class="buy_summury_span">중고</span><span class="badge">0</span></td><td><span onclick="productview_st.buy('faulty',this)" data-st="faulty" class="buy_summury_span">불량</span><span class="badge">0</span></td><td><span onclick="productview_st.buy('discard',this)" data-st="discard" class="buy_summury_span">자진신고</span><span class="badge">0</span></td>
+                </tr>
+                <tr class="rent_summury">
+                    <td>대여</td><td><span onclick="productview_st.rent('all',this)" data-st="all" class="rent_summury_span">전체</span><span class="badge">0</span><td><span onclick="productview_st.rent('restock',this)" data-st="restock" class="rent_summury_span">소독 미출고</span><span class="badge">0</span></td><td><span onclick="productview_st.rent('clean_none',this)" data-st="clean_none" class="rent_summury_span">미소독 미출고</span><span class="badge">0</span></td><td><span onclick="productview_st.rent('as',this)" data-st="as" class="rent_summury_span">A/S</span><span class="badge">0</span></td><td><span onclick="productview_st.rent('used',this)" data-st="used" class="rent_summury_span">중고</span><span class="badge">0</span></td><td><span onclick="productview_st.rent('faulty',this)" data-st="faulty" class="rent_summury_span">불량</span><span class="badge">0</span></td><td><span onclick="productview_st.rent('discard',this)" data-st="discard" class="rent_summury_span">자진신고</span><span class="badge">0</span></td>
+                </tr>
+
+            </tbody>
+        </table>
+        <div class="product_btn_area">
+            <div class="flexstart"><!--div class="product_up_btn" onclick="product_up()">비급여 품목등록</div--><div class="bcode_up_btn" onclick="product_btn_area.bcode_batch_up();">엑셀 재고등록</div><div class="bcode_up_btn" onclick="product_btn_area.rent_clean_up();">소독내역 공단등록</div><div class="bcode_up_btn" onclick="product_btn_area.product_info_print();">품목 가격표 출력</div><div class="bcode_up_btn stock_release_all" style="display:none;" onclick="stock_release_all()">전체출고</div></div><div class="flexend"><div class="flexend product_has_cnt_area" style="display:none;">조회된 보유재고 전체수량:<div class="product_has_cnt">8</div>개</div></div>
+        </div>
+        <table class="product_table table table-bordered">
+            <thead class="product_table_thead">
+                
+                
+            </thead>
+            <tbody class="product_table_tbody">
+                <tr class="tablemenu">
+                    <td colspan="20">
+                        <div class="numnavi" style="text-align:center;">
+                           
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>품목</td><td width="70px">이미지</td><td>품목명</td><td>품목코드</td><td>구입/대여</td><td>급여/비급여</td><td>출고단가</td><td>매입단가</td><td>색상</td><td>사이즈</td><td>보유재고</td>
+                </tr>
+                
+            </tbody>
+        </table>
+
+    </div>
+    <div class="pdash">
+
+    </div>
+</div><!--maincontainer end-->
+
+<style>
+    .confirmtable{
+        border-collapse: collapse;
+    }
+    .confirmtable tr{
+        border:1px solid #797979;
+    }
+    .confirmtable tr td{
+        padding:5px;
+        font-weight: bold;
+    }
+    .confirmtable tr td input[type="checkbox"]{
+        transform: scale(1.7);
+    }
+    .modal .mbtn{cursor: pointer;border: 1px solid #999999;text-align: center;border-radius: 5px;outline: none;font-weight: 500; margin: 10px;}
+    .dimLayer{display: block;width: 100%;background-color: rgba(0, 0, 0, 0.3);position: fixed;left: 0;top: 0px;margin: 0;padding: 0;z-index: 998;}
+    .modal{width: 600px;height: 550px;border-radius: 10px;box-sizing: border-box;text-align: center;}
+    .modal-section{ background: #ffffff;box-sizing: border-box;display: none;position: absolute;top: 50%;left: 50%;-webkit-transform: translate(-50%, -50%);-ms-transform: translate(-50%, -50%);-moz-transform: translate(-50%, -50%);-o-transform: translate(-50%, -50%);transform: translate(-50%, -50%);display: none;z-index: 999; border: 1px solid #ffffff; border-radius: 20px;}
+    .menu_msg{font-size: 18px;font-weight: bold; padding-top:20px;}
+    .enroll_btn{
+        bottom:0;
+        position:fixed;
+        width: 100%;
+        height: 95px;
+        background: #fff;
+    }
+    .gray_btn {width: 90px;background: #e77547;color: #ffffff;height: 36px;transition: 0.5s;font-size: 17px;}
+    .white_btn {width: 90px;background: #ffffff;color: #000000;height: 36px;transition: 0.5s;font-size: 17px;}
+    .pink_btn {width: 90px;background: #518ad6;color: #fff;height: 36px;transition: 0.5s;font-size: 17px;border: none;}
+    .enroll_box{
+        overflow-y:scroll;
+        margin-top:20px;
+        margin-bottom:50px;
+        height:410px;
+    }
+    @media (max-width: 600px) {
+        .modal{
+            width:350px;
+        }
+    }
+
+</style>
+<section class="modal modal-section type-confirm">
+    
+    <div class="enroll_box">
+        <p class="menu_msg"></p>
+        <div style="padding:5px; font-size:17px; font-weight: bold;">
+            <div>바코드:&nbsp;&nbsp;&nbsp;<span class="bcnt"></span>개</div>
+            <!--div class="flex"><div>선택 품목 도매지정 : </div><div><select class="wholesale" style="height:40px; margin-bottom:10px;" onchange="wholesalechange(this)"></select></div></div-->
+        </div>
+        <div class="flex">
+            <table class="confirmtable">
+                <tr>
+                    <td>선택</td><td>품목명</td><td>제품명</td><td>바코드</td><!--td>도매</td--><td>색상</td><td>사이즈</td><td></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="enroll_btn flex">
+        <div>
+            <button class="mbtn gray_btn modal_ok">등록</button>
+        <button class="mbtn white_btn modal_close">닫기</button>
+        </div>
+    </div>
+</section>
+<script>
+
+function wholesalechange(x){
+    $.each($('.bcodelist'),function(i){
+        if($('.bcodelist').eq(i).children('td').eq(0).children('input').prop("checked")==true){
+            $('.wholechk').eq(i).text($(x).val());
+        }
+
+    });
+}
+
+function wholesale(){
+    var wstr = '<option value="'+company+'">선택</option>';
+    $.ajax({
+        url: '/wholesalechk',
+        data: 'company='+company,
+        type: 'POST',
+        dataType: 'JSON',
+        success: function (result) {
+            $.each(result.data,function(i){
+               wstr+='<option value="'+result.data[i].name+'">'+result.data[i].name+'</option>';
+            });
+            $('.wholesale').append(wstr);
+        }
+    });
+}
+
+var confirmdatatxt = "";
+function confirmchk(x){
+    //$('.confirmtable tr').not($('.confirmtable tr').first()).remove();
+    if($('.confirmtable').is(':visible')==false){
+        $('.bcodelist').remove();
+        action_popup.confirm("바코드 스캔 품목", function (res) {
+            if (res) {
+                //action_popup.close(this);
+            }
+        });
+    }
+    $('.confirmtable').append(x);
+}
+
+var action_popup = {
+    timer: 300,
+    confirm: function (txt, callback) {
+        if (txt == null || txt.trim() == "") {
+            console.warn("confirm message is empty.");
+            return;
+        } else if (callback == null || typeof callback != 'function') {
+            console.warn("callback is null or not function.");
+            return;
+        } else {
+            $(".type-confirm .btn_ok").on("click", function () {
+                $(this).unbind("click");
+                callback(true);
+                action_popup.close(this);
+            });
+            this.open("type-confirm", txt);
+        }
+    },
+
+    alert: function (txt) {
+        if (txt == null || txt.trim() == "") {
+            console.warn("confirm message is empty.");
+            return;
+        } else {
+            this.open("type-alert", txt);
+        }
+    },
+
+    open: function (type, txt) {
+        var popup = $("." + type);
+        popup.find(".menu_msg").text(txt);
+        $("body").append("<div class='dimLayer'></div>");
+        $(".dimLayer").css('height', $(document).height()).attr("target", type);
+        wholesale();
+        popup.fadeIn(this.timer);
+    },
+
+    close: function (target) {
+        var modal = $(target).closest(".modal-section");
+        var dimLayer;
+        if (modal.hasClass("type-confirm")) {
+            dimLayer = $(".dimLayer[target=type-confirm]");
+            $(".type-confirm .btn_ok").unbind("click");
+        } else if (modal.hasClass("type-alert")) {
+            dimLayer = $(".dimLayer[target=type-alert]")
+        } else {
+            console.warn("close unknown target.")
+            return;
+        }
+        modal.fadeOut(this.timer);
+        setTimeout(function () {
+            dimLayer != null ? dimLayer.remove() : "";
+        }, this.timer);
+    }
+}
+
+$(document).ready(function(){
+    product_pcode_get();
+    color_table_get().then(res=>{
+        product_list_get(1,'',ptype_on_chk());
+    });
+    if(company=="건강100세 의료기"||company=="건강100세"||company=="건강한복지용구"||company=="건강한가족의료기")$(".stock_release_all").show();
+
+    
+});
+
+$(".modal_close").on("click", function () {
+    Swal.fire({
+        width: '450px',
+        fontsize:'13px',
+        title: '창을 닫으시겠습니까?',
+        text: "닫으면 입력된 정보가 지워집니다",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '닫기',
+        cancelButtonText: '취소',
+        allowOutsideClick: false,
+        
+    }).then((result) => {
+        if (result.isConfirmed){
+            bcodeprev=[];
+            action_popup.close(this);
+        }
+    });
+});
+
+
+function addbcode(productkey,bcodearray){
+    $.ajax({ 
+        url: "/addbcode", 
+        data: "company=" + company +"&productkey=" + productkey+"&bcodearray=" + bcodearray,
+        type: 'POST',
+        dataType: "JSON", 
+        async:false,
+        success: function (result) { 
+
+        }
+    });
+}
+
+const bcode_method = {
+    bcode_update:function(num,stock_id,bcode_type_prev,bcode_type_next, pnum, info_type,product_index){
+        axios({
+            method:'post',
+            url:'/BcodeUpdate',
+            data:{
+                num : num,
+                stockid : stock_id,
+                bcodetypeprev: bcode_type_prev,
+                bcodetypenext: bcode_type_next
+            }
+        }).then(res=>{
+            const data = res.data;
+            if(data.code==200){
+                product_bcode_get(pnum,info_type,product_index).then(res=>{
+                    
+                });
+            }
+        })
+    },
+    bcode_add : function(pcode,bcode,color,size,bcodetype,item_id){
+        $.ajax({ 
+            url: "/BcodeAddNew", 
+            data: "company=" + company +"&pcode=" + pcode+"&bcode=" + bcode+"&color=" + color+"&size=" + size+"&bcodetype=" + bcodetype+"&num=" + item_id,
+            type: 'POST',
+            dataType: "JSON", 
+            async:false,
+            success: function (result) { 
+
+            }
+        });
+    },
+    bcode_del: function(num, pnum,info_type,index){
+        console.log(pnum,num)
+        axios({
+            method:'post',
+            url:'/BcodeDel',
+            data:{
+                num:num
+            }
+        }).then(res=>{
+            const data = res.data;
+            if(data.code==200){
+                product_bcode_get(pnum,info_type,index).then(res=>{
+                    
+                });
+            }else if(data.code==300){
+                //alert("주문서에 입력되어있는 바코드입니다");
+            }
+        })
+    }
+}
+
+// function add_bcode_new(pcode,bcode,color,size,bcodetype){
+//     $.ajax({ 
+//         url: "/BcodeAddNew", 
+//         data: "company=" + company +"&pcode=" + pcode+"&bcode=" + bcode+"&color=" + color+"&size=" + size+"&bcodetype=" + bcodetype+"&num=" + product_obj.pcode[pcode],
+//         type: 'POST',
+//         dataType: "JSON", 
+//         async:false,
+//         success: function (result) { 
+
+//         }
+//     });
+// }
+
+$(".modal_ok").on("click", function () {
+    Swal.fire({
+        width: '450px',
+        fontsize:'13px',
+        title: '스캔하신 바코드를 등록하시겠습니까?',
+        text: '총: '+$('.bcnt').text()+'개',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '등록',
+        cancelButtonText: '취소',
+        allowOutsideClick: false,
+        
+    }).then((result) => {
+        if (result.isConfirmed){
+            Swal.fire({
+                title:'바코드 등록완료',
+                icon:'success',
+                allowOutsideClick: false,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if(('.bcodelist').length>0){
+                        $.each($('.bcodelist'),function(i){
+                            if($('.bcodelist').eq(i).children('td').eq(0).children('input').prop("checked")==true){
+                                let item_id = $('.bcodelist').eq(i).children('.code').data("num");
+                                let bcode = $('.bcodelist').eq(i).children('.code').text();
+                                let color = $('.bcodelist').eq(i).children('.scan_color').children("select").val()||'';
+                                let size = $('.bcodelist').eq(i).children('.scan_size').children("select").val()||'';
+                                console.log(item_id,bcode,color,size);
+                                bcode_method.bcode_add('',bcode,color,size,'clean',item_id);
+                                // if(productkey==$('.bcodelist').eq(i).children('.code').text().split('-')[0]){
+                                //     productkey = $('.bcodelist').eq(i).children('.code').text().split('-')[0];
+                                //     bcodearr.push($('.bcodelist').eq(i).children('code').text().split('-')[1]);
+                                //     if(i==$('.bcodelist').length-1)addbcode(productkey,bcodearr);
+                                // }else{
+                                //     addbcode(productkey,bcodearr);
+                                //     bcodearr=[];
+                                //     productkey = $('.bcodelist').eq(i).children('td').eq(3).text().split('-')[0];
+                                //     bcodearr.push($('.bcodelist').eq(i).children('td').eq(3).text().split('-')[1]+'|'+today());
+                                //     if(i==$('.bcodelist').length-1)addbcode(productkey,bcodearr);
+                                // }
+                            }
+                        });
+                    }else{
+
+                    }
+                    bcodeprev = [];
+                    action_popup.close($(".modal_close"));
+                    product_list_get(1,'',ptype_on_chk());
+                }
+            });
+        }
+    });
+});
+
+function bdelete(x,pcode,bcode){
+    console.log(bcodeprev,bcode)
+    for(let i = 0; i < bcodeprev.length; i++) {
+        if(bcodeprev[i] === pcode+"-"+bcode)  {
+            bcodeprev.splice(i, 1);
+            i--;
+        }
+    }
+    $(x).parent().remove();
+    $('.bcnt').html($('.bcodelist').length);
+}
+
+function barcode_input(str,state,bcode){
+    //datasplit = data.split('|');
+    if(state=='error'){
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'middle',
+            showConfirmButton: false,
+            timer: 2500,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        Toast.fire({
+            icon: 'error',
+            title: '현재 재고에 등록된 바코드입니다 '+bcode,
+        });
+    }else if(bcodeprev.indexOf(bcode)==-1){
+        bcodeprev.push(bcode);
+        
+        confirmchk(str);
+        $('.bcnt').html($('.bcodelist').length);
+    }else if(bcodeprev.indexOf(bcode)!=-1){
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'middle',
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        Toast.fire({
+            icon: 'error',
+            title: '동일한 바코드 입력'
+        });
+    }
+}
+
+function barcode_test(barcode){
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'middle',
+        showConfirmButton: false,
+        timer: 2500,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    });
+
+    
+    var str = "";
+    var barcodere = barcode.replace('-','');
+    var hlist = ['ㅃ','ㅉ','ㄸ','ㄲ','ㅆ','ㅁ','ㄴ','ㅇ','ㄹ','ㅎ','ㅗ','ㅔ'];
+    var elist = ['Q','W','E','R','T','A','S','D','F','G','H','P'];
+    $.each(hlist,function(i){
+        barcodere = barcodere.replace(hlist[i],elist[i]);
+    });
+    $.ajax({
+        url: "/BcodeChkNew",
+        data: "pcode=" + barcodere.substr(0, 12)+"&bcode=" + barcodere.substr(12)+'&company='+company,
+        type: 'POST',
+        dataType: "JSON",
+        success: function (result) {
+            if(result.code==200){
+                const data = result.data[0];
+                console.log('data',data)
+                let option_obj = {
+                    color_str:'',
+                    size_str:'',
+                };
+                if(data.size){
+                    data.size.split(",").forEach(function(obj,index){
+                        option_obj.size_str += `<option value="${obj}">${obj}</option>`;
+                    });
+                }
+                if(data.color){
+                    data.color.split(",").forEach(function(obj,index){
+                        option_obj.color_str += `<option value="${obj}">${color_obj[obj]}</option>`;
+                    });
+                }
+                str += `
+                <tr class='bcodelist'>
+                    <td><input type='checkbox' checked></td>
+                    <td class="pname">${data.name}</td>
+                    <td class="pname2">${data.name2}</td>
+                    <td class="code" data-num="${data.num}">${barcodere.substr(12)}</td>
+                    <td class="scan_color"><select>${option_obj.color_str}</select></td>
+                    <td class="scan_size"><select>${option_obj.size_str}</select></td>
+                    <td onclick='bdelete(this,"${barcodere.substr(0,12)}","${barcodere.substr(12)}");' style='cursor:pointer; background:#122459; color:#fff;'>삭제</td>
+                </tr>`;
+                barcode_input(str,result.code,barcodere.substr(0, 12)+"-"+barcodere.substr(12));
+            }else if(result.code==300){
+                Toast.fire({
+                    icon: 'error',
+                    title: '현재 재고에 등록된 바코드입니다 '+barcodere.substr(0,12)+'-'+barcodere.substr(12),
+                });
+            }else if(result.code==301){
+                Toast.fire({
+                    icon: 'error',
+                    title: '급여품목이 아닙니다 '+barcodere.substr(0,12)+'-'+barcodere.substr(12),
+                });
+            }else if(result.code==400){
+                Toast.fire({
+                    icon: 'error',
+                    title: '시스템오류',
+                });
+            }
+            // socket.emit('disconnect2', {'name': uid});
+            // socket.emit('login', {'name': uid});
+            // socket.emit('barcodeinput',{'name':uid, 'msg':str+'|'+barcodere.substr(0, 12)+"-"+barcodere.substr(12)+'|'+result.msg});
+        } 
+    }); 
+}
+
+$(document).ready(function(){
+    $.datepicker.setDefaults({
+        dateFormat: 'yy-mm-dd',
+        prevText: '이전 달',
+        nextText: '다음 달',
+        monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+        monthNamesShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+        dayNames: ['일', '월', '화', '수', '목', '금', '토'],
+        dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
+        dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
+        showMonthAfterYear: true,
+        yearSuffix: '년'
+    });
+    clean_company_get();
+    var xOffset = 20;
+    var yOffset = 10;
+
+    $(document).on("mouseover",".thumbnail",function(e){ //마우스 오버시
+        
+        $("body").append("<p id='preview'><img src='"+ $(this).attr("src") +"' width='250px' /></p>"); //보여줄 이미지를 선언						 
+        $("#preview")
+            .css("top",(e.pageY)-this.height + "px")
+            .css("left",(e.pageX + yOffset) + "px")
+            .fadeIn("fast"); //미리보기 화면 설정 셋팅
+    });
+    
+    $(document).on("mousemove",".thumbnail",function(e){ //마우스 이동시
+        $('#preview img').css({'maxHeight':'500px'});
+        $("#preview")
+            .css("top",(e.pageY)-$("#preview").height() + "px")
+            .css("left",(e.pageX + yOffset) + "px");
+    });
+    
+    $(document).on("mouseout",".thumbnail",function(){ //마우스 아웃시
+        $("#preview").remove();
+    });
+
+    (function($){
+        $.fn.scannerDetection=function(options){
+
+            // If string given, call onComplete callback
+            if(typeof options==="string"){
+                this.each(function(){
+                    this.scannerDetectionTest(options);
+                });
+                return this;
+            }
+            
+            // If false (boolean) given, deinitialize plugin
+            if(options === false){
+                this.each(function(){
+                    this.scannerDetectionOff();
+                });
+                return this;
+            }
+
+            var defaults={
+                onComplete:false, // Callback after detection of a successfull scanning (scanned string in parameter)
+                onError:false, // Callback after detection of a unsuccessfull scanning (scanned string in parameter)
+                onReceive:false, // Callback after receiving and processing a char (scanned char in parameter)
+                onKeyDetect:false, // Callback after detecting a keyDown (key char in parameter) - in contrast to onReceive, this fires for non-character keys like tab, arrows, etc. too!
+                timeBeforeScanTest:100, // Wait duration (ms) after keypress event to check if scanning is finished
+                avgTimeByChar:30, // Average time (ms) between 2 chars. Used to do difference between keyboard typing and scanning
+                minLength:6, // Minimum length for a scanning
+                endChar:[9,13], // Chars to remove and means end of scanning
+                startChar:[], // Chars to remove and means start of scanning
+                ignoreIfFocusOn:false, // do not handle scans if the currently focused element matches this selector
+                scanButtonKeyCode:false, // Key code of the scanner hardware button (if the scanner button a acts as a key itself) 
+                scanButtonLongPressThreshold:3, // How many times the hardware button should issue a pressed event before a barcode is read to detect a longpress
+                onScanButtonLongPressed:false, // Callback after detection of a successfull scan while the scan button was pressed and held down
+                stopPropagation:false, // Stop immediate propagation on keypress event
+                preventDefault:false // Prevent default action on keypress event
+            };
+            if(typeof options==="function"){
+                options={onComplete:options}
+            }
+            if(typeof options!=="object"){
+                options=$.extend({},defaults);
+            }else{
+                options=$.extend({},defaults,options);
+            }
+            
+            this.each(function(){
+                var self=this, $self=$(self), firstCharTime=0, lastCharTime=0, stringWriting='', callIsScanner=false, testTimer=false, scanButtonCounter=0;
+                var initScannerDetection=function(){
+                    firstCharTime=0;
+                    stringWriting='';
+                    scanButtonCounter=0;
+                };
+                self.scannerDetectionOff=function(){
+                $self.unbind('keydown.scannerDetection');
+                $self.unbind('keypress.scannerDetection');
+            }
+            self.isFocusOnIgnoredElement=function(){
+                if(!options.ignoreIfFocusOn) return false;
+                if(typeof options.ignoreIfFocusOn === 'string') return $(':focus').is(options.ignoreIfFocusOn);
+                if(typeof options.ignoreIfFocusOn === 'object' && options.ignoreIfFocusOn.length){
+                    var focused=$(':focus');
+                    for(var i=0; i<options.ignoreIfFocusOn.length; i++){
+                        if(focused.is(options.ignoreIfFocusOn[i])){
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+            self.scannerDetectionTest=function(s){
+                // If string is given, test it
+                if(s){
+                    firstCharTime=lastCharTime=0;
+                    stringWriting=s;
+                }
+
+                if (!scanButtonCounter){
+                    scanButtonCounter = 1;
+                }
+
+                // If all condition are good (length, time...), call the callback and re-initialize the plugin for next scanning
+                // Else, just re-initialize
+                if(stringWriting.length>=options.minLength && lastCharTime-firstCharTime<stringWriting.length*options.avgTimeByChar){
+                    if(options.onScanButtonLongPressed && scanButtonCounter > options.scanButtonLongPressThreshold) options.onScanButtonLongPressed.call(self,stringWriting,scanButtonCounter);
+                        else if(options.onComplete) options.onComplete.call(self,stringWriting,scanButtonCounter);
+                        $self.trigger('scannerDetectionComplete',{string:stringWriting});
+                        initScannerDetection();
+                        return true;
+                    }else{
+                        if(options.onError) options.onError.call(self,stringWriting);
+                        $self.trigger('scannerDetectionError',{string:stringWriting});
+                        initScannerDetection();
+                        return false;
+                    }
+                }
+                $self.data('scannerDetection',{options:options}).unbind('.scannerDetection').bind('keydown.scannerDetection',function(e){
+                    // If it's just the button of the scanner, ignore it and wait for the real input
+                    if(options.scanButtonKeyCode !== false && e.which==options.scanButtonKeyCode) {
+                        scanButtonCounter++;
+                        // Cancel default
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                    }
+                    // Add event on keydown because keypress is not triggered for non character keys (tab, up, down...)
+                    // So need that to check endChar and startChar (that is often tab or enter) and call keypress if necessary
+                    else if((firstCharTime && options.endChar.indexOf(e.which)!==-1) 
+                    || (!firstCharTime && options.startChar.indexOf(e.which)!==-1)){
+                        // Clone event, set type and trigger it
+                        var e2=jQuery.Event('keypress',e);
+                        e2.type='keypress.scannerDetection';
+                        $self.triggerHandler(e2);
+                        // Cancel default
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                    }
+                    // Fire keyDetect event in any case!
+                    if(options.onKeyDetect) options.onKeyDetect.call(self,e);
+                    $self.trigger('scannerDetectionKeyDetect',{evt:e});
+                    
+                }).bind('keypress.scannerDetection',function(e){
+                    if (this.isFocusOnIgnoredElement()) return;
+                    if(options.stopPropagation) e.stopImmediatePropagation();
+                    if(options.preventDefault) e.preventDefault();
+
+                    if(firstCharTime && options.endChar.indexOf(e.which)!==-1){
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                        callIsScanner=true;
+                    }else if(!firstCharTime && options.startChar.indexOf(e.which)!==-1){
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                        callIsScanner=false;
+                    }else{
+                        if (typeof(e.which) != 'undefined'){
+                            stringWriting+=String.fromCharCode(e.which);
+                        }
+                        callIsScanner=false;
+                    }
+
+                    if(!firstCharTime){
+                        firstCharTime=Date.now();
+                    }
+                    lastCharTime=Date.now();
+
+                    if(testTimer) clearTimeout(testTimer);
+                    if(callIsScanner){
+                        self.scannerDetectionTest();
+                        testTimer=false;
+                    }else{
+                        testTimer=setTimeout(self.scannerDetectionTest,options.timeBeforeScanTest);
+                    }
+
+                    if(options.onReceive) options.onReceive.call(self,e);
+                    $self.trigger('scannerDetectionReceive',{evt:e});
+                });
+            });
+            return this;
+        }
+    })(jQuery);
+
+    var bcodeopen = 'n';
+    $(document).scannerDetection({ 
+        timeBeforeScanTest: 200, // wait for the next character for upto 200ms 
+        startChar: [120], // Prefix character for the cabled scanner (OPL6845R) 
+        endChar: [13], // be sure the scan is complete if key 13 (enter) is detected 
+        avgTimeByChar: 40, // it's not a barcode if a character takes longer than 40ms 
+        onComplete: function(barcode, qty){
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'middle',
+                showConfirmButton: false,
+                timer: 2500,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+
+            
+            var str = "";
+            var barcodere = barcode.replace('-','');
+            var hlist = ['ㅃ','ㅉ','ㄸ','ㄲ','ㅆ','ㅁ','ㄴ','ㅇ','ㄹ','ㅎ','ㅗ','ㅔ'];
+            var elist = ['Q','W','E','R','T','A','S','D','F','G','H','P'];
+            $.each(hlist,function(i){
+                barcodere = barcodere.replace(hlist[i],elist[i]);
+            });
+            $.ajax({
+                url: "/BcodeChkNew",
+                data: "pcode=" + barcodere.substr(0, 12)+"&bcode=" + barcodere.substr(12)+'&company='+company,
+                type: 'POST',
+                dataType: "JSON",
+                success: function (result) {
+                    if(result.code==200){
+                        const data = result.data[0];
+                        console.log('data',data)
+                        let option_obj = {
+                            color_str:'',
+                            size_str:'',
+                        };
+                        if(data.size){
+                            data.size.split(",").forEach(function(obj,index){
+                                option_obj.size_str += `<option value="${obj}">${obj}</option>`;
+                            });
+                        }
+                        if(data.color){
+                            data.color.split(",").forEach(function(obj,index){
+                                option_obj.color_str += `<option value="${color_obj[obj]}">${color_obj[obj]}</option>`;
+                            });
+                        }
+                        str += `
+                        <tr class='bcodelist'>
+                            <td><input type='checkbox' checked></td>
+                            <td class="pname">${data.name}</td>
+                            <td class="pname2">${data.name2}</td>
+                            <td class="code" data-num="${data.num}">${barcodere.substr(12)}</td>
+                            <td class="scan_color"><select>${option_obj.color_str}</select></td>
+                            <td class="scan_size"><select>${option_obj.size_str}</select></td>
+                            <td onclick='bdelete(this,"${barcodere.substr(0,12)}","${barcodere.substr(12)}");' style='cursor:pointer; background:#122459; color:#fff;'>삭제</td>
+                        </tr>`;
+                        barcode_input(str,result.code,barcodere.substr(0, 12)+"-"+barcodere.substr(12));
+                    }else if(result.code==300){
+                        Toast.fire({
+                            icon: 'error',
+                            title: '현재 재고에 등록된 바코드입니다 '+barcodere.substr(0,12)+'-'+barcodere.substr(12),
+                        });
+                    }else if(result.code==301){
+                        Toast.fire({
+                            icon: 'error',
+                            title: '급여품목이 아닙니다 '+barcodere.substr(0,12)+'-'+barcodere.substr(12),
+                        });
+                    }else if(result.code==400){
+                        Toast.fire({
+                            icon: 'error',
+                            title: '시스템오류',
+                        });
+                    }
+                    // socket.emit('disconnect2', {'name': uid});
+                    // socket.emit('login', {'name': uid});
+                    // socket.emit('barcodeinput',{'name':uid, 'msg':str+'|'+barcodere.substr(0, 12)+"-"+barcodere.substr(12)+'|'+result.msg});
+                } 
+            }); 
+            // var str = "";
+            // var barcodere = barcode.replace('-','');
+            // var hlist = ['ㅃ','ㅉ','ㄸ','ㄲ','ㅆ','ㅁ','ㄴ','ㅇ','ㄹ','ㅎ','ㅗ','ㅔ']
+            // var elist = ['Q','W','E','R','T','A','S','D','F','G','H','P']
+            // $.each(hlist,function(i){
+            //     barcodere = barcodere.replace(hlist[i],elist[i]);
+            // });
+            // $.ajax({
+            //     url: "/bcodechk",
+            //     data: "bcode=" + barcodere.substr(0, 12)+"&bcode2=" + barcodere.substr(12)+'&company='+company,
+            //     type: 'POST',
+            //     dataType: "JSON",
+            //     success: function (result) {
+            //         let color_str = `<select>`;
+            //         Object.keys(color_obj).forEach(function(obj,index){
+            //             color_str += `<option>${color_obj[obj]}</option>`;
+            //         });
+                    
+            //         color_str += `</select>`;
+            //         str += `
+            //         <tr class='bcodelist'>
+            //             <td><input type='checkbox' checked></td>
+            //             <td class="pname">${result.result[0].name}</td>
+            //             <td class="pname2">${result.result[0].name2}</td>
+            //             <td class="code" style="width:110px;">${barcodere.substr(0, 12)}-${barcodere.substr(12)}</td>
+            //             <td>${color_str}</td>
+            //             <td><select><option>95</option><option>100</option><option>105</option></select></td>
+            //             <td onclick='bdelete("${barcodere.substr(12)}");' style='cursor:pointer; background:#122459; color:#fff;'>삭제</td>
+            //         </tr>`;
+            //         barcode_input(str,result.msg,barcodere.substr(0, 12)+"-"+barcodere.substr(12));
+
+            //         // socket.emit('disconnect2', {'name': uid});
+            //         // socket.emit('login', {'name': uid});
+            //         // socket.emit('barcodeinput',{'name':uid, 'msg':str+'|'+barcodere.substr(0, 12)+"-"+barcodere.substr(12)+'|'+result.msg});
+            //     } 
+            // }); 
+        }
+    }); 
+});
+</script>
+
+<div class="popup" data-popup="popup-1">
+	<div class="popup-inner">
+        <iframe name="clientup" src="//localhost:802/productup?username=<%=username%>" frameborder="0"></iframe>
+		<a class="popup-close" data-popup-close="popup-1" href="#">x</a>
+	</div>
+</div>
+<div class="popup2" data-popup="popup-2">
+	<div class="popup2-inner">
+        <iframe class='clientmodify' name="clientmodify" src="" frameborder="0"></iframe>
+		<a class="popup2-close" data-popup-close="popup-2" href="#">x</a>
+	</div>
+</div>
+<div class="popup3" data-popup="popup-3">
+	<div class="popup3-inner">
+        <iframe class='ordermodify' name="ordermodify" src="" frameborder="0"></iframe>
+		<a class="popup3-close" data-popup-close="popup-3" data-num='' data-info-type="" data-index="" href="#">x</a>
+	</div>
+</div>
+<div class="pc">
+    <%- include('mobilefoot') %>
+  </div>
+</body>
+</html>

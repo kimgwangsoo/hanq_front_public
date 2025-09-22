@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+    <head>
+        <meta http_quiv="content-type" content="text/html; charset=utf-8">
+        <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/1.5.3/signature_pad.min.js"></script>
+
+    </head>
+<style type="text/css">
+  .signbox{
+    display:none;
+  }
+  #signature{
+    /*border:1px solid #000;*/
+      width:190px;
+      height:160px;
+      top:-10px;
+      left:-50px;
+      position:absolute;
+      background: none;
+  }
+    .tg  {border-collapse:collapse;border-spacing:0;}
+    .tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:13px;
+  padding:3px 3px;word-break:normal; text-align: center;}
+    .tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:13px;
+    font-weight:normal;overflow:hidden;padding:3px 3px;word-break:normal;}
+    .tg .tg-nrix{text-align:center;vertical-align:middle}
+    .tg .tg-0pky{
+      font-weight:bold;
+    }
+    .flex{
+      width:100%;
+      display:flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .flexend{
+      width:100%;
+      display:flex;
+      justify-content: flex-end;
+      align-items:center;
+    }
+    .flexstart{
+      width:100%;
+      display:flex;
+      justify-content: flex-start;
+      align-items:center;
+    }
+    .flexcolumn{
+      width:100%;
+      display:flex;
+      flex-direction: column;
+    }
+    .flexcolstart{
+      width:100%;
+      display:flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .flexcolend{
+      width:100%;
+      display:flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-end;
+    }
+
+    .td input:focus, .td textarea:focus{
+        outline: none;
+        font-weight:bold;
+    }
+    .f25{
+      font-size: 25px;
+    }
+</style>
+<body>
+  <div class="f12 font_fix" style="letter-spacing: 1px;"><span style="font-size: 12px;">■</span> 복지용구 급여범위 및 급여기준 등에 관한 고시 [별지 제2호서식]<개정 2024.12.16.></div>
+  <div class="flex f25 h50 tit">복지용구 추가급여신청서</div>
+  <div class="flexend f12">(앞쪽)</div>
+    <table class="tg">
+    <tbody>
+      <tr>
+        <td class="tg-0pky f16" style="border-left:none;">구 분</td>
+        <td class="tg-0pky" colspan="6" style="border-right:none; letter-spacing: 2px;">
+          <label>[<input type="radio" name="check" id="check1" value="1" style="width:17px; height:17px;">] 훼손여부 확인</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <label>[<input type="radio" name="check" id="check2" value="2" checked style="width:17px; height:17px;">] 신체기능상태 변화 확인</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <label>[<input type="radio" name="check" id="check3" value="3" style="width:17px; height:17px;">] 기타</label>
+        </td>
+      </tr>
+      <tr>
+        <td style="border:none;height:2px;padding:0"></td>
+        <td style="border:none;height:2px;padding:0" colspan="2"></td>
+        <td style="border:none;height:2px;padding:0"></td>
+        <td style="border:none;height:2px;padding:0"></td>
+        <td style="border:none;height:2px;padding:0"></td>
+      </tr>
+      <tr>
+        <td class="tg-0pky w100 f16 font_fix" rowspan="4" style="border-left:none;">신청인<br/>(본인)<br></td>
+        <td class="tg-0pky w40" colspan="3">성 명</td>
+        <td class="tg-0pky w190 name"></td>
+        <td class="tg-0pky w110">생년월일</td>
+        <td class="tg-0pky w180 regident resident" style="border-right:none;"></td>
+      </tr>
+      <tr>
+        <td class="tg-0pky" colspan="3">주 소</td>
+        <td class="tg-0pky address"></td>
+        <td class="tg-0pky" rowspan="2">전화번호</td>
+        <td class="tg-0pky pdfphone1 phone1" rowspan="2" style="border-right:none;"></td>
+      </tr>
+      <tr>
+        <td class="tg-0pky" colspan="3">실거주지</td>
+        <td class="tg-0pky address"></td>
+      </tr>
+      <tr>
+        <td class="tg-0pky" colspan="3">장기요양인정번호</td>
+        <td class="tg-0pky number"></td>
+        <td class="tg-0pky">장기요양등급</td>
+        <td class="tg-0pky ranker" style="border-right:none;"></td>
+      </tr>
+      <tr>
+        <td style="border:none;height:2px;padding:0"></td>
+        <td style="border:none;height:2px;padding:0" colspan="2"></td>
+        <td style="border:none;height:2px;padding:0"></td>
+        <td style="border:none;height:2px;padding:0"></td>
+        <td style="border:none;height:2px;padding:0"></td>
+      </tr>
+      <tr>
+        <td class="tg-0pky f16 font_fix" rowspan="4" style="border-left:none;">대리인</td>
+        <td class="tg-0pky" colspan="3">성 명</td>
+        <td class="tg-0pky pdfguardname guardName"></td>
+        <td class="tg-0pky">생년월일</td>
+        <td class="tg-0pky" style="border-right:none;"><textarea name="content guardResident" rows="1" style="width:99%; height:20px; border: 0; resize: none; font-weight: bold; font-size:14px;"></textarea></td>
+      </tr>
+      <tr>
+        <td class="tg-0pky" colspan="3">유 형</td>
+        <td class="tg-0pky font_fix" colspan="3" style="text-align:left; border-right:none;">1. 가족 · 친족 · 이해관계인(신청인과의 관계 :  <span class="pdfguardtarget"></span>   )<br>2. 사회복지전담공무원<br>3. 치매안심센터의 장 ( 신청인이 치매환자인 경우로 한정 )<br>4. 특별자치시장 · 특별자치도지사 · 시장 · 군수 · 구청장이 지정한자</td>
+      </tr>
+      <tr>
+        <td class="tg-0pky" colspan="3">주 소</td>
+        <td class="tg-0pky address" colspan="3" style="border-right:none;"></td>
+      </tr>
+      <tr>
+        <td class="tg-0pky" colspan="3">전화번호</td>
+        <td class="tg-dvpl" colspan="3" style="border-right:none;"><div class="flexend">(휴대전화)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="pdfphone1 phone1"></span></div></td>
+      </tr>
+      <tr>
+        <td style="border:none;height:1.5px;padding:0"></td>
+        <td style="border:none;height:1.5px;padding:0" colspan="2"></td>
+        <td style="border:none;height:1.5px;padding:0"></td>
+        <td style="border:none;height:2px;padding:0"></td>
+        <td style="border:none;height:1.5px;padding:0"></td>
+      </tr>
+      <tr>
+        <td class="tg-0pky f16 font_fix" rowspan="6" style="border-left:none;">신청<br/>내용</td>
+        <td class="tg-0pky" colspan="2" rowspan="2">신체 기능<br>상태 변화</td>
+        <td class="tg-0pky">신 청<br>품 목</td>
+        <td class="tg-0pky" colspan="3" style="border-right:none;"><textarea name="content" rows="2" style="font-size:14px; width:99%; border: 0; resize: none;"></textarea></td>
+      </tr>
+      <tr>
+        <td class="tg-0pky">신 청<br>사 유</td>
+        <td class="tg-0pky" colspan="3" style="border-right:none;"><textarea name="content" rows="2" style="font-size:11px; width:99%; border: 0; resize: none; height:70px;"></textarea></td>
+      </tr>
+      <tr>
+        <td class="tg-0pky" colspan="2" rowspan="2">훼 손</td>
+        <td class="tg-0pky">훼 손<br>제 품</td>
+        <td class="tg-0pky" colspan="3" style="border-right:none;"><textarea name="content" rows="2" style="font-size:14px; width:99%; border: 0; resize: none;"></textarea></td>
+      </tr>
+      <tr>
+        <td class="tg-0pky">훼 손<br>사 유</td>
+        <td class="tg-0pky" colspan="3" style="border-right:none;"><textarea name="content" rows="2" style="font-size:11px; width:99%; border: 0; resize: none; height:70px;"></textarea></td>
+      </tr>
+      <tr>
+        <td class="tg-0pky" colspan="2" rowspan="2">기타</td>
+        <td class="tg-0pky">신 청<br>품 목</td>
+        <td class="tg-0pky" colspan="3" style="border-right:none;"><textarea name="content" rows="2" style="font-size:14px; width:99%; border: 0; resize: none;"></textarea></td>
+      </tr>
+      <tr>
+        <td class="tg-0pky">신 청<br>사 유</td>
+        <td class="tg-0pky" colspan="3" style="border-right:none;"><textarea name="content" rows="2" style="font-size:11px; width:99%; border: 0; resize: none; height:70px;"></textarea></td>
+      </tr>
+      <tr>
+        <td class="tg-0pky" colspan="7" style="border-left:none; border-right:none;">
+
+          <div class="flexcolumn">
+            <span class="flexstart f16" style="text-align: left; padding-top: 2px;">『복지용구 급여범위 및 급여기준 등에 관한 고시』 제4조 제1항 제5호 및 같은 조 제4항에 따라 위와 같이 복지용구 급여를 신청합니다.</span><br/><br/><span class="pdfday f20" style="letter-spacing: 2px;">2023년 05월 24일</span><div class="flexcolend">
+              <div class="flexend">신청인 : <span class="name" style="padding-left:5px; padding-right:100px;"></span>&nbsp;&nbsp;&nbsp;<div style="position:relative;"><span class="pdfsign clientSignBox">(서명 또는 인)</span></div> </div><br/>
+                <div class="flexend">대리인 : <span class="pdfguardname guardName" style="padding-left:5px; padding-right:100px;"></span>&nbsp;&nbsp;&nbsp;
+                  <div style="position:relative; z-index:9999;">
+                    <canvas id="signature" width="200" height:="200"></canvas>
+                    <span class="">(서명 또는 인)</span>
+                  </div> 
+                </div>
+            </div>
+            <div class="flexstart font_fix" style="padding-bottom: 5px;"><span class="f17">국민건강보험공단 이사장</span>&nbsp;<span>귀하</span></div>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td class="tg-0pky" style="border-left:none;">신청인<br>(대리인)<br>제출서류</td>
+        <td class="tg-0pky" colspan="6" style="border-right:none;">
+          <div class="flexcolstart font_fix" style="font-size:11px">
+            <div>1. 물품의 훼손상태를 확인 할 수 있는 사진(부득이 사진을 제출하지 못할 경우 사실확인서)</div>
+            <div>2. 신분증</div>
+            <div>&nbsp;가. 본인이 신청하는경우 : 본인의 신분증 1부</div>
+            <div>&nbsp;나. 대리인이 신청한 경우</div>
+            <div>&nbsp;<span style="font-size:14px;">①</span> 가족,친족 또는 이해관계인 : 대리인의 신분증 1부</div>
+            <div>&nbsp;<span style="font-size:14px;">②</span> 사회복지전담공무원 : 공무원임을 증명하는 신분증 1부</div>
+            <div style="text-align: left;">&nbsp;<span style="font-size:14px;">③</span> 치매안심센터의 장(신청인이 치매환자인 경우로 한정합니다) : 대리인의 신분증 및 치매안심센터의 장임을 증명하는 서류 각 1부</div>
+            <div style="text-align: left;">&nbsp;<span style="font-size:14px;">④</span> 특별자치시장 · 특별자치도지사 · 시장 · 군수 · 구청장이 지정한 자 : 노인장기요양보험법 시행규칙 별지 제9호 서식의 대리인 지정서 1부</div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+    </table>
+  </body>
+  </html>

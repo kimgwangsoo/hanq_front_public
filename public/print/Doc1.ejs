@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>장기요양급여 제공기록지(복지용구)</title>
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="/axios/dist/axios.js"></script>
+</head>
+<style>
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+        width: 100%;
+    }
+    .tg td {
+        border-color: black;
+        border-style: solid;
+        border-width: 1px;
+        font-family: Arial, sans-serif;
+        padding: 2px 1px;
+        word-break: normal;
+    }
+    .tg th {
+        border-color: black;
+        border-style: solid;
+        border-width: 1px;
+        font-family: Arial, sans-serif;
+        font-weight: normal;
+        overflow: hidden;
+        padding: 8px 5px;
+        word-break: normal;
+    }
+    .tg .tg-lboi {
+        text-align: left;
+        vertical-align: middle;
+    }
+    .tg .tg-123x {
+        font-size: 100%;
+        text-align: left;
+        vertical-align: middle;
+    }
+    .tg .tg-9wq8 {
+        text-align: center;
+        vertical-align: middle;
+    }
+    .tg .tg-baqh {
+        text-align: center;
+        vertical-align: top;
+    }
+    .tg .tg-0pky {
+        text-align: left;
+        vertical-align: top;
+    }
+    .tg .tg-0lax {
+        text-align: left;
+        vertical-align: top;
+    }
+    .tg .tg-lqy6 {
+        text-align: right;
+        vertical-align: top;
+    }
+    .tg .tg-c3ow {
+        text-align: center;
+        vertical-align: middle;
+    }
+    .tg .tg-nrix {
+        text-align: center;
+        vertical-align: middle;
+    }
+    .tit {
+        text-align: center;
+        font-size: 23px;
+    }
+    .inputtxt1 {
+        width: 95%;
+        height: 60px;
+        font-size: 14px;
+        font-weight: bold;
+        overflow: hidden;
+        resize: none;
+        border: none;
+        margin-top: 1px;
+        text-align: left;
+    }
+    .info_container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .info_item {
+        display: flex;
+        justify-content: flex-start;
+        width: 35%;
+    }
+    .info_label {
+        display: inline-block;
+        width: 80px; /* 라벨 너비를 설정하여 일치시킴 */
+        text-align: right; /* 오른쪽 정렬 */
+        margin-right: 10px; /* 라벨과 값 사이의 간격 */
+    }
+</style>
+<body>
+    <div id="printContent">
+        <div class="tit">
+            장기요양급여 제공기록지(복지용구)
+        </div>
+        <br>
+        <div style="font-size: x-small;">
+            <!-- ※ 뒤쪽의 아래의 유의사항을 읽고 작성하여 주시기 바라며, [ ]에는 해당되는 곳에 √표를 합니다. -->
+        </div>
+        <div>
+            <table class="tg">
+                <tbody>
+                    <tr class="client_num_area" style="display:none;">
+                        <td style="border:none;">NO.<span class="client_num"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="left-top">수급자 성명 <div class="name"></div></td>
+                        <td class="left-top">생년월일 <div class="resident"></div></td>
+                        <td class="left-top">장기요양등급 <div style="display:flex; justify-content:flex-start; align-items:center; justify-content: center;"><div class="target"></div>&nbsp;&nbsp; <span class="sale"></span>&nbsp;&nbsp; <span class="ranker"></span></div></td>
+                        <td class="left-top">장기요양인정번호 <div class="number"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left-top" colspan="2">장기요양기관명 <div class="companyName"></div></td>
+                        <td class="left-top" colspan="2">장기요양기관기호 <div class="cnum"></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <br>
+        <div>
+            <table class="tg doc1_table">
+                <tbody>
+                    <tr>
+                        <td class="center-middle" colspan="8" style="text-align: center;">
+                            <!-- <span>구입</span> -->
+                            <label><input type="radio" name="구입대여" checked/><span class="file_type">구입</span></label>
+                        </td>
+                    </tr>
+                    <tr style="font-size:14px">
+                        <td class="center-middle" rowspan="2">①품목명</td>
+                        <td class="center-middle" rowspan="2">②<br/>제품명</td>
+                        <td class="center-middle" rowspan="2">③복지용구<br/>표준코드</td>
+                        <td class="center-middle" rowspan="2">④급여비용</td>
+                        <td class="center-middle" rowspan="2">⑤판매일</td>
+                        <td class="center-middle" colspan="3" style="text-align:center">급여비 내역(원)</td>
+                    </tr>
+                    <tr class="pdfadd" style="font-size:14px">
+                        <td class="center-middle">⑥총액</td>
+                        <td class="center-middle">⑦본인<br/>부담금</td>
+                        <td class="center-middle">⑧공단<br/>부담액</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <br>
+        <div>
+            <table class="tg">
+                <!-- <thead>
+                    <tr>
+                        <th class="center-middle">특이 사항</th>
+                        <th class="left-middle" colspan="4">
+                            <textarea type="text" class="inputtxt1 issuetxt" placeholder="" readonly></textarea>
+                        </th>
+                    </tr>
+                </thead> -->
+                <tbody>
+                    <tr>
+                        <th class="center-middle">특이 사항</th>
+                        <th class="left-middle" colspan="4">
+                            <textarea type="text" class="inputtxt1 issuetxt" placeholder="" readonly></textarea>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td class="center-middle" rowspan="3">확인자</td>
+                        <td class="center-middle">사업소 담당자</td>
+                        <td class="right-middle" colspan="3" style="position:relative; text-align: right; height:40px;"><span class="ceo ceo_custum ceoName"></span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="signBox">( 서명 또는 인 )</span></td>
+                    </tr>
+                    <tr>
+                        <td class="center-middle" rowspan="2">수급자 또는 보호자</td>
+                        <td class="right-middle" colspan="3" style="position:relative; text-align: right; height:40px;"><span class="pdfguardname guardName"></span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="pdfsign clientSignBox">( 서명 또는 인 )</span></td>
+                    </tr>
+                    <tr>
+                        <td class="left-middle" colspan="3" style="position:relative; text-align: right; height:40px;">
+                            수급자와의 관계 :<span class="pdfguardtarget clientRelationInfo"></span>
+                            <!-- <label><input type="radio" name="관계" />본인</label>
+                            <label><input type="radio" name="관계" />가족</label>
+                            <label><input type="radio" name="관계" />친족</label>
+                            <label><input type="radio" name="관계" />기타(<div></div>)</label> -->
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="center-middle" colspan="2">확인일시</td>
+                        <td class="center-middle"><div class="pdfday"></div></td>
+                        <td class="center-middle">확인방법</td>
+                        <td class="center-middle">
+                            <label><input type="checkbox" id="option1" name="방문" value="1" onclick="confirmoption(1)" checked/>방문</label>
+                            <label><input type="checkbox" id="option2" name="유선" value="1" onclick="confirmoption(0)"/>유선</label>
+                        </td>
+                    </tr>
+                    <tr style="display:none;" class="gungang_custum">
+                        <td class="center-middle" colspan="2">제공일자</td>
+                        <td class="center-middle"><div class=""></div></td>
+                        <td class="center-middle">제공방법</td>
+                        <td class="center-middle">
+                            <label><input type="radio" id="option1" name="방문우편" value="1" checked/>방문</label>
+                            <label><input type="radio" id="option2" name="방문우편" value="1" />우편</label>
+                            <label><input type="radio" id="option2" name="방문우편" value="1" />문자</label>
+                            <label><input type="radio" id="option2" name="방문우편" value="1" />메일</label>
+                        </td>
+                    </tr>
+                    <tr style="display:none;" class="gungang_custum">
+                        <td colspan="5" style="text-align: center;">유의사항</td>
+                    </tr>
+                    <tr style="display:none;" class="gungang_custum">
+                        <td colspan="5" style="font-size:12px;">
+                            * 장기요양급여 제공기록지(복지용구)는 구입제품은 제공할 때, 대여제품은 최초 제공할 떄와 매월 기록합니다.<br/>
+                            * 급여비 내역의 총액은 제품가격(월대여료)의 합계를 기록하고 공단 부담액은 공단에 청구한 급여비용을 기록합니다. 다만, 제품<br/>
+                            가격에서 10원 미만의 금액은 절사합니다<br/>
+                            * 의료기관 입원, 시설 입소, 복지용구 점검 사항 등은 특이사항에 기록합니다.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

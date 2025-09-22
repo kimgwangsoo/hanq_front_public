@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>장기요양기관 입소·이용신청서</title>
+    <style>
+        @media print {
+            body { margin: 0; }
+            .page-break { page-break-before: always; }
+        }
+        
+        .form-container {
+            width: 210mm;
+            font-family: 'Malgun Gothic', '맑은 고딕', Arial, sans-serif;
+            font-size: 11px;
+            line-height: 1.3;
+            margin: 0 auto;
+            padding: 15mm;
+            box-sizing: border-box;
+        }
+        
+        .form-header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .form-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .form-subtitle {
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .form-note {
+            font-size: 10px;
+            text-align: left;
+            margin-bottom: 15px;
+        }
+        
+        .form-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        
+        .form-table td, .form-table th {
+            border: 1px solid #000;
+            padding: 8px;
+            vertical-align: top;
+        }
+        
+        .form-table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .header-row {
+            background-color: #e0e0e0;
+        }
+        
+        .label-cell {
+            background-color: #f8f8f8;
+            font-weight: bold;
+            text-align: center;
+            width: 80px;
+        }
+        
+        .input-cell {
+            background-color: white;
+            min-height: 25px;
+        }
+        
+        .wide-input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-size: 11px;
+        }
+        
+        .checkbox-group {
+            margin: 10px 0;
+        }
+        
+        .checkbox-item {
+            margin-right: 20px;
+            display: inline-block;
+        }
+        
+        .signature-section {
+            margin: 20px 0;
+            text-align: right;
+        }
+        
+        .consent-section {
+            margin: 20px 0;
+            border: 1px solid #000;
+            padding: 10px;
+        }
+        
+        .consent-title {
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .footer-note {
+            font-size: 10px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .page-two {
+            margin-top: 30px;
+        }
+        
+        .process-flow {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .process-step {
+            display: inline-block;
+            margin: 0 10px;
+            padding: 5px 10px;
+            border: 1px solid #000;
+        }
+        
+        .arrow {
+            display: inline-block;
+            margin: 0 5px;
+        }
+        
+        .dark-cell {
+            background-color: #d0d0d0;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <!-- 첫 번째 페이지 -->
+        <div class="form-header">
+            <div class="form-title">■ 노인장기요양보험법 시행규칙 [별지 제10호서식] &lt;개정 2021. 1. 18.&gt;</div>
+            <div class="form-title">장기요양기관 입소·이용신청서</div>
+            <div class="form-subtitle">([ ] 신규신청 [ ]갱신 [ ]변경 [ ]해지)</div>
+        </div>
+        
+        <div class="form-note">
+            ※ 어두운 란은 신청인이 적지 않고, [ ]에는 해당되는 곳에 √표를 합니다. (앞쪽)
+        </div>
+        
+        <table class="form-table">
+            <tr class="header-row">
+                <td class="label-cell">접수번호</td>
+                <td class="input-cell"></td>
+                <td class="label-cell">접수일시</td>
+                <td class="input-cell"></td>
+                <td class="label-cell">처리기간</td>
+                <td class="input-cell">7일이내</td>
+            </tr>
+        </table>
+        
+        <table class="form-table">
+            <tr>
+                <td class="label-cell" rowspan="4">신청인</td>
+                <td class="label-cell">성명</td>
+                <td class="input-cell"></td>
+                <td class="label-cell">생년월일</td>
+                <td class="input-cell"></td>
+            </tr>
+            <tr>
+                <td class="label-cell">수급자와의 관계</td>
+                <td class="input-cell"></td>
+                <td class="label-cell">전화번호(또는 휴대전화번호)</td>
+                <td class="input-cell"></td>
+            </tr>
+            <tr>
+                <td class="label-cell">주소</td>
+                <td class="input-cell" colspan="3"></td>
+            </tr>
+        </table>
+        
+        <table class="form-table">
+            <tr>
+                <td class="label-cell" rowspan="4">수급자</td>
+                <td class="label-cell">성명</td>
+                <td class="input-cell"></td>
+                <td class="label-cell">주민등록번호</td>
+                <td class="input-cell"></td>
+            </tr>
+            <tr>
+                <td class="label-cell">장기요양 등급</td>
+                <td class="input-cell"></td>
+                <td class="label-cell">장기요양 인정번호</td>
+                <td class="input-cell"></td>
+            </tr>
+            <tr>
+                <td class="label-cell">주소</td>
+                <td class="input-cell" colspan="3"></td>
+            </tr>
+            <tr>
+                <td class="label-cell">전화번호(또는 휴대전화번호)</td>
+                <td class="input-cell" colspan="3"></td>
+            </tr>
+        </table>
+        
+        <table class="form-table">
+            <tr>
+                <td class="label-cell">입소·이용 희망 장기요양기관</td>
+                <td class="input-cell" colspan="5"></td>
+            </tr>
+        </table>
+        
+        <div class="checkbox-group">
+            <div class="checkbox-item">구분</div>
+            <div class="checkbox-item">[ ] 「의료급여법」 제3조제1항제1호에 따른 의료급여를 받는 사람</div>
+            <div class="checkbox-item">[ ] 「의료급여법」 제3조제1항제1호 외의 규정에 따른 의료급여를 받는 사람</div>
+        </div>
+        
+        <div style="margin: 20px 0;">
+            「노인장기요양보험법 시행규칙」 제16조제5항에 따라 장기요양기관 입소·이용을 위와 같이 신청합니다.
+        </div>
+        
+        <div class="signature-section">
+            <div style="margin-bottom: 20px;">
+                <span style="margin-right: 50px;">년</span>
+                <span style="margin-right: 50px;">월</span>
+                <span style="margin-right: 50px;">일</span>
+            </div>
+            <div>신청인: (서명 또는 인)</div>
+        </div>
+        
+        <div style="font-size: 10px; margin: 15px 0;">
+            ※ 신청인이 수급자 본인·가족, 사회복지전담공무원, 치매안심센터의 장(수급자가 치매환자인 경우로 한정합니다), 특별자치시장·특별자치도지사·시장·군수·구청장이 지정한 사람 외의 이해관계인인 경우에는 수급자의 동의를 받아야 합니다. 
+            <div style="text-align: right; margin-top: 10px;">수급자(또는 보호자): (서명 또는 인)</div>
+        </div>
+        
+        <div style="text-align: center; margin: 20px 0;">
+            <strong>○○ 특별자치시장·특별자치도지사·시장·군수·구청장 귀하</strong>
+        </div>
+        
+        <div class="consent-section">
+            <div class="consent-title">행정정보 공동이용 동의서</div>
+            <div style="margin: 10px 0;">
+                본인은 이 건 업무처리와 관련하여 담당 공무원이 「전자정부법」 제36조제1항에 따른 행정정보의 공동이용 및 사회복지통합전산망을 통하여 뒤쪽의 담당 공무원 확인사항을 확인하는 것에 동의합니다.
+            </div>
+            <div style="font-size: 10px; margin: 10px 0;">
+                ※ 동의하지 않거나 확인이 되지 않는 경우에는 수급자(또는 보호자)가 직접 관련 서류를 제출해야 합니다.
+            </div>
+            <div style="text-align: right; margin-top: 10px;">수급자(또는 보호자): (서명 또는 인)</div>
+        </div>
+        
+        <div style="text-align: center; margin: 20px 0;">
+            ☞ 뒤쪽에 신청인 첨부서류가 있습니다.
+        </div>
+        
+        <div class="footer-note">
+            210mm×297mm[백상지(80g/㎡) 또는 중질지(80g/㎡)]
+        </div>
+        
+        <!-- 두 번째 페이지 -->
+        <div class="page-break page-two">
+            <div style="text-align: right; font-size: 10px; margin-bottom: 20px;">(뒤쪽)</div>
+            
+            <table class="form-table">
+                <tr>
+                    <td class="label-cell" rowspan="2">신청인<br>첨부서류</td>
+                    <td class="input-cell">장기요양인정서 사본</td>
+                </tr>
+                <tr>
+                    <td class="input-cell"></td>
+                </tr>
+            </table>
+            
+            <table class="form-table">
+                <tr>
+                    <td class="label-cell">수수료</td>
+                    <td class="input-cell">없음</td>
+                </tr>
+            </table>
+            
+            <table class="form-table">
+                <tr>
+                    <td class="label-cell" rowspan="3">담당 공무원<br>확인사항</td>
+                    <td class="input-cell">1. 주민등록표 등·초본</td>
+                </tr>
+                <tr>
+                    <td class="input-cell">2. 「의료급여법」 제3조제1항제1호에 따른 의료급여를 받는 사람의 경우 의료급여수급자 증명서, 「의료급여법」 제3조제1항제1호 외의 규정에 따른 의료급여를 받는 사람의 경우 의료급여증</td>
+                </tr>
+                <tr>
+                    <td class="input-cell"></td>
+                </tr>
+            </table>
+            
+            <div style="margin: 30px 0;">
+                <div style="text-align: center; font-weight: bold; margin-bottom: 20px;">처 리 절 차</div>
+                <div class="process-flow">
+                    <div class="process-step">신청서 작성</div>
+                    <span class="arrow">→</span>
+                    <div class="process-step">접수 및 확인</div>
+                    <span class="arrow">→</span>
+                    <div class="process-step">장기요양기관에<br>의뢰서 송부</div>
+                    <span class="arrow">→</span>
+                    <div class="process-step">통지</div>
+                </div>
+                <div style="text-align: center; margin-top: 10px;">
+                    <div style="margin-bottom: 5px;">신청인</div>
+                    <div style="margin-bottom: 5px;">처 리 기 관<br>(특별자치시·도, 시·군·구)</div>
+                    <div style="margin-bottom: 5px;">처 리 기 관<br>(특별자치시·도, 시·군·구)</div>
+                    <div>신청인</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

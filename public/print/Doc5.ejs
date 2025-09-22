@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<head>
+    <meta http_quiv="content-type" content="text/html; charset=utf-8">
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+</head>
+<style type="text/css">
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+    .tg td {
+        border-color: black;
+        border-style: solid;
+        border-width: 1px;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        padding: 2px 1px;
+        word-break: normal;
+    }
+    .tg th {
+        border-color: black;
+        border-style: solid;
+        border-width: 1px;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        overflow: hidden;
+        padding: 10px 5px;
+        word-break: normal;
+    }
+    .tg .tg-nrix {
+        text-align: center;
+        vertical-align: middle
+    }
+    .pdfstr_custum {
+        resize: none;
+        border: none;
+        font-size: 15px;
+        font-weight: bold;
+        width: 75px;
+        text-align: center;
+        height: 20px;
+        overflow: hidden;
+    }
+</style>
+<body>
+    <div class="mbody">
+        <table class="tg" style="width:100%;">
+            <tbody>
+                <tr class="client_num_area" style="display:none;">
+                    <td style="border:none;">NO.<span class="client_num"></span></td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky f20 h5" colspan="7" style="font-weight:bold; text-align: center;">장기요양급여비용 명세서</td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky f7 h5">장기요양<br>기관기호</td>
+                    <td class="tg-0pky f7 h5 cnum"></td>
+                    <td class="tg-0pky f7 h5">장기요양기관명</td>
+                    <td class="tg-0pky f7 h5 companyName" colspan="4"></td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky">주소</td>
+                    <td class="tg-0pky address" colspan="4"></td>
+                    <td class="tg-0pky">사업자등록번호</td>
+                    <td class="tg-0pky bnum"></td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky">성명</td>
+                    <td class="tg-0pky">장기요양인정번호</td>
+                    <td class="tg-0pky" colspan="4">급여제공기간</td>
+                    <td class="tg-0pky">영수증번호</td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky name"></td>
+                    <td class="tg-0pky number"></td>
+                    <td class="tg-0pky sdate" colspan="4"></td>
+                    <td class="tg-0pky"></td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky" colspan="3">항목</td>
+                    <td class="tg-0pky">금액</td>
+                    <td class="tg-0pky" colspan="3">금액산정내역</td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky" rowspan="3">급<br>여</td>
+                    <td class="tg-0pky" colspan="2">본인부담금</td>
+                    <td class="tg-0pky pdfbuytotal myTotal"></td>
+                    <td class="tg-0pky" colspan="2">총액(급여+비급여)</td>
+                    <td class="tg-0pky pdfdantotal danTotal"></td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky" colspan="2">공단부담금</td>
+                    <td class="tg-0pky pdfgongtotal gongTotal"></td>
+                    <td class="tg-0pky" colspan="2" rowspan="2">본인부담총액</td>
+                    <td class="tg-0pky pdfbuytotal myTotal" rowspan="2"></td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky" colspan="2">급여 계</td>
+                    <td class="tg-0pky pdfdantotal danTotal"></td>
+                    <!-- <td class="tg-0pky"></td> -->
+                </tr>
+                <tr>
+                    <td class="tg-0pky" rowspan="9">비<br>급<br>여</td>
+                    <td class="tg-0pky" colspan="2">식사재료비</td>
+                    <td class="tg-0pky">0</td>
+                    <td class="tg-0pky" colspan="2">이미 납부한금액</td>
+                    <td class="tg-0pky">0</td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky" colspan="2">상급침실 이용에<br>따른 추가비용</td>
+                    <td class="tg-0pky">0</td>
+                    <td class="tg-0pky" rowspan="4">수납금액</td>
+                    <td class="tg-0pky">카드</td>
+                    <td class="tg-0pky">0</td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky" colspan="2">이 / 미용비</td>
+                    <td class="tg-0pky">0</td>
+                    <td class="tg-0pky">현금영수증</td>
+                    <td class="tg-0pky">0</td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky" rowspan="5">기타</td>
+                    <td class="tg-0pky">기타</td>
+                    <td class="tg-0pky">0</td>
+                    <td class="tg-0pky">현금</td>
+                    <td class="tg-0pky">0</td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky"></td>
+                    <td class="tg-0pky"></td>
+                    <td class="tg-0pky">합계</td>
+                    <td class="tg-0pky">0</td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky"></td>
+                    <td class="tg-0pky"></td>
+                    <td class="tg-0pky" colspan="3">현금영수증</td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky"></td>
+                    <td class="tg-0pky"></td>
+                    <td class="tg-0pky" colspan="2">신분확인번호</td>
+                    <td class="tg-0pky"></td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky"></td>
+                    <td class="tg-0pky"></td>
+                    <td class="tg-0pky" colspan="2">현금승인번호</td>
+                    <td class="tg-0pky"></td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky" colspan="2">비급여 계</td>
+                    <td class="tg-0pky">0</td>
+                    <td class="tg-0pky product_arr" colspan="3"></td>
+                </tr>
+                <!-- </tbody> -->
+                <!-- </table>
+                <table class="tg"> -->
+                <!-- <thead> -->
+                <tr>
+                    <td class="tg-0pky" rowspan="2">신용카드를<br>사용하실 때</td>
+                    <td class="tg-0pky">회원번호</td>
+                    <td class="tg-0pky"></td>
+                    <td class="tg-0pky">승인번호</td>
+                    <td class="tg-0pky"></td>
+                    <td class="tg-0pky">할부</td>
+                    <td class="tg-0pky"></td>
+                    <!-- <th class="tg-0pky">사용금액</th> -->
+                </tr>
+                <tr>
+                    <td class="tg-0pky">카드종류</td>
+                    <td class="tg-0pky"></td>
+                    <td class="tg-0pky">유효기간</td>
+                    <td class="tg-0pky"></td>
+                    <td class="tg-0pky">가맹점번호</td>
+                    <td class="tg-0pky"></td>
+                    <!-- <th class="tg-0pky"></th> -->
+                </tr>
+                <!-- </thead>
+                <tbody> -->
+                <tr>
+                    <td class="tg-c3ow" colspan="7">
+                        <div class="pdfday" style="text-align:center;"></div><br><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <div class="flex" style="display:flex; justify-content:center;">
+                            <div class="company"></div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;대 표&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <div class="ceo ceoName"></div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <div class="" style="position:relative;"><div class="signBox">(인)</div></div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky" colspan="7"><br/><br/>
+                        * 이 명세서(영수증)는 「소득세법」에 따른 의료비 또는 「조세특례제한법」에 따른 현금영수증(현금영수증 승인번호가 기재된 경우) 공제신청에 사용할 수 있습니다. 다만, 지출증빙용으로 발급된 현금영수증(지출증빙)은 공제신청에 사용할 수 없습니다.<br/>
+                        * 이 명세서(영수증)에 대한 세부내역을 요구할 수 있습니다.<br/>
+                        * 비고란은 장기요양기관의 임의활용 란으로 사용합니다. 다만, 복지용구의 경우 품목과 구입ㆍ대여를 구분하여 기재하시기 바랍니다.<br/>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
