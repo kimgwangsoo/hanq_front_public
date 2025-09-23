@@ -5,11 +5,13 @@ const path = require('path');
 const electron = require('electron');
 const app = electron.app || require('@electron/remote').app;
 const { waitForLoading, menuMove, getAuthToken } = require('../common/commonService');
-
+const os = require('os');
 class BuyContractService {
   constructor(driver) {
     this.driver = driver;
-    this.tokenPath = path.join(app.getPath('userData'), 'auth_token.json');
+    // this.tokenPath = path.join(app.getPath('userData'), 'auth_token.json');
+    this.tokenPath = path.join(os.homedir(), 'Documents', 'hanq_token', 'auth_token.json');
+
   }
 
   async updateContractState(orderId,contractState) {

@@ -5,12 +5,14 @@ const app = electron.app || require('@electron/remote').app;
 const { waitForLoading, menuMove, handleAlerts, getAuthToken } = require('../common/commonService');
 const LookupService = require('../lookup/lookupService');
 const axios = require('axios');
-
+const os = require('os');
 class RentContractAddService extends LookupService{
   constructor(driver) {
     super(driver);
     this.driver = driver;
-    this.tokenPath = path.join(app.getPath('userData'), 'auth_token.json');
+    // this.tokenPath = path.join(app.getPath('userData'), 'auth_token.json');
+    this.tokenPath = path.join(os.homedir(), 'Documents', 'hanq_token', 'auth_token.json');
+
   }
 
   async updateRentContract(items,rentStartOrigin) {
@@ -516,6 +518,7 @@ class RentContractAddService extends LookupService{
             if (alertText.includes("계약되었습니다")) {
               // await this.createAddContract(this.tokenPath, products);
               console.log("계약이 정상적으로 완료되었습니다.");
+              await handleAlerts(this.driver);
               event.sender.send('rentContractAddResponse', { 
                 success: true, 
                 message: '계약이 정상적으로 완료되었습니다.',

@@ -5,12 +5,14 @@ const app = electron.app || require('@electron/remote').app;
 const { waitForLoading, menuMove, handleAlerts, getAuthToken } = require('../common/commonService');
 const LookupService = require('../lookup/lookupService');
 const axios = require('axios');
-
+const os = require('os');
 class RentContractService extends LookupService{
   constructor(driver) {
     super(driver);
     this.driver = driver;
-    this.tokenPath = path.join(app.getPath('userData'), 'auth_token.json');
+    // this.tokenPath = path.join(app.getPath('userData'), 'auth_token.json');
+    this.tokenPath = path.join(os.homedir(), 'Documents', 'hanq_token', 'auth_token.json');
+
   }
 
   async updateContractState(orderId,contractState) {
@@ -497,19 +499,19 @@ class RentContractService extends LookupService{
             await waitForLoading(this.driver);
             
             // 검색 결과 선택 및 저장
-            // await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.grid_wimList.body.gridrow_0.cell_0_0.cellcheckbox:icontext"]')).click();
-            // await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form.div_functionButton.form.btn_save"]')).click();
+            await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.grid_wimList.body.gridrow_0.cell_0_0.cellcheckbox:icontext"]')).click();
+            await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form.div_functionButton.form.btn_save"]')).click();
             
-            // // 알림창 처리
-            // const alert1 = await this.driver.wait(until.alertIsPresent(), 5000);
-            // await alert1.accept();
+            // 알림창 처리
+            const alert1 = await this.driver.wait(until.alertIsPresent(), 5000);
+            await alert1.accept();
             
-            // try {
-            //   const alert2 = await this.driver.wait(until.alertIsPresent(), 5000);
-            //   await alert2.accept();
-            // } catch (error) {
-            //   console.log("두 번째 알림창 없음:", error);
-            // }
+            try {
+              const alert2 = await this.driver.wait(until.alertIsPresent(), 5000);
+              await alert2.accept();
+            } catch (error) {
+              console.log("두 번째 알림창 없음:", error);
+            }
             
             // 창 닫기
             await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form.div_functionButton.form.btn_close"]')).click();
@@ -546,7 +548,7 @@ class RentContractService extends LookupService{
     }
     await menuMove('npia201', this.driver);
     console.log(name,number,ranker,resident,rcgt,startDateArray[0]);
-    await this.lookup(name,number,ranker,resident,rcgt,startDateArray[0]);
+    await this.lookup(this.driver,name,number,ranker,resident,rcgt,startDateArray[0]);
     try {
       // 제품 등록 프로세스 구현
       try {
@@ -617,7 +619,7 @@ class RentContractService extends LookupService{
         // 대리인 관계 콤보박스 클릭
         await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010100.form._div_bizFrameMain.form.cmb_prsRel.comboedit:input"]' }).click();
         await new Promise(resolve => setTimeout(resolve, 200));
-        await this.driver.findElement({xpath: `//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010100.form._div_bizFrameMain.form.cmb_prsRel.combolist.item_${clientRelationInfoId}:text"]`}).click();
+        await this.driver.findElement({xpath: `//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010100.form._div_bizFrameMain.form.cmb_prsRel.combolist.item_${clientRelationInfoId-1}:text"]`}).click();
         console.log("대리인 관계 설정 완료");
         // 대리인 관계 입력 확인
         await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010100.form._div_bizFrameMain.form.cmb_prsRel.comboedit:input"]' }).sendKeys(Key.ENTER);
@@ -824,17 +826,25 @@ class RentContractService extends LookupService{
               ('0' + (firstStartDateObj.getMonth() + 1)).slice(-2) +
               ('0' + firstStartDateObj.getDate()).slice(-2);
               
-              if(firstStartDate !== product.startDate){
-                  // 새 객체 생성하여 배열 첫 번째에 추가
+              if(firstStartDate !== product.startDate && product.startDate <= dayBeforeFirstStart){
+                  // 새 객체 생성하여 배열 첫 번째에 추가 (시작일이 종료일보다 작은 경우만)
                   nextDateArrayObjectFilter.unshift({
                   startDate: product.startDate,
                   endDate: dayBeforeFirstStart
                   });
               }
+
+              // 첫번째 객체의 startDate를 product.startDate로 설정
+              nextDateArrayObjectFilter[0].startDate = product.startDate;
               
               // 마지막 객체의 endDate를 product.endDate로 교체
               const lastIndex = nextDateArrayObjectFilter.length - 1;
               nextDateArrayObjectFilter[lastIndex].endDate = product.endDate;
+              
+              // 모든 객체에 대해 startDate가 endDate보다 큰지 확인하고 제거
+              nextDateArrayObjectFilter = nextDateArrayObjectFilter.filter(obj => 
+                  obj.startDate <= obj.endDate
+              );
               
               console.log(nextDateArrayObjectFilter, "수정된 nextDateArrayObjectFilter");
           }else{
@@ -903,27 +913,33 @@ class RentContractService extends LookupService{
         // 알림 처리
         try {
           await handleAlerts(this.driver);
-          
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          await handleAlerts(this.driver);
+          await new Promise(resolve => setTimeout(resolve, 1000));
           // 성공 메시지 확인
-          await handleAlerts(this.driver, async (alertText) => {
-            if (alertText.includes("계약되었습니다")) {
-              // await this.createAddContract(this.tokenPath, products);
-              console.log("계약이 정상적으로 완료되었습니다.");
-              event.sender.send('rentContractResponse', { 
-                success: true, 
-                message: '계약이 정상적으로 완료되었습니다.',
-                data: {
-                  bcode: products.map(p => p.bcode),
-                  endDate: products[0].endDate
-                }
-              });
-              return true;
-            } else {
-              console.log("계약 실패:", alertText);
-              event.sender.send('rentContractResponse', { success: false, message: alertText });
-              return false;
-            }
-          });
+
+          await this.updateContractState(orderData.id,'ok');
+          
+          const result2 = await this.driver.switchTo().alert();
+          const alertText = await result2.getText();
+          if (alertText.includes("계약되었습니다")) {
+            // await this.createAddContract(this.tokenPath, products);
+            console.log("계약이 정상적으로 완료되었습니다.");
+            await handleAlerts(this.driver);
+            event.sender.send('rentContractResponse', { 
+              success: true, 
+              message: '계약이 정상적으로 완료되었습니다.',
+              data: {
+                bcode: products.map(p => p.bcode),
+                endDate: products[0].endDate
+              }
+            });
+            return true;
+          } else {
+            console.log("계약 실패:", alertText);
+            event.sender.send('rentContractResponse', { success: false, message: alertText });
+            return false;
+          }
         } catch (error) {
           console.log('계약 전송 중 오류:', error);
           event.sender.send('rentContractResponse', { success: false, message: '계약 전송 중 오류 발생' });
@@ -932,7 +948,7 @@ class RentContractService extends LookupService{
         console.log("대여 계약 처리 완료");
       } catch (error) {
         console.log('대여 계약 처리 중 오류:', error);
-        event.sender.send('rentContractResponse', { success: false, message: '대여 계약 연장 처리 중 오류 발생' });
+        event.sender.send('rentContractResponse', { success: false, message: '대여 계약 처리 중 중 오류 발생' });
       }
     } catch (error) {
       console.log('대여 계약 처리 중 오류 발생:', error);

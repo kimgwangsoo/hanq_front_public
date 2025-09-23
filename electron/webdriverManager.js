@@ -155,7 +155,7 @@ class WebdriverManager {
 
     chromeProcess.unref(); // 부모가 종료돼도 크롬은 계속 실행됨
 
-    console.log(`✅ Chrome launched in debug mode (port=${debugPort}, profile=${userDataDir})`);
+    console.log(`Chrome launched in debug mode (port=${debugPort}, profile=${userDataDir})`);
     return chromeProcess;
   }
 
@@ -171,11 +171,24 @@ class WebdriverManager {
             // 기본 레지스트리 경로
             
             // 대체 레지스트리 경로 시도
-            const cmd = 'reg query "HKLM\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Google Chrome" /v version';
-            const stdout = execSync(cmd).toString();
-            const match = stdout.match(/version\s+REG_SZ\s+([\d.]+)/i);
-            if (match) chromeVersion = match[1];
-            console.log(match, "chromeVersion")
+            try {
+              const cmd = 'reg query "HKLM\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Google Chrome" /v version';
+              const stdout = execSync(cmd).toString();
+              const match = stdout.match(/version\s+REG_SZ\s+([\d.]+)/i);
+              if (match) chromeVersion = match[1];
+              console.log(match, "chromeVersion");
+            } catch (e) {
+              // 사용자 레지스트리 경로 시도
+              try {
+                const userCmd = 'reg query "HKCU\\Software\\Google\\Chrome\\BLBeacon" /v version';
+                const userStdout = execSync(userCmd).toString();
+                const userMatch = userStdout.match(/version\s+REG_SZ\s+([\d.]+)/i);
+                if (userMatch) chromeVersion = userMatch[1];
+                console.log(userMatch, "chromeVersion (사용자 레지스트리)");
+              } catch (userError) {
+                console.error('사용자 레지스트리에서도 Chrome 버전을 읽는 데 실패했습니다:', userError);
+              }
+            }
             
             // 로그 파일에 버전 기록
             fs.writeFileSync("error_log.log", chromeVersion || "Chrome 버전을 찾을 수 없음");
