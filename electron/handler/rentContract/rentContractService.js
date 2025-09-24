@@ -45,7 +45,7 @@ class RentContractService extends LookupService{
     try {
       const token = getAuthToken(this.tokenPath);
       const response = await axios.patch(`http://3.37.206.255:3000/rent/end-date/${rentId}`, {
-        endDate: endDate
+        endDate: endDate.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3')
       },
         {
         headers: token ? {
@@ -228,10 +228,12 @@ class RentContractService extends LookupService{
             await dateField.clear();
             
             // 현재 날짜 설정 (YYYYMMDD 형식)
-            const today = new Date();
-            const formattedDate = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
-            await dateField.sendKeys(formattedDate);
-            
+            // const today = new Date();
+            // const formattedDate = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
+            await dateField.sendKeys(startDateArray[j]);
+
+            // console.log(formattedDate, "formattedDate");
+            // return;
             // 확인 버튼 클릭
             await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.btn_confirm"]' }).click();
             await new Promise(resolve => setTimeout(resolve, 1000));
