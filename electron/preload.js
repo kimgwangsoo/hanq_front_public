@@ -45,6 +45,11 @@ contextBridge.exposeInMainWorld('electron', {
     const authChannel = [
       'save-auth-token',
     ];
+
+    // 파일 다운로드 채널
+    const downloadChannel = [
+      'download-file',
+    ];
     
     // 허용된 채널 목록
     const validChannels = [
@@ -55,7 +60,8 @@ contextBridge.exposeInMainWorld('electron', {
       ...messageChannel,
       ...contractChannel,
       ...rentContractChannel,
-      ...authChannel
+      ...authChannel,
+      ...downloadChannel
     ];
     
     if (validChannels.includes(channel)) {

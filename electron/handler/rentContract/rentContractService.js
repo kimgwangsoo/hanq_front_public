@@ -44,7 +44,7 @@ class RentContractService extends LookupService{
   async updateRentEndDate(rentId,endDate) {
     try {
       const token = getAuthToken(this.tokenPath);
-      const response = await axios.patch(`http://3.37.206.255:3000/end-date/${rentId}`, {
+      const response = await axios.patch(`http://3.37.206.255:3000/rent/end-date/${rentId}`, {
         endDate: endDate
       },
         {
@@ -62,6 +62,8 @@ class RentContractService extends LookupService{
     this.driver = driver;
     await menuMove('nprk303',this.driver);
     await waitForLoading(this.driver);
+    
+
     const argsData = JSON.parse(args);
     const {
         orderData,
@@ -918,11 +920,14 @@ class RentContractService extends LookupService{
           await new Promise(resolve => setTimeout(resolve, 1000));
           // 성공 메시지 확인
 
-          await this.updateContractState(orderData.id,'ok');
-          
           const result2 = await this.driver.switchTo().alert();
           const alertText = await result2.getText();
+
+          
+
           if (alertText.includes("계약되었습니다")) {
+            await this.updateContractState(orderData.id,'ok');
+            await this.updateRentEndDate(rentId,products[0].endDate);
             // await this.createAddContract(this.tokenPath, products);
             console.log("계약이 정상적으로 완료되었습니다.");
             await handleAlerts(this.driver);

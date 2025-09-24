@@ -128,9 +128,9 @@ async function createWindow() {
   })
 
   // 개발자 도구 열기
-  if (isDevelopment) {
+  // if (isDevelopment) {
   // win.webContents.openDevTools();
-  }
+  // }
 
   // 윈도우를 최대화하여 전체화면으로 표시
   win.maximize()
@@ -338,6 +338,63 @@ function cleanupControllers() {
     console.error('컨트롤러 정리 중 오류:', error);
   }
 }
+
+// 파일 다운로드 핸들러
+ipcMain.on('download-file', async (event, data) => {
+  try {
+    const { url, fileName } = data;
+    console.log(`파일 다운로드 요청: ${url}, 파일명: ${fileName}`);
+    
+    // 다운로드 경로 설정 (common-file 폴더로 변경)
+    const downloadPath = path.join(__dirname, 'common-file', fileName);
+    
+    // 다운로드 옵션 설정
+    win.webContents.session.once('will-download', (event, item) => {
+      // 다운로드 경로 설정
+      item.setSavePath(downloadPath);
+      
+      // 다운로드 완료 이벤트
+      item.once('done', (event, state) => {
+        if (state === 'completed') {
+          console.log(`파일 다운로드 완료: ${downloadPath}`);
+          
+          // 다운로드 완료 알림 표시
+          dialog.showMessageBox(win, {
+            type: 'info',
+            title: '다운로드 완료',
+            message: `${fileName} 파일이 다운로드 되었습니다.`,
+            detail: `저장 위치: ${downloadPath} (common-file 폴더)`,
+            buttons: ['확인', '폴더 열기'],
+            defaultId: 0
+          }).then(result => {
+            if (result.response === 1) {
+              // common-file 폴더 열기
+              const { shell } = require('electron');
+              shell.showItemInFolder(downloadPath);
+            }
+          });
+        } else {
+          console.error(`파일 다운로드 실패: ${state}`);
+          dialog.showErrorBox('다운로드 실패', `${fileName} 파일 다운로드에 실패했습니다.`);
+        }
+      });
+      
+      // 다운로드 중단 이벤트 처리 추가
+      item.on('updated', (event, state) => {
+        if (state === 'interrupted') {
+          console.log(`파일 다운로드 실패: interrupted`);
+        }
+      });
+    });
+    
+    // 다운로드 시작
+    win.webContents.downloadURL(url);
+    
+  } catch (error) {
+    console.error('파일 다운로드 처리 중 오류:', error);
+    dialog.showErrorBox('다운로드 오류', `파일 다운로드 중 오류가 발생했습니다: ${error.message}`);
+  }
+})
 
 // 윈도우 컨트롤 이벤트 처리 (기존과 동일)
 ipcMain.on('minimize-window', () => {
