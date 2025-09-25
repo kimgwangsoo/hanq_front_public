@@ -141,7 +141,7 @@ async function createWindow() {
   const devUrl = process.env.ELECTRON_START_URL || process.env.WEBPACK_DEV_SERVER_URL
   // if (devUrl) {
     // 개발 모드 - 외부 dev 서버 사용
-     await win.loadURL("http://3.37.206.255:8080/")
+     await win.loadURL("http://3.37.206.255:80/")
     // await win.loadURL("http://localhost:8080/")
   // } else {
   //   // 프로덕션 모드 - 빌드된 파일 로드
