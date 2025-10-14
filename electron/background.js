@@ -481,9 +481,11 @@ app.on('activate', () => {
 // })
 
 app.on('ready', async () => {
+  // 자동 업데이트 기능 활성화 - 오류 처리 개선
   initAutoUpdater({onNoUpdate: startProgram});
-  // startProgram();
-  scheduleAutoUpdate(3600000); //1시간 마다 업데이트 체크, 현재 방법으로는 1시간 이하로 줄이지 말 것
+  
+  // 24시간마다 업데이트 체크 (1시간마다 체크하는 것은 너무 자주 재시작됨)
+  scheduleAutoUpdate(24 * 3600000);
 })
 
 async function startProgram(){

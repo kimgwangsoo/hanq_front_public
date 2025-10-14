@@ -89,8 +89,9 @@ function initAutoUpdater({onNoUpdate} = {}) {
   });
 
   autoUpdater.on('error', err => {
-    dialog.showErrorBox('업데이트 오류', err == null ? "unknown" : (err.stack || err).toString());
-    app.quit();
+    console.error('업데이트 오류:', err == null ? "unknown" : (err.stack || err).toString());
+    // 오류가 발생해도 앱을 종료하지 않고 계속 실행
+    if(onNoUpdate) onNoUpdate();
   });
 }
 

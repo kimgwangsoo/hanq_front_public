@@ -116,7 +116,9 @@ class BuyContractService {
       
       // 행 설정 및 검색 실행
       await this.driver.executeScript("nexacro.getApplication().all[0].VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010100.npia210p01.form._div_bizFrameMain.form.ds_ctrHistList.rowcount=1");
+      await new Promise(resolve => setTimeout(resolve, 500));
       await this.driver.executeScript("nexacro.getApplication().all[0].VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010100.npia210p01.form._div_bizFrameMain.form.fn_selectWelToolTgtSearchCfm()");
+      await new Promise(resolve => setTimeout(resolve, 500));
       await waitForLoading(this.driver); // await 추가
       // 알림창 처리
       let sresult = '';
