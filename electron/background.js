@@ -2,7 +2,7 @@
 // 'use strict'
 console.log(process.type, "process.type2")
 const { app, protocol, BrowserWindow, ipcMain, Menu, dialog } = require('electron')
-const { autoUpdater } = require('electron-updater');
+// const { autoUpdater } = require('electron-updater');
 const installExtension = require('electron-devtools-installer')
 const { VUEJS3_DEVTOOLS } = require('electron-devtools-installer')
 const LongtermController = require('./handler/login/longtermLoginController')
@@ -10,6 +10,8 @@ const LookupController = require('./handler/lookup/lookupController')
 const BuyContractController = require('./handler/buyContract/buyContractController')
 const RentContractController = require('./handler/rentContract/rentContractController')
 const RentContractAddController = require('./handler/rentContractAdd/rentContractAddController')
+const { initAutoUpdater, scheduleAutoUpdate, autoUpdater } = require('./updater')
+
 // 컨트롤러 및 유틸리티 임포트
 const ipcManager = require('./ipcManager')
 const WebdriverManager = require('./webdriverManager')
@@ -129,7 +131,7 @@ async function createWindow() {
 
   // 개발자 도구 열기
   // if (isDevelopment) {
-  // win.webContents.openDevTools();
+  win.webContents.openDevTools();
   // }
 
   // 윈도우를 최대화하여 전체화면으로 표시
@@ -152,13 +154,13 @@ async function createWindow() {
   // =====================================================
   // 자동 업데이트 설정 (GitHub)
   // =====================================================
-  if (isPackaged) {
-    // 이벤트를 먼저 붙이고 나서 체크 호출
-    setupAutoUpdater();
-    autoUpdater.checkForUpdatesAndNotify();     // 한 번만
-    // 주기적으로 재확인하고 싶으면:
-    // setInterval(() => autoUpdater.checkForUpdates(), 6 * 60 * 60 * 1000);
-  }
+  // if (isPackaged) {
+  //   // 이벤트를 먼저 붙이고 나서 체크 호출
+  //   setupAutoUpdater();
+  //   autoUpdater.checkForUpdatesAndNotify();     // 한 번만
+  //   // 주기적으로 재확인하고 싶으면:
+  //   // setInterval(() => autoUpdater.checkForUpdates(), 6 * 60 * 60 * 1000);
+  // }
 
   // 페이지 로드 완료 후 ipcManager에 윈도우 등록
   win.webContents.once('did-finish-load', () => {
@@ -462,21 +464,33 @@ app.on('activate', () => {
   }
 })
 
+// app.on('ready', async () => {
+//   // if (isDevelopment && !process.env.IS_TEST) {
+//   //   try {
+//   //     await installExtension(VUEJS3_DEVTOOLS)
+//   //   } catch (e) {
+//   //     console.error('Vue Devtools failed to install:', e.toString())
+//   //   }
+//   // }
+  
+//   Menu.setApplicationMenu(null)
+  
+//   // 메인 윈도우 생성
+//   await createWindow()
+//   await initializeControllers()
+// })
+
 app.on('ready', async () => {
-  // if (isDevelopment && !process.env.IS_TEST) {
-  //   try {
-  //     await installExtension(VUEJS3_DEVTOOLS)
-  //   } catch (e) {
-  //     console.error('Vue Devtools failed to install:', e.toString())
-  //   }
-  // }
-  
-  Menu.setApplicationMenu(null)
-  
-  // 메인 윈도우 생성
-  await createWindow()
-  await initializeControllers()
+  initAutoUpdater({onNoUpdate: startProgram});
+  // startProgram();
+  scheduleAutoUpdate(3600000); //1시간 마다 업데이트 체크, 현재 방법으로는 1시간 이하로 줄이지 말 것
 })
+
+async function startProgram(){
+  Menu.setApplicationMenu(null);
+  await createWindow();
+  await initializeControllers();
+}
 
 // 개발 모드 에러 처리
 if (isDevelopment) {
