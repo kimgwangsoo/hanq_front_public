@@ -131,7 +131,7 @@ async function createWindow() {
 
   // 개발자 도구 열기
   // if (isDevelopment) {
-  win.webContents.openDevTools();
+  // win.webContents.openDevTools();
   // }
 
   // 윈도우를 최대화하여 전체화면으로 표시
