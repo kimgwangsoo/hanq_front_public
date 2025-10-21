@@ -200,7 +200,7 @@ class BuyContractService {
             
             // 검색 결과 텍스트 가져오기
             csearchtxt = await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winnpi0105030000.form._div_bizFrameMain.form.sta_totalCnt:text"]/span/span/b' }).getText();
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 1500));
             console.log('csearchtxt 입력 완료');
           }
           if (csearchtxt !== '0') {
