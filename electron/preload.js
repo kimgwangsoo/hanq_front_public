@@ -40,6 +40,9 @@ contextBridge.exposeInMainWorld('electron', {
       'rentContract',
       'rentContractAdd',
       'rentContractCancel',
+      'rentContractStop',
+      'rentContractStopCancel',
+      'rentContractStopRestart'
     ];
     // 인증 관련 채널
     const authChannel = [
@@ -49,6 +52,11 @@ contextBridge.exposeInMainWorld('electron', {
     // 파일 다운로드 채널
     const downloadChannel = [
       'download-file',
+    ];
+
+    // 클레임 채널
+    const claimChannel = [
+      'claimStart',
     ];
     
     // 허용된 채널 목록
@@ -61,7 +69,8 @@ contextBridge.exposeInMainWorld('electron', {
       ...contractChannel,
       ...rentContractChannel,
       ...authChannel,
-      ...downloadChannel
+      ...downloadChannel,
+      ...claimChannel
     ];
     
     if (validChannels.includes(channel)) {
@@ -86,6 +95,13 @@ contextBridge.exposeInMainWorld('electron', {
       'rentContractResponse',
       'rentContractAddResponse',
       'rentContractCancelResponse',
+      'rentContractStopResponse',
+      'rentContractStopCancelResponse',
+      'rentContractStopRestartResponse',
+    ];
+    // 클레임 채널
+    const claimChannel = [
+      'claimStartResponse',
     ];
     // 허용된 채널 목록
     const validChannels = [
@@ -94,7 +110,8 @@ contextBridge.exposeInMainWorld('electron', {
       'webdriver-restart',
       'reply',
       ...contractChannel,
-      ...rentContractChannel
+      ...rentContractChannel,
+      ...claimChannel
     ];
     
     if (validChannels.includes(channel)) {

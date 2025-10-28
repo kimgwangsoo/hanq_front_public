@@ -2,7 +2,7 @@ const { app, BrowserWindow, dialog } = require('electron');
 const { autoUpdater } = require('electron-updater');
 
 let progressWin = null;
-
+let isStarted = false;
 function createProgressWindow() {
   progressWin = new BrowserWindow({
     width: 360, height: 120,
@@ -85,7 +85,10 @@ function initAutoUpdater({onNoUpdate} = {}) {
   });
 
   autoUpdater.on('update-not-available', () => {
-    if(onNoUpdate) onNoUpdate();
+    if(onNoUpdate && !isStarted) {
+      onNoUpdate();
+      isStarted = true;
+    }
   });
 
   autoUpdater.on('error', err => {

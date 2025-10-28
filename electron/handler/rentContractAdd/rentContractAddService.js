@@ -37,7 +37,7 @@ class RentContractAddService extends LookupService{
     try {
       const token = getAuthToken(this.tokenPath);
       const response = await axios.post('http://3.37.206.255:3000/rent/create/add-contract', {
-        items: items
+        items: items,
       },
         {
         headers: token ? {
@@ -63,7 +63,8 @@ class RentContractAddService extends LookupService{
             orderData,
             rentAddContractData,
             rentId,
-            rentStartOrigin
+            rentStartOrigin,
+            companyId
         } = argsData;
         let { 
             id,
@@ -256,6 +257,19 @@ class RentContractAddService extends LookupService{
             console.log('전화번호 입력 중 오류:', error);
             event.sender.send('buyContractResponse', { success: false, message: '전화번호 입력 중 오류 발생' });
           }
+
+          // 계약서 복사 체크박스 클릭
+          try {
+            console.log("계약서 복사 체크박스 클릭 시작");
+            await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010100.form._div_bizFrameMain.form.chk_copy:icontext"]' }).click();
+            console.log("계약서 복사 체크박스 클릭 완료");
+          } catch (error) {
+            console.log('계약서 복사 체크박스 클릭 중 오류:', error);
+            event.sender.send('buyContractResponse', { success: false, message: '계약서 복사 체크박스 클릭 중 오류 발생' });
+          }
+          
+          // 잠시 대기
+          await new Promise(resolve => setTimeout(resolve, 300));
   
           // 화면 요소 위치 조정 (전화번호 입력 후)
           try {
@@ -456,7 +470,25 @@ class RentContractAddService extends LookupService{
                 );
                 // 알림 처리
                 try {
-                    await handleAlerts(this.driver);
+                    const alertText = await handleAlerts(this.driver);
+                    console.log(alertText, "alertText");
+                    if (alertText.includes("연장대여하시겠습니까")) {
+                      try {
+                          await this.driver.wait(until.alertIsPresent(), 5000);
+                          const secondAlert = await this.driver.switchTo().alert();
+                          await secondAlert.accept();
+                          
+                          await this.driver.manage().setTimeouts({ implicit: 3000 });
+                          
+                          await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010100.npia207p01.npia207p04.form._div_bizFrameMain.form.btn_apply"]')).click();
+                          
+                          await this.driver.executeScript(
+                              `nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010100.npia207p01.form._div_bizFrameMain.form.fn_validlndPsblYn(${rpnum})`
+                          );
+                      } catch (error) {
+                          console.log('연장대여 알림 처리 중 오류:', error);
+                      }
+                  }
                 } catch (error) {
                     console.log('알림 처리 중 오류:', error);
                 }
@@ -490,7 +522,8 @@ class RentContractAddService extends LookupService{
                 contractAt: new Date().toISOString().split('T')[0],
                 constractStartDate: p.startDate.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3'),
                 contractEndDate: p.endDate.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3'),
-                type: '1'
+                type: '1',
+                companyId: companyId
               }));
             itemsArray.push(...items);
           }
@@ -507,11 +540,7 @@ class RentContractAddService extends LookupService{
             await new Promise(resolve => setTimeout(resolve, 500));
             // 성공 메시지 확인
             console.log(itemsArray, "itemsArray");
-            for (const item of itemsArray) {
-              const response = await this.createAddContract(item);
-              await this.updateRentContract(item,rentStartOrigin);
-              console.log(response, "response");
-            }
+           
             const result2 = await this.driver.switchTo().alert();
             const alertText = await result2.getText();
             console.log(alertText, "alertText");
@@ -527,6 +556,11 @@ class RentContractAddService extends LookupService{
                   endDate: products[0].endDate
                 }
               });
+              for (const item of itemsArray) {
+                const response = await this.createAddContract(item);
+                await this.updateRentContract(item,rentStartOrigin);
+                console.log(response, "response");
+              }
               return true;
             } else {
               console.log("계약 실패:", alertText);

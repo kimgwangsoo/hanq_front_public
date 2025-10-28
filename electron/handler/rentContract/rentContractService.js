@@ -15,6 +15,60 @@ class RentContractService extends LookupService{
 
   }
 
+  async copyOrder(rentId, rentalStartDate, rentalEndDate, companyId) {
+    try {
+      // 저장된 토큰 가져오기
+      const token = getAuthToken(this.tokenPath);
+      
+      // API 호출하여 주문 복사 요청
+      const response = await axios.post('http://3.37.206.255:3000/order/copy', {
+        rentId: rentId,
+        rentalStartDate: rentalStartDate,
+        rentalEndDate: rentalEndDate,
+        companyId: companyId
+      }, {
+        headers: token ? {
+          'Authorization': `Bearer ${token}`
+        } : {}
+      });
+      
+      if (response.data.success) {
+        console.log('주문 복사 성공:', response.data);
+        return { 
+          success: true, 
+          message: '주문이 성공적으로 복사되었습니다.',
+          data: response.data.order
+        };
+      } else {
+        console.log('주문 복사 실패:', response.data);
+        return { 
+          success: false, 
+          message: '주문 복사 중 오류가 발생했습니다.' 
+        };
+      }
+    } catch (error) {
+      console.error('주문 복사 실패:', error);
+      return { 
+        success: false, 
+        message: '주문 복사 중 오류가 발생했습니다.',
+        error: error.message
+      };
+    }
+  }
+
+  async insertRentStopContract(insertRentStopContractData) {
+      const response = await axios.post('http://3.37.206.255:3000/rent/create/stop-contract',
+        insertRentStopContractData,
+      );
+      if (response.data.success) {
+        console.log('대여 계약 중지 처리 성공:', response.data);
+        return { success: true, message: '대여 계약 중지 처리 성공' };
+      } else {
+        console.log('대여 계약 중지 처리 실패:', response.data);
+        return { success: false, message: '대여 계약 중지 처리 중 오류가 발생했습니다.' };
+      }
+  }
+
   async updateContractState(orderId,contractState) {
     try {
       // 저장된 토큰 가져오기
@@ -41,11 +95,12 @@ class RentContractService extends LookupService{
     }
   }
 
-  async updateRentEndDate(rentId,endDate) {
+  async updateRentEndDate(rentId,endDate,stopCheck) {
     try {
       const token = getAuthToken(this.tokenPath);
       const response = await axios.patch(`http://3.37.206.255:3000/rent/end-date/${rentId}`, {
-        endDate: endDate.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3')
+        endDate: endDate.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3'),
+        stopCheck: stopCheck
       },
         {
         headers: token ? {
@@ -65,12 +120,14 @@ class RentContractService extends LookupService{
     
 
     const argsData = JSON.parse(args);
+    console.log(argsData, "argsData");
     const {
         orderData,
         rentAddContractData,
         rentId,
-        rentStartOrigin,
-        cleanData
+        eventType,
+        cleanData,
+        companyId
     } = argsData;
     let { 
         id,
@@ -165,97 +222,123 @@ class RentContractService extends LookupService{
     const orderProductId = orderProducts.map(product => product.id); // 제품 아이디 배열
     const orderProductBcodeId = orderProducts.map(product => product.orderProductBcodes[0].id); // 제품 코드 아이디 배열
     console.log(pnameArray, pitemArray, pcodeArray,bcodeArray,startDateArray,endDateArray, "pnameArray, pitemArray, pcodeArray,bcodeArray");
-    
+
     // 대여 중지가 아니고 동일한 의료기기가 아닌 경우 처리
     // if (stop_chk_result === 0 && medichk !== "same") {
-    for (let j = 0; j < pcodeArray.length; j++) {
-      try {
-        // 메뉴 이동 및 제품 코드 입력
-        await menuMove('nprk303',this.driver);
-        await waitForLoading(this.driver);
-        
-        // 제품 코드 입력
-        await this.driver.executeScript(
-          "document.getElementById('mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.edt_wimCd:input').value='" + pcodeArray[j] + "'"
-        );
-        
-        // 바코드 입력
-        await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.edt_bcdNo:input"]'}).clear();
-        await this.driver.findElement({ xpath:'//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.edt_bcdNo:input"]'}).sendKeys(bcodeArray[j].replace(' ', ''));
-        
-        // 검색 버튼 클릭
-        await this.driver.executeScript(
-          "return nexacro.getApplication().all[0].VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.btn_search_onclick()"
-        );
-
-        
-        // 로딩 이미지 대기
-        // await waitForLoading(this.driver);
-        
-        // 알림창 처리
+    if (sterilizeType!="동일인"){
+      for (let j = 0; j < pcodeArray.length; j++) {
         try {
-          // 알림창 대기
-          const alert = await this.driver.wait(until.alertIsPresent(), 5000);
-          const result = await this.driver.switchTo().alert();
-          const alertText = await result.getText();
+          // 메뉴 이동 및 제품 코드 입력
+          await menuMove('nprk303',this.driver);
+          await waitForLoading(this.driver);
           
-          if (alertText.includes("없습니다")) {
-            console.log("알림창 메시지:", alertText);
-            await result.accept();
-            
-            // 창 닫기
-            await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form.div_functionButton.form.btn_close"]' }).click();
-            
-            // 메뉴 이동
-            await menuMove('nprk301', this.driver);
-            
-            // 바코드 스캔 버튼 클릭
-            await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.btn_wimCdScan"]' }).click();
-            
-            // 바코드 입력
-            await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.edt_bcdNo:input"]' }).sendKeys(bcodeArray[j]);
-            
-            // 제품 코드 입력
-            await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.edt_wimCd:input"]' }).clear();
-            await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.edt_wimCd:input"]' }).sendKeys(pcodeArray[j]);
-            
-            // 엔터 키 입력
-            await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.edt_bcdNo:input"]' }).sendKeys(Key.ENTER);
-            
-            // 날짜 입력 필드 클릭 및 설정
-            const dateField = await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.cal_aplyDt.calendaredit:input"]' });
-            await dateField.click();
-            await dateField.clear();
-            
-            // 현재 날짜 설정 (YYYYMMDD 형식)
-            // const today = new Date();
-            // const formattedDate = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
-            await dateField.sendKeys(startDateArray[j]);
+          // 제품 코드 입력
+          await this.driver.executeScript(
+            "document.getElementById('mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.edt_wimCd:input').value='" + pcodeArray[j] + "'"
+          );
+          
+          // 바코드 입력
+          await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.edt_bcdNo:input"]'}).clear();
+          await this.driver.findElement({ xpath:'//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.edt_bcdNo:input"]'}).sendKeys(bcodeArray[j].replace(' ', ''));
+          
+          // 검색 버튼 클릭
+          await this.driver.executeScript(
+            "return nexacro.getApplication().all[0].VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.btn_search_onclick()"
+          );
 
-            // console.log(formattedDate, "formattedDate");
-            // return;
-            // 확인 버튼 클릭
-            await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.btn_confirm"]' }).click();
-            await new Promise(resolve => setTimeout(resolve, 1000));
+          
+          // 로딩 이미지 대기
+          // await waitForLoading(this.driver);
+          
+          // 알림창 처리
+          try {
+            // 알림창 대기
+            const alert = await this.driver.wait(until.alertIsPresent(), 5000);
+            const result = await this.driver.switchTo().alert();
+            const alertText = await result.getText();
             
-            try {
-              // 알림창 확인
-              const innerAlert = await this.driver.wait(until.alertIsPresent(), 3000);
-              const innerResult = await this.driver.switchTo().alert();
-              const innerAlertText = await innerResult.getText();
+            if (alertText.includes("없습니다")) {
+              console.log("알림창 메시지:", alertText);
+              await result.accept();
               
-              if (innerAlertText.includes("사용중인") || innerAlertText.includes("않습니다") || innerAlertText.includes("불가합니다")) {
-                console.log("알림창 메시지:", innerAlertText);
-                await innerResult.accept();
-                await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form.div_functionButton.form.btn_close"]' }).click();
+              // 창 닫기
+              await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form.div_functionButton.form.btn_close"]' }).click();
+              
+              // 메뉴 이동
+              await menuMove('nprk301', this.driver);
+              
+              // 바코드 스캔 버튼 클릭
+              await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.btn_wimCdScan"]' }).click();
+              
+              // 바코드 입력
+              await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.edt_bcdNo:input"]' }).sendKeys(bcodeArray[j]);
+              
+              // 제품 코드 입력
+              await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.edt_wimCd:input"]' }).clear();
+              await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.edt_wimCd:input"]' }).sendKeys(pcodeArray[j]);
+              
+              // 엔터 키 입력
+              await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.edt_bcdNo:input"]' }).sendKeys(Key.ENTER);
+              
+              // 날짜 입력 필드 클릭 및 설정
+              const dateField = await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.cal_aplyDt.calendaredit:input"]' });
+              await dateField.click();
+              await dateField.clear();
+              
+              // 현재 날짜 설정 (YYYYMMDD 형식)
+              // const today = new Date();
+              // const formattedDate = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
+              await dateField.sendKeys(startDateArray[j]);
+
+              // console.log(formattedDate, "formattedDate");
+              // return;
+              // 확인 버튼 클릭
+              await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.btn_confirm"]' }).click();
+              await new Promise(resolve => setTimeout(resolve, 1000));
+              
+              try {
+                // 알림창 확인
+                const innerAlert = await this.driver.wait(until.alertIsPresent(), 3000);
+                const innerResult = await this.driver.switchTo().alert();
+                const innerAlertText = await innerResult.getText();
                 
-                // 계약 상태 업데이트 필요 시 여기에 추가
-                await menuMove('npia201', this.driver);
-                return;
-              }
-              
-              if (innerAlertText.includes("타사업소에서 대여제품으로 사용하였던 제품")) {
-                await innerResult.accept();
+                if (innerAlertText.includes("사용중인") || innerAlertText.includes("않습니다") || innerAlertText.includes("불가합니다")) {
+                  console.log("알림창 메시지:", innerAlertText);
+                  await innerResult.accept();
+                  await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form.div_functionButton.form.btn_close"]' }).click();
+                  
+                  // 계약 상태 업데이트 필요 시 여기에 추가
+                  await menuMove('npia201', this.driver);
+                  return;
+                }
+                
+                if (innerAlertText.includes("타사업소에서 대여제품으로 사용하였던 제품")) {
+                  await innerResult.accept();
+                  await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.btn_save"]' }).click();
+                  
+                  // 첫 번째 알림창 처리
+                  const saveAlert1 = await this.driver.wait(until.alertIsPresent(), 2000);
+                  await saveAlert1.accept();
+                  
+                  // 두 번째 알림창 처리
+                  const saveAlert2 = await this.driver.wait(until.alertIsPresent(), 2000);
+                  await saveAlert2.accept();
+                  
+                  await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form.div_functionButton.form.btn_close"]' }).click();
+                  
+                  // 메뉴 이동 및 검색 다시 시도
+                  await menuMove('nprk303m01', this.driver);
+                  await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.edt_wimCd:input"]' }).clear();
+                  await this.driver.executeScript(
+                    "document.getElementById('mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.edt_wimCd:input').value='" + pcodeArray[j] + "'"
+                  );
+                  await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.edt_bcdNo:input"]' }).sendKeys(bcodeArray[j]);
+                  await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.btn_search"]' }).click();
+                }
+              } catch (innerError) {
+                console.log("내부 알림창 처리 중 오류:", innerError);
+                
+                // 알림창이 없는 경우 저장 진행
                 await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.btn_save"]' }).click();
                 
                 // 첫 번째 알림창 처리
@@ -270,285 +353,261 @@ class RentContractService extends LookupService{
                 
                 // 메뉴 이동 및 검색 다시 시도
                 await menuMove('nprk303m01', this.driver);
-                await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.edt_wimCd:input"]' }).clear();
                 await this.driver.executeScript(
                   "document.getElementById('mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.edt_wimCd:input').value='" + pcodeArray[j] + "'"
                 );
                 await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.edt_bcdNo:input"]' }).sendKeys(bcodeArray[j]);
                 await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.btn_search"]' }).click();
               }
-            } catch (innerError) {
-              console.log("내부 알림창 처리 중 오류:", innerError);
+            } else if (alertText.includes("바코드자리수")) {
+              console.log("바코드 자리수 오류:", alertText);
+              await result.accept();
+              await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form.div_functionButton.form.btn_close"]' }).click();
               
-              // 알림창이 없는 경우 저장 진행
-              await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.btn_save"]' }).click();
-              
-              // 첫 번째 알림창 처리
-              const saveAlert1 = await this.driver.wait(until.alertIsPresent(), 2000);
-              await saveAlert1.accept();
-              
-              // 두 번째 알림창 처리
-              const saveAlert2 = await this.driver.wait(until.alertIsPresent(), 2000);
-              await saveAlert2.accept();
-              
-              await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form.div_functionButton.form.btn_close"]' }).click();
-              
-              // 메뉴 이동 및 검색 다시 시도
-              await menuMove('nprk303m01', this.driver);
-              await this.driver.executeScript(
-                "document.getElementById('mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.edt_wimCd:input').value='" + pcodeArray[j] + "'"
-              );
-              await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.edt_bcdNo:input"]' }).sendKeys(bcodeArray[j]);
-              await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.btn_search"]' }).click();
+              // 계약 상태 업데이트 필요 시 여기에 추가
+              await menuMove('npia201', this.driver);
+              return;
             }
-          } else if (alertText.includes("바코드자리수")) {
-            console.log("바코드 자리수 오류:", alertText);
-            await result.accept();
-            await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form.div_functionButton.form.btn_close"]' }).click();
-            
-            // 계약 상태 업데이트 필요 시 여기에 추가
-            await menuMove('npia201', this.driver);
-            return;
+          } catch (error) {
+            console.log("알림창 처리 중 오류 또는 알림창 없음:", error);
           }
+          // 검색 결과 처리
         } catch (error) {
-          console.log("알림창 처리 중 오류 또는 알림창 없음:", error);
+          console.log("대여 계약 처리 중 오류 발생:", error);
         }
-        // 검색 결과 처리
-      } catch (error) {
-        console.log("대여 계약 처리 중 오류 발생:", error);
-      }
 
-      // 검색 결과 처리
-      try {
-        // 로딩 대기
-        await waitForLoading(this.driver);
-        
-        // 검색 결과 총 개수 확인
-        const rcnt = await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.sta_totalCnt:text"]/span/span')).getText();
-        
-        let resulttxt1 = '';
-        let resulttxt2 = '';
-        let resulttxt3 = '';
-        
-        if (parseInt(rcnt) !== 0) {
-          for (let k = 0; k < parseInt(rcnt); k++) {
-            const rtxt1 = pcodeArray[j] + '-' + bcodeArray[j];
-            const rtxt2 = await this.driver.findElement(By.xpath(`//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.grd_wimLndngPrdctStusList.body.gridrow_${k}.cell_${k}_1"]`)).getText();
-            
-            if (rtxt1.replace(' ', '') === rtxt2.replace(' ', '')) {
-              resulttxt1 = await this.driver.findElement(By.xpath(`//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.grd_wimLndngPrdctStusList.body.gridrow_${k}.cell_${k}_9:text"]`)).getText();
-              resulttxt2 = await this.driver.findElement(By.xpath(`//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.grd_wimLndngPrdctStusList.body.gridrow_${k}.cell_${k}_10:text"]`)).getText();
-              resulttxt3 = await this.driver.findElement(By.xpath(`//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.grd_wimLndngPrdctStusList.body.gridrow_${k}.cell_${k}_5:text"]`)).getText();
-              break;
-            } else if (k === parseInt(rcnt) - 1) {
-              // 마지막 항목까지 검색했는데 일치하는 항목이 없는 경우
-              event.sender.send('rent-contract-message', { type: 'message', message: '대여제품 등록중입니다.' });
+        // 검색 결과 처리
+        try {
+          // 로딩 대기
+          await waitForLoading(this.driver);
+          
+          // 검색 결과 총 개수 확인
+          const rcnt = await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.sta_totalCnt:text"]/span/span')).getText();
+          
+          let resulttxt1 = '';
+          let resulttxt2 = '';
+          let resulttxt3 = '';
+          
+          if (parseInt(rcnt) !== 0) {
+            for (let k = 0; k < parseInt(rcnt); k++) {
+              const rtxt1 = pcodeArray[j] + '-' + bcodeArray[j];
+              const rtxt2 = await this.driver.findElement(By.xpath(`//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.grd_wimLndngPrdctStusList.body.gridrow_${k}.cell_${k}_1"]`)).getText();
               
-              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form.div_functionButton.form.btn_close"]')).click();
-              await menuMove('nprk301', this.driver);
-              
-              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.btn_wimCdScan"]')).click();
-              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.edt_bcdNo:input"]')).sendKeys(bcodeArray[j]);
-              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.edt_wimCd:input"]')).clear();
-              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.edt_wimCd:input"]')).sendKeys(pcodeArray[j]);
-              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.edt_bcdNo:input"]')).sendKeys(Key.ENTER);
-              
-              // 날짜 입력 처리
-              const startDate = orderData.startDate || new Date().toISOString().slice(0, 10).replace(/-/g, '');
-              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.cal_aplyDt.calendaredit:input"]')).click();
-              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.cal_aplyDt.calendaredit:input"]')).clear();
-              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.cal_aplyDt.calendaredit:input"]')).sendKeys(startDate);
-              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.btn_confirm"]')).click();
-              
-              // 알림창 처리
-              try {
-                const alert = await this.driver.wait(until.alertIsPresent(), 3000);
-                const alertText = await alert.getText();
-                await alert.accept();
-              } catch (error) {
-                console.log("알림창 없음:", error);
+              if (rtxt1.replace(' ', '') === rtxt2.replace(' ', '')) {
+                resulttxt1 = await this.driver.findElement(By.xpath(`//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.grd_wimLndngPrdctStusList.body.gridrow_${k}.cell_${k}_9:text"]`)).getText();
+                resulttxt2 = await this.driver.findElement(By.xpath(`//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.grd_wimLndngPrdctStusList.body.gridrow_${k}.cell_${k}_10:text"]`)).getText();
+                resulttxt3 = await this.driver.findElement(By.xpath(`//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.grd_wimLndngPrdctStusList.body.gridrow_${k}.cell_${k}_5:text"]`)).getText();
+                break;
+              } else if (k === parseInt(rcnt) - 1) {
+                // 마지막 항목까지 검색했는데 일치하는 항목이 없는 경우
+                event.sender.send('rent-contract-message', { type: 'message', message: '대여제품 등록중입니다.' });
                 
-                // 저장 진행
-                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.btn_save"]')).click();
+                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form.div_functionButton.form.btn_close"]')).click();
+                await menuMove('nprk301', this.driver);
                 
-                // 첫 번째 알림창 처리
-                const saveAlert1 = await this.driver.wait(until.alertIsPresent(), 2000);
-                await saveAlert1.accept();
+                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.btn_wimCdScan"]')).click();
+                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.edt_bcdNo:input"]')).sendKeys(bcodeArray[j]);
+                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.edt_wimCd:input"]')).clear();
+                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.edt_wimCd:input"]')).sendKeys(pcodeArray[j]);
+                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.edt_bcdNo:input"]')).sendKeys(Key.ENTER);
                 
-                // 두 번째 알림창 처리
-                const saveAlert2 = await this.driver.wait(until.alertIsPresent(), 2000);
-                await saveAlert2.accept();
+                // 날짜 입력 처리
+                const startDate = orderData.startDate || new Date().toISOString().slice(0, 10).replace(/-/g, '');
+                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.cal_aplyDt.calendaredit:input"]')).click();
+                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.cal_aplyDt.calendaredit:input"]')).clear();
+                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.cal_aplyDt.calendaredit:input"]')).sendKeys(startDate);
+                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.btn_confirm"]')).click();
                 
-                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form.div_functionButton.form.btn_close"]')).click();
-                
-                // 메뉴 이동 및 검색 다시 시도
-                await menuMove('nprk303m01', this.driver);
-                await this.driver.executeScript(
-                  "document.getElementById('mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.edt_wimCd:input').value='" + pcodeArray[j] + "'"
-                );
-                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.edt_bcdNo:input"]')).sendKeys(bcodeArray[j]);
-                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.btn_search"]')).click();
-              }
-              
-              // 로딩 대기
-              await waitForLoading(this.driver);
-              
-              // 검색 결과 재확인
-              const rcntAfterSave = await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.sta_totalCnt:text"]/span/span')).getText();
-              
-              if (parseInt(rcntAfterSave) !== 0) {
-                for (let k = 0; k < parseInt(rcntAfterSave); k++) {
-                  const rtxt1 = pcodeArray[j] + '-' + bcodeArray[j];
-                  const rtxt2 = await this.driver.findElement(By.xpath(`//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.grd_wimLndngPrdctStusList.body.gridrow_${k}.cell_${k}_1"]`)).getText();
+                // 알림창 처리
+                try {
+                  const alert = await this.driver.wait(until.alertIsPresent(), 3000);
+                  const alertText = await alert.getText();
+                  await alert.accept();
+                } catch (error) {
+                  console.log("알림창 없음:", error);
                   
-                  if (rtxt1 === rtxt2) {
-                    resulttxt1 = await this.driver.findElement(By.xpath(`//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.grd_wimLndngPrdctStusList.body.gridrow_${k}.cell_${k}_9:text"]`)).getText();
-                    resulttxt2 = await this.driver.findElement(By.xpath(`//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.grd_wimLndngPrdctStusList.body.gridrow_${k}.cell_${k}_10:text"]`)).getText();
-                    resulttxt3 = await this.driver.findElement(By.xpath(`//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.grd_wimLndngPrdctStusList.body.gridrow_${k}.cell_${k}_5:text"]`)).getText();
-                    break;
+                  // 저장 진행
+                  await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form._div_bizFrameMain.form.btn_save"]')).click();
+                  
+                  // 첫 번째 알림창 처리
+                  const saveAlert1 = await this.driver.wait(until.alertIsPresent(), 2000);
+                  await saveAlert1.accept();
+                  
+                  // 두 번째 알림창 처리
+                  const saveAlert2 = await this.driver.wait(until.alertIsPresent(), 2000);
+                  await saveAlert2.accept();
+                  
+                  await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020100.form.div_functionButton.form.btn_close"]')).click();
+                  
+                  // 메뉴 이동 및 검색 다시 시도
+                  await menuMove('nprk303m01', this.driver);
+                  await this.driver.executeScript(
+                    "document.getElementById('mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.edt_wimCd:input').value='" + pcodeArray[j] + "'"
+                  );
+                  await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.edt_bcdNo:input"]')).sendKeys(bcodeArray[j]);
+                  await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.btn_search"]')).click();
+                }
+                
+                // 로딩 대기
+                await waitForLoading(this.driver);
+                
+                // 검색 결과 재확인
+                const rcntAfterSave = await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.sta_totalCnt:text"]/span/span')).getText();
+                
+                if (parseInt(rcntAfterSave) !== 0) {
+                  for (let k = 0; k < parseInt(rcntAfterSave); k++) {
+                    const rtxt1 = pcodeArray[j] + '-' + bcodeArray[j];
+                    const rtxt2 = await this.driver.findElement(By.xpath(`//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.grd_wimLndngPrdctStusList.body.gridrow_${k}.cell_${k}_1"]`)).getText();
+                    
+                    if (rtxt1 === rtxt2) {
+                      resulttxt1 = await this.driver.findElement(By.xpath(`//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.grd_wimLndngPrdctStusList.body.gridrow_${k}.cell_${k}_9:text"]`)).getText();
+                      resulttxt2 = await this.driver.findElement(By.xpath(`//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.grd_wimLndngPrdctStusList.body.gridrow_${k}.cell_${k}_10:text"]`)).getText();
+                      resulttxt3 = await this.driver.findElement(By.xpath(`//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form._div_bizFrameMain.form.grd_wimLndngPrdctStusList.body.gridrow_${k}.cell_${k}_5:text"]`)).getText();
+                      break;
+                    }
                   }
                 }
               }
             }
-          }
-          
-          // 검색 결과에 따른 처리
-          if ((resulttxt2 === "소독" && resulttxt1 === "보관") || (resulttxt2 === "신규")) {
-            // 소독된 바코드 처리
-            event.sender.send('rent-contract-message', { type: 'message', message: '소독된 바코드입니다. 대여계약 진행중입니다.' });
-            await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form.div_functionButton.form.btn_close"]')).click();
-          } else if (resulttxt2 === "반납" && resulttxt1 === "보관") {
-            // 소독필증 작성 필요
-            event.sender.send('rent-contract-message', { type: 'message', message: '소독필증 작성중입니다.' });
             
-            // 소독필증 작성 로직 구현
-            await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form.div_functionButton.form.btn_close"]')).click();
-            
-            // 기존 창 닫기 시도
-            try {
-              await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form.cfn_close()");
-            } catch (error) {
-              console.log("창 닫기 오류:", error);
-            }
-            
-            // 소독필증 작성 메뉴로 이동
-            await menuMove('nprk207m03', this.driver);
-            
-            // 대기 설정
-            await this.driver.manage().setTimeouts({ implicit: 3000 });
-            
-            // 소독 유형 선택
-            if (sterilizeType === "자체") {
-              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.rdo_exposeTypeCd.radioitem0:icontext"]')).click();
-            } else {
-              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.rdo_exposeTypeCd.radioitem1:icontext"]')).click();
-              await this.driver.sleep(500);
+            // 검색 결과에 따른 처리
+            if ((resulttxt2 === "소독" && resulttxt1 === "보관") || (resulttxt2 === "신규")) {
+              // 소독된 바코드 처리
+              event.sender.send('rent-contract-message', { type: 'message', message: '소독된 바코드입니다. 대여계약 진행중입니다.' });
+              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form.div_functionButton.form.btn_close"]')).click();
+            } else if (resulttxt2 === "반납" && resulttxt1 === "보관") {
+              // 소독필증 작성 필요
+              event.sender.send('rent-contract-message', { type: 'message', message: '소독필증 작성중입니다.' });
               
-              // 작업자 정보 입력
-              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.edt_wrkerNm:input"]')).click();
-              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.edt_wrkerNm:input"]')).sendKeys(sterilizeCompanyName);
+              // 소독필증 작성 로직 구현
+              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form.div_functionButton.form.btn_close"]')).click();
               
-              // 등록번호 입력
-              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.met_regNo:input"]')).click();
-              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.met_regNo:input"]')).sendKeys(sterilizeCompanyNumber);
-              
-              // 소독필증 번호 입력
-              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.div_rexdcert.form.edt_rexdcertNo:input"]')).click();
-              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.div_rexdcert.form.edt_rexdcertNo:input"]')).sendKeys(sterilizeNumber);
-            }
-            
-            // 소독일자 입력
-            await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.cal_exposeDt.calendaredit"]')).click();
-            await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.cal_exposeDt.calendaredit"]/input')).clear();
-            await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.cal_exposeDt.calendaredit"]/input')).sendKeys(sterilizeDate);
-            
-            // 소독 방법 선택
-            let meditxtcnt = 1;
-            if (sterilizeProductType === "약물소독") {
-              meditxtcnt = 1;
-            } else if (sterilizeProductType === "증기소독") {
-              meditxtcnt = 2;
-            } else if (sterilizeProductType === "일광소독") {
-              meditxtcnt = 3;
-            } else if (sterilizeProductType === "끓는물소독") {
-              meditxtcnt = 4;
-            } else if (sterilizeProductType === "기타") {
-              meditxtcnt = 5;
-            }
-            
-            try {
-              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.grid_wimExposeDesc.body.gridrow_0.cell_0_1"]')).click();
-              for (let x = 0; x < meditxtcnt; x++) {
-                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.grid_wimExposeDesc.body.gridrow_0.cell_0_1"]')).sendKeys(Key.ARROW_DOWN);
+              // 기존 창 닫기 시도
+              try {
+                await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form.cfn_close()");
+              } catch (error) {
+                console.log("창 닫기 오류:", error);
               }
-            } catch (error) {
-              console.log(error);
+              
+              // 소독필증 작성 메뉴로 이동
+              await menuMove('nprk207m03', this.driver);
+              
+              // 대기 설정
+              await this.driver.manage().setTimeouts({ implicit: 3000 });
+              
+              // 소독 유형 선택
+              if (sterilizeType === "자체") {
+                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.rdo_exposeTypeCd.radioitem0:icontext"]')).click();
+              } else {
+                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.rdo_exposeTypeCd.radioitem1:icontext"]')).click();
+                await this.driver.sleep(500);
+                
+                // 작업자 정보 입력
+                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.edt_wrkerNm:input"]')).click();
+                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.edt_wrkerNm:input"]')).sendKeys(sterilizeCompanyName);
+                
+                // 등록번호 입력
+                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.met_regNo:input"]')).click();
+                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.met_regNo:input"]')).sendKeys(sterilizeCompanyNumber);
+                
+                // 소독필증 번호 입력
+                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.div_rexdcert.form.edt_rexdcertNo:input"]')).click();
+                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.div_rexdcert.form.edt_rexdcertNo:input"]')).sendKeys(sterilizeNumber);
+              }
+              
+              // 소독일자 입력
+              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.cal_exposeDt.calendaredit"]')).click();
+              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.cal_exposeDt.calendaredit"]/input')).clear();
+              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.cal_exposeDt.calendaredit"]/input')).sendKeys(sterilizeDate);
+              
+              // 소독 방법 선택
+              let meditxtcnt = 1;
+              if (sterilizeProductType === "약물소독") {
+                meditxtcnt = 1;
+              } else if (sterilizeProductType === "증기소독") {
+                meditxtcnt = 2;
+              } else if (sterilizeProductType === "일광소독") {
+                meditxtcnt = 3;
+              } else if (sterilizeProductType === "끓는물소독") {
+                meditxtcnt = 4;
+              } else if (sterilizeProductType === "기타") {
+                meditxtcnt = 5;
+              }
+              
+              try {
+                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.grid_wimExposeDesc.body.gridrow_0.cell_0_1"]')).click();
+                for (let x = 0; x < meditxtcnt; x++) {
+                  await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.grid_wimExposeDesc.body.gridrow_0.cell_0_1"]')).sendKeys(Key.ARROW_DOWN);
+                }
+              } catch (error) {
+                console.log(error);
+              }
+              
+              // 약제명과 규격 입력
+              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.grid_wimExposeDesc.body.gridrow_0.cell_0_3"]')).click();
+              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.grid_wimExposeDesc.body.gridrow_0.cell_0_3.celledit:input"]')).sendKeys(sterilizeProductName);
+              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.grid_wimExposeDesc.body.gridrow_0.cell_0_5"]')).click();
+              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.grid_wimExposeDesc.body.gridrow_0.cell_0_5.celledit:input"]')).sendKeys(sterilizeProductAmount);
+              
+              // 바코드 검색
+              await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.edt_bcdNo.value='111111111111'");
+              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.btn_search"]')).click();
+              await waitForLoading(this.driver);
+              
+              // 실제 바코드 정보 입력
+              await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.edt_wimCd.value='" + pcodeArray[j] + "'");
+              await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.edt_bcdNo.value='" + bcodeArray[j].replace(' ', '') + "'");
+              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.btn_search"]')).click();
+              await waitForLoading(this.driver);
+              
+              // 검색 결과 선택 및 저장
+              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.grid_wimList.body.gridrow_0.cell_0_0.cellcheckbox:icontext"]')).click();
+              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form.div_functionButton.form.btn_save"]')).click();
+              
+              // 알림창 처리
+              const alert1 = await this.driver.wait(until.alertIsPresent(), 5000);
+              await alert1.accept();
+              
+              try {
+                const alert2 = await this.driver.wait(until.alertIsPresent(), 5000);
+                await alert2.accept();
+              } catch (error) {
+                console.log("두 번째 알림창 없음:", error);
+              }
+              
+              // 창 닫기
+              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form.div_functionButton.form.btn_close"]')).click();
+              // 소독필증 작성 완료 메시지
+              event.sender.send('rent-contract-message', { type: 'message', message: '소독필증 작성이 완료되었습니다. 대여계약 진행중입니다.' });
+            } else if (resulttxt1 === "대여") {
+              // 이미 대여 중인 바코드
+              const errorMessage = "현재 대여 등록된 바코드입니다.";
+              event.sender.send('rent-contract-message', { type: 'error', message: errorMessage + '|' + bcodeArray[j] });
+              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form.div_functionButton.form.btn_close"]')).click();
+              
+              // 메뉴 이동
+              await menuMove('npia201', this.driver);
+              return;
             }
-            
-            // 약제명과 규격 입력
-            await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.grid_wimExposeDesc.body.gridrow_0.cell_0_3"]')).click();
-            await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.grid_wimExposeDesc.body.gridrow_0.cell_0_3.celledit:input"]')).sendKeys(sterilizeProductName);
-            await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.grid_wimExposeDesc.body.gridrow_0.cell_0_5"]')).click();
-            await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.grid_wimExposeDesc.body.gridrow_0.cell_0_5.celledit:input"]')).sendKeys(sterilizeProductAmount);
-            
-            // 바코드 검색
-            await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.edt_bcdNo.value='111111111111'");
-            await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.btn_search"]')).click();
-            await waitForLoading(this.driver);
-            
-            // 실제 바코드 정보 입력
-            await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.edt_wimCd.value='" + pcodeArray[j] + "'");
-            await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.edt_bcdNo.value='" + bcodeArray[j].replace(' ', '') + "'");
-            await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.btn_search"]')).click();
-            await waitForLoading(this.driver);
-            
-            // 검색 결과 선택 및 저장
-            await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.grid_wimList.body.gridrow_0.cell_0_0.cellcheckbox:icontext"]')).click();
-            await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form.div_functionButton.form.btn_save"]')).click();
-            
-            // 알림창 처리
-            const alert1 = await this.driver.wait(until.alertIsPresent(), 5000);
-            await alert1.accept();
-            
-            try {
-              const alert2 = await this.driver.wait(until.alertIsPresent(), 5000);
-              await alert2.accept();
-            } catch (error) {
-              console.log("두 번째 알림창 없음:", error);
-            }
-            
-            // 창 닫기
-            await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form.div_functionButton.form.btn_close"]')).click();
-            // 소독필증 작성 완료 메시지
-            event.sender.send('rent-contract-message', { type: 'message', message: '소독필증 작성이 완료되었습니다. 대여계약 진행중입니다.' });
-          } else if (resulttxt1 === "대여") {
-            // 이미 대여 중인 바코드
-            const errorMessage = "현재 대여 등록된 바코드입니다.";
-            event.sender.send('rent-contract-message', { type: 'error', message: errorMessage + '|' + bcodeArray[j] });
-            await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04020200.form.div_functionButton.form.btn_close"]')).click();
-            
-            // 메뉴 이동
-            await menuMove('npia201', this.driver);
+          } else {
+            // 검색 결과가 없는 경우
+            const errorMessage = "대여제품조회실패";
+            event.sender.send('rent-contract-message', { type: 'error', message: errorMessage });
             return;
           }
-        } else {
-          // 검색 결과가 없는 경우
-          const errorMessage = "대여제품조회실패";
-          event.sender.send('rent-contract-message', { type: 'error', message: errorMessage });
-          return;
+          
+          // 마지막 제품 처리 후 메시지 전송
+          if (j === pcodeArray.length - 1) {
+            event.sender.send('rent-contract-message', { type: 'message', message: '대여계약 진행중입니다.' });
+          }
+        } catch (error) {
+          console.error("검색 결과 처리 중 오류:", error);
+          event.sender.send('rent-contract-message', { type: 'error', message: '검색 결과 처리 중 오류가 발생했습니다.' });
         }
-        
-        // 마지막 제품 처리 후 메시지 전송
-        if (j === pcodeArray.length - 1) {
-          event.sender.send('rent-contract-message', { type: 'message', message: '대여계약 진행중입니다.' });
-        }
-      } catch (error) {
-        console.error("검색 결과 처리 중 오류:", error);
-        event.sender.send('rent-contract-message', { type: 'error', message: '검색 결과 처리 중 오류가 발생했습니다.' });
+
+
+        // }
       }
-
-
-      // }
     }
     await menuMove('npia201', this.driver);
     console.log(name,number,ranker,resident,rcgt,startDateArray[0]);
@@ -574,11 +633,11 @@ class RentContractService extends LookupService{
         
         console.log("복지용구 대상자 이력 정보:", truedatesp);
         console.log("현재 날짜:", nowtimeymd);
-        
+        console.log("rentAddContractData",rentAddContractData)
         // 날짜 배열 처리 로직
         for (let e = 0; e < rentAddContractData.nextDateArray.length; e += 2) {
           if (new Date(rentAddContractData.nextDateArray[e].replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3')) <= new Date(endDateArray[0].replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3'))) {
-            rentAddContractData.nextDateArray[e + 1] = endDateArray[j];
+            rentAddContractData.nextDateArray[e + 1] = endDateArray[0];
             break;
           }
         }
@@ -808,7 +867,7 @@ class RentContractService extends LookupService{
           }).filter(dateObject => dateObject !== null);
           console.log(nextDateArrayObject, "nextDateArrayObject");
           //product.endDate가 포함되는 객체만 분리
-          let nextDateArrayObjectFilter = nextDateArrayObject.filter(dateObject => dateObject.startDate <= product.endDate && dateObject.endDate >= product.endDate);
+          let nextDateArrayObjectFilter = nextDateArrayObject.filter(dateObject => dateObject.startDate <= product.endDate);
           console.log(nextDateArrayObjectFilter, "nextDateArrayObjectFilter");
           //nextDateArrayObjectFilter의 객체안에 날짜를 확인해서 오름차순으로 객체 배열을 정렬
           nextDateArrayObjectFilter.sort((a, b) => a.endDate - b.endDate);
@@ -816,7 +875,7 @@ class RentContractService extends LookupService{
 
           if (nextDateArrayObjectFilter.length > 0) {
               // 첫 번째 객체의 시작일 하루 전 계산
-              const firstStartDate = nextDateArrayObjectFilter[0].startDate;
+              const firstStartDate = nextDateArrayObjectFilter[0].startDate.replace(/ /g,'');
               const firstStartDateObj = new Date(
               firstStartDate.substring(0, 4) + '-' + 
               firstStartDate.substring(4, 6) + '-' + 
@@ -872,7 +931,25 @@ class RentContractService extends LookupService{
               );
               // 알림 처리
               try {
-                  await handleAlerts(this.driver);
+                const alertText = await handleAlerts(this.driver);
+                console.log(alertText, "alertText");
+                if (alertText.includes("연장대여하시겠습니까")) {
+                  try {
+                      await this.driver.wait(until.alertIsPresent(), 5000);
+                      const secondAlert = await this.driver.switchTo().alert();
+                      await secondAlert.accept();
+                      
+                      await this.driver.manage().setTimeouts({ implicit: 3000 });
+                      
+                      await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010100.npia207p01.npia207p04.form._div_bizFrameMain.form.btn_apply"]')).click();
+                      
+                      await this.driver.executeScript(
+                          `nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010100.npia207p01.form._div_bizFrameMain.form.fn_validlndPsblYn(${rpnum})`
+                      );
+                  } catch (error) {
+                      console.log('연장대여 알림 처리 중 오류:', error);
+                  }
+                }
               } catch (error) {
                   console.log('알림 처리 중 오류:', error);
               }
@@ -929,8 +1006,19 @@ class RentContractService extends LookupService{
 
           if (alertText.includes("계약되었습니다")) {
             await this.updateContractState(orderData.id,'ok');
-            await this.updateRentEndDate(rentId,products[0].endDate);
-            // await this.createAddContract(this.tokenPath, products);
+            let stopCheck = 0;
+            if(eventType === "rentContractStopCancel"){
+              stopCheck = 2;
+            }else if(eventType === "rentContractStopRestart"){
+              stopCheck = 3;
+              await this.copyOrder(
+                rentId, 
+                products[0].startDate.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3'), 
+                products[0].endDate.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3'),
+                companyId
+              );
+            }
+            await this.updateRentEndDate(rentId,products[0].endDate,stopCheck);
             console.log("계약이 정상적으로 완료되었습니다.");
             await handleAlerts(this.driver);
             event.sender.send('rentContractResponse', { 
@@ -1078,7 +1166,7 @@ class RentContractService extends LookupService{
                   console.log(error);
                 }
                 
-                // await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.btn_updDescTrs_onclick()");
+                await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.btn_updDescTrs_onclick()");
                 
                 const alert = await this.driver.wait(until.alertIsPresent(), 5000);
                 const alertText = await alert.getText();
@@ -1136,7 +1224,7 @@ class RentContractService extends LookupService{
           if (j === cproductname2.length - 1) {
             await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form.cfn_close()");
 
-            await this.updateRentEndDate(rentId,edate[0]);
+            await this.updateRentEndDate(rentId,edate[0],0);
             await this.updateContractState(orderData.id,'cok');
             console.log(edate[0], "edate[0]");
           
@@ -1157,6 +1245,213 @@ class RentContractService extends LookupService{
     } catch (error) {
       console.log('대여 계약 취소 처리 중 오류:', error);
       event.sender.send('rentContractCancelResponse', { success: false, message: '대여 계약 취소 처리 중 오류 발생' });
+    }
+  }
+
+  async rentContractStop(driver,event,args) {
+    this.driver = driver;
+
+    await menuMove('npia202',this.driver);
+    await waitForLoading(this.driver);
+    const argsData = JSON.parse(args);
+    try {
+      const { rentStopContractData, orderData, rentId, stopUndoDate,stopEndDate,stopReason,companyId } = argsData;
+      const insertRentStopContractData = {
+        orderData: orderData,
+        rentId: rentId,
+        stopUndoDate: stopUndoDate,
+        stopEndDate: stopEndDate.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3'),
+        stopReason: stopReason,
+        companyId: companyId
+      }
+      
+      console.log(argsData, "argsData");
+      const { name, number } = orderData.client;
+      const products = rentStopContractData.products;
+      const cproductname2 = products.map(p => p.pitem);
+      const cbcode = products.map(p => p.bcode);
+      const edate = stopEndDate;
+      
+      try {
+        await this.driver.executeScript("return nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form.cfn_close()");
+      } catch (error) {
+        console.log(error);
+      }
+      
+      // 메뉴 이동
+      await menuMove('npia202', this.driver);
+      // await sleep(100);
+      // this.driver.manage().timeouts().implicitlyWait(3000);
+      
+      console.log("고객 정보:", name, number);
+      
+      // 고객 정보 입력
+      await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.edt_prsFnm:input"]')).sendKeys(name);
+      await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.edt_ltcMgmtNo:input"]')).sendKeys(number);
+      await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.btn_selectPln"]')).click();
+      
+      await waitForLoading(this.driver);
+      
+      await this.driver.executeScript("return nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.grd_ltcoInfoList_oncellclick('',{col:6})");
+      await waitForLoading(this.driver);
+      await this.driver.executeScript("return nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.grd_ltcoInfoList_oncellclick('',{col:6})");
+      await waitForLoading(this.driver);
+      
+      let canclec = 0;
+      
+      for (let j = 0; j < cproductname2.length; j++) {
+        let productName = cproductname2[j];
+        if (productName === "경사로(실외)") {
+          productName = "경사로(실외용)";
+        }
+        
+        let rplist = await this.driver.executeScript("return nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.ds_weltoolCtrLndList._viewRecords");
+        // console.log(rplist);
+        
+        if (rplist && rplist.length > 0) {
+          let p = 0;
+          while (p < rplist.length) {
+            console.log('0:' + p);
+            console.log(rplist[p][0], cbcode[j].replace(" ", ""));
+            console.log(rplist[p][37], productName);
+            if (rplist[p][0] === cbcode[j].replace(" ", "") && rplist[p][37] === productName) {
+              console.log(rplist[p][24].replace(" ", ""));
+              console.log(rplist[p][1].replace(" ", ""));
+              console.log(edate[0]);
+              
+              const urents1 = new Date(rplist[p][24].replace(" ", "").replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")).getTime();
+              const urente1 = new Date(rplist[p][1].replace(" ", "").replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")).getTime();
+              const uedate = new Date(edate[0].replace(" ", "").replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")).getTime();
+              
+              if (urents1 < uedate && urente1 <= uedate) {
+                p++;
+                console.log('1:' + p);
+                console.log('1:' + rplist.length);
+              } else if (urents1 <= uedate && urente1 > uedate) {
+                console.log('2:' + p);
+                await this.driver.executeScript(`nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.ds_weltoolCtrLndList.setColumn(${p},'AF_POF_TO_DT',${edate})`);
+                
+                try {
+                  const alert = await this.driver.wait(until.alertIsPresent(), 3000);
+                  const alertText = await alert.getText();
+                  if (alertText.includes('지급내역')) {
+                    event.sender.send('rentContractCancelResponse', { success: false, message: alertText });
+                    await alert.accept();
+                    return;
+                  }
+                } catch (error) {
+                  console.log(error);
+                }
+                
+                // if (canclex[0] === "반품") {
+                  canclec = 1;
+                // } else if (canclex[0] === "착오계약") {
+                //   canclec = 2;
+                // } else if (canclex[0] === "자격변동") {
+                //   canclec = 4;
+                // } else {
+                //   canclec = 3;
+                // }
+                
+                await this.driver.executeScript(`nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.ds_weltoolCtrLndList.setColumn(${p}, 'UPD_TYPE',${canclec})`);
+                
+                // if (canclec === 3) {
+                //   // await sleep(1000);
+                //   await this.driver.executeScript(`nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.ds_weltoolCtrLndList.setColumn(${p}, 'CTR_CHG_RSN', '${canclex[0]}')`);
+                // }
+                
+                try {
+                  const alert = await this.driver.wait(until.alertIsPresent(), 3000);
+                  const alertText = await alert.getText();
+                  if (alertText.includes('지급내역')) {
+                    event.sender.send('rentContractCancelResponse', { success: false, message: alertText });
+                    await alert.accept();
+                    return;
+                  }
+                } catch (error) {
+                  console.log(error);
+                }
+                
+                await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.btn_updDescTrs_onclick()");
+                
+                const alert = await this.driver.wait(until.alertIsPresent(), 5000);
+                const alertText = await alert.getText();
+                if (alertText.includes('변경된내역이 없습니다')) {
+                  event.sender.send('rentContractCancelResponse', { success: false, message: alertText });
+                }
+                
+                await alert.accept();
+                
+                try {
+                  const secondAlert = await this.driver.wait(until.alertIsPresent(), 5000);
+                  await secondAlert.accept();
+                } catch (error) {
+                  console.log(error);
+                }
+                
+                // await sleep(500);
+                p++;
+              } else if (urents1 > uedate) {
+                await this.driver.executeScript(`return nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.fn_validateChkAfPofToDt(${p}, 'delete')`);
+                
+                try {
+                  const alert = await this.driver.wait(until.alertIsPresent(), 3000);
+                  const alertText = await alert.getText();
+                  if (alertText.includes('지급내역')) {
+                    await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form.cfn_close()");
+                  }
+                  await alert.accept();
+                } catch (error) {
+                  await this.driver.executeScript(`nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.ds_weltoolCtrLndList.setColumn(${p}, 'CNCL_YN', '1')`);
+                }
+                
+                await this.driver.executeScript(`nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.ds_weltoolCtrLndList.setColumn(${p}, 'UPD_TYPE',1)`);
+                await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.btn_updDescTrs_onclick()");
+                
+                const alert = await this.driver.wait(until.alertIsPresent(), 3000);
+                await alert.accept();
+                
+                try {
+                  const secondAlert = await this.driver.wait(until.alertIsPresent(), 3000);
+                  await secondAlert.accept();
+                } catch (error) {
+                  console.log(error);
+                }
+                rplist = await this.driver.executeScript("return nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.ds_weltoolCtrLndList._viewRecords");
+                // await sleep(1000);
+              } else {
+                p++;
+              }
+            } else {
+              p++;
+            }
+          }
+          
+          if (j === cproductname2.length - 1) {
+            await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form.cfn_close()");
+
+            await this.updateRentEndDate(rentId,edate,1);
+            await this.insertRentStopContract(insertRentStopContractData);
+            // await this.updateContractState(orderData.id,'cok');
+            console.log(edate, "edate");
+          
+            event.sender.send('rentContractStopResponse', { 
+              success: true, 
+              message: '계약이 정상적으로 완료되었습니다.',
+              data: {
+                bcode: cbcode,
+                endDate: edate[0]
+              }
+            });
+          }
+        } else {
+          event.sender.send('rentContractStopResponse', { success: false, message: '대여계약취소건이 없습니다' });
+          return;
+        }
+      }
+    } catch (error) {
+      console.log('대여 계약 취소 처리 중 오류:', error);
+      event.sender.send('rentContractStopResponse', { success: false, message: '대여 계약 취소 처리 중 오류 발생' });
     }
   }
 }

@@ -56,7 +56,7 @@ class LongtermLoginService {
       console.log("1. 로그인 시작")
       // 1단계: 기관번호 입력 및 법인인증서 로그인
       await this.CNumLogin(driver, cnum);
-      
+      await driver.sleep(3000);
       console.log("2. 인증서 선택 시작")
       // 2단계: 인증서 선택
       await this.SelectCertificate(driver, cname);

@@ -10,6 +10,7 @@ const LookupController = require('./handler/lookup/lookupController')
 const BuyContractController = require('./handler/buyContract/buyContractController')
 const RentContractController = require('./handler/rentContract/rentContractController')
 const RentContractAddController = require('./handler/rentContractAdd/rentContractAddController')
+const ClaimController = require('./handler/claim/claimController')
 const { initAutoUpdater, scheduleAutoUpdate, autoUpdater } = require('./updater')
 
 // 컨트롤러 및 유틸리티 임포트
@@ -29,6 +30,7 @@ let lookupController
 let buyContractController
 let rentContractController
 let rentContractAddController
+let claimController
 // Scheme 등록
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
@@ -321,6 +323,9 @@ async function initializeControllers() {
     
     rentContractAddController = new RentContractAddController(webdriverManagerInstance);
     rentContractAddController.registerHandlers();
+
+    claimController = new ClaimController(webdriverManagerInstance);
+    claimController.registerHandlers();
     
     console.log('컨트롤러 초기화 완료');
   } catch (error) {
@@ -485,7 +490,7 @@ app.on('ready', async () => {
   initAutoUpdater({onNoUpdate: startProgram});
   
   // 24시간마다 업데이트 체크 (1시간마다 체크하는 것은 너무 자주 재시작됨)
-  scheduleAutoUpdate(24 * 3600000);
+  scheduleAutoUpdate(1 * 3600000);
 })
 
 async function startProgram(){

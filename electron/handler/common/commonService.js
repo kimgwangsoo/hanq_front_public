@@ -99,16 +99,18 @@ function getAuthToken(tokenPath) {
 
 function handleAlerts(driver) {
   return new Promise(async (resolve) => {
-  try {
-    const alert = await driver.switchTo().alert();
-    console.log('경고창 발견:', await alert.getText());
-    await alert.accept();
-    console.log('경고창 닫힘');
-  } catch (alertError) {
+    try {
+      const alert = await driver.switchTo().alert();
+      const alertText = await alert.getText();
+      console.log('경고창 발견:', alertText);
+      await alert.accept();
+      console.log('경고창 닫힘');
+      resolve(alertText);
+    } catch (alertError) {
       console.log('경고창 없음');
+      resolve(null);
     }
     console.log('경고창 처리 완료');
-    resolve();
   });
 }
 
