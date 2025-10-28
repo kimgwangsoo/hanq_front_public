@@ -1164,26 +1164,38 @@ class RentContractService extends LookupService{
                   }
                 } catch (error) {
                   console.log(error);
+                  event.sender.send('rentContractCancelResponse', { success: false, message: p+"취소계약 진행중..1" });
+
                 }
                 
-                await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.btn_updDescTrs_onclick()");
-                
+                try {
+                  await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.btn_updDescTrs_onclick()");
+                } catch (error) {
+                  event.sender.send('rentContractCancelResponse', { success: false, message: p+"취소계약 진행중.. 2" });
+                  console.log(error);
+                }
                 const alert = await this.driver.wait(until.alertIsPresent(), 5000);
                 const alertText = await alert.getText();
                 if (alertText.includes('변경된내역이 없습니다')) {
                   event.sender.send('rentContractCancelResponse', { success: false, message: alertText });
                 }
                 
-                await alert.accept();
-                
+                try {
+                  await alert.accept();
+                } catch (error) {
+                  event.sender.send('rentContractCancelResponse', { success: false, message: p+"취소계약 진행중.. 3" });
+                  console.log(error);
+                }
                 try {
                   const secondAlert = await this.driver.wait(until.alertIsPresent(), 5000);
                   await secondAlert.accept();
                 } catch (error) {
+                  event.sender.send('rentContractCancelResponse', { success: false, message: p+"취소계약 진행중.. 4" });
                   console.log(error);
                 }
                 
-                // await sleep(500);
+                await this.driver.sleep(500);
+
                 p++;
               } else if (urents1 > uedate) {
                 await this.driver.executeScript(`return nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.fn_validateChkAfPofToDt(${p}, 'delete')`);
@@ -1222,7 +1234,9 @@ class RentContractService extends LookupService{
           }
           
           if (j === cproductname2.length - 1) {
-            await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form.cfn_close()");
+            
+            // event.sender.send('rentContractCancelResponse', { success: false, message: "5" });
+            
 
             await this.updateRentEndDate(rentId,edate[0],0);
             await this.updateContractState(orderData.id,'cok');
