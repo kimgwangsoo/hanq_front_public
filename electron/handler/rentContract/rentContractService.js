@@ -1156,6 +1156,7 @@ class RentContractService extends LookupService{
                 
                 try {
                   const alertText = await handleAlerts(this.driver);
+                  await new Promise(resolve => setTimeout(resolve, 1500));
                   if (alertText.includes('지급내역')) {
                     event.sender.send('rentContractCancelResponse', { success: false, message: alertText });
                     return;
@@ -1173,11 +1174,13 @@ class RentContractService extends LookupService{
                   console.log(error);
                 }
                 const alertText = await handleAlerts(this.driver);
+                await new Promise(resolve => setTimeout(resolve, 1500));
                 if (alertText.includes('변경된내역이 없습니다')) {
                   event.sender.send('rentContractCancelResponse', { success: false, message: alertText });
                 }
                 try {
                   await handleAlerts(this.driver);
+                  await new Promise(resolve => setTimeout(resolve, 1500));
                 } catch (error) {
                   event.sender.send('rentContractCancelResponse', { success: false, message: p+"취소계약 진행중.. 4" });
                   console.log(error);
@@ -1191,6 +1194,7 @@ class RentContractService extends LookupService{
                 
                 try {
                   const alertText = await handleAlerts(this.driver);
+                  await new Promise(resolve => setTimeout(resolve, 1500));
                   if (alertText.includes('지급내역')) {
                     await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form.cfn_close()");
                   }
@@ -1202,9 +1206,11 @@ class RentContractService extends LookupService{
                 await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.btn_updDescTrs_onclick()");
                 
                 await handleAlerts(this.driver);
+                await new Promise(resolve => setTimeout(resolve, 1500));
                 
                 try {
                   await handleAlerts(this.driver);
+                  await new Promise(resolve => setTimeout(resolve, 1500));
                 } catch (error) {
                   console.log(error);
                 }
