@@ -1155,11 +1155,9 @@ class RentContractService extends LookupService{
                 // }
                 
                 try {
-                  const alert = await this.driver.wait(until.alertIsPresent(), 3000);
-                  const alertText = await alert.getText();
+                  const alertText = await handleAlerts(this.driver);
                   if (alertText.includes('지급내역')) {
                     event.sender.send('rentContractCancelResponse', { success: false, message: alertText });
-                    await alert.accept();
                     return;
                   }
                 } catch (error) {
@@ -1174,21 +1172,12 @@ class RentContractService extends LookupService{
                   event.sender.send('rentContractCancelResponse', { success: false, message: p+"취소계약 진행중.. 2" });
                   console.log(error);
                 }
-                const alert = await this.driver.wait(until.alertIsPresent(), 5000);
-                const alertText = await alert.getText();
+                const alertText = await handleAlerts(this.driver);
                 if (alertText.includes('변경된내역이 없습니다')) {
                   event.sender.send('rentContractCancelResponse', { success: false, message: alertText });
                 }
-                
                 try {
-                  await alert.accept();
-                } catch (error) {
-                  event.sender.send('rentContractCancelResponse', { success: false, message: p+"취소계약 진행중.. 3" });
-                  console.log(error);
-                }
-                try {
-                  const secondAlert = await this.driver.wait(until.alertIsPresent(), 5000);
-                  await secondAlert.accept();
+                  await handleAlerts(this.driver);
                 } catch (error) {
                   event.sender.send('rentContractCancelResponse', { success: false, message: p+"취소계약 진행중.. 4" });
                   console.log(error);
@@ -1201,12 +1190,10 @@ class RentContractService extends LookupService{
                 await this.driver.executeScript(`return nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.fn_validateChkAfPofToDt(${p}, 'delete')`);
                 
                 try {
-                  const alert = await this.driver.wait(until.alertIsPresent(), 3000);
-                  const alertText = await alert.getText();
+                  const alertText = await handleAlerts(this.driver);
                   if (alertText.includes('지급내역')) {
                     await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form.cfn_close()");
                   }
-                  await alert.accept();
                 } catch (error) {
                   await this.driver.executeScript(`nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.ds_weltoolCtrLndList.setColumn(${p}, 'CNCL_YN', '1')`);
                 }
@@ -1214,12 +1201,10 @@ class RentContractService extends LookupService{
                 await this.driver.executeScript(`nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.ds_weltoolCtrLndList.setColumn(${p}, 'UPD_TYPE',1)`);
                 await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.btn_updDescTrs_onclick()");
                 
-                const alert = await this.driver.wait(until.alertIsPresent(), 3000);
-                await alert.accept();
+                await handleAlerts(this.driver);
                 
                 try {
-                  const secondAlert = await this.driver.wait(until.alertIsPresent(), 3000);
-                  await secondAlert.accept();
+                  await handleAlerts(this.driver);
                 } catch (error) {
                   console.log(error);
                 }
