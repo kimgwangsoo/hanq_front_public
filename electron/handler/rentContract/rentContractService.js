@@ -161,7 +161,7 @@ class RentContractService extends LookupService{
     } = cleanData;
     
     // 배열이 아닌 데이터를 배열로 변환
-    sterilizeType = Array.isArray(sterilizeType) ? sterilizeType : [sterilizeType];
+    // sterilizeType = Array.isArray(sterilizeType) ? sterilizeType : [sterilizeType];
     sterilizeDate = Array.isArray(sterilizeDate) ? sterilizeDate : [sterilizeDate];
     sterilizeCompanyName = Array.isArray(sterilizeCompanyName) ? sterilizeCompanyName : [sterilizeCompanyName];
     sterilizeCompanyNumber = Array.isArray(sterilizeCompanyNumber) ? sterilizeCompanyNumber : [sterilizeCompanyNumber];
