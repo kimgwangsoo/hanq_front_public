@@ -736,6 +736,16 @@ class RentContractService extends LookupService{
         event.sender.send('buyContractResponse', { success: false, message: '전화번호 입력 중 오류 발생' });
       }
 
+      // 계약서 복사 체크박스 클릭
+      try {
+        console.log("계약서 복사 체크박스 클릭 시작");
+        await this.driver.findElement({ xpath: '//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010100.form._div_bizFrameMain.form.chk_copy:icontext"]' }).click();
+        console.log("계약서 복사 체크박스 클릭 완료");
+      } catch (error) {
+        console.log('계약서 복사 체크박스 클릭 중 오류:', error);
+        event.sender.send('buyContractResponse', { success: false, message: '계약서 복사 체크박스 클릭 중 오류 발생' });
+      }
+
       // 화면 요소 위치 조정 (전화번호 입력 후)
       try {
         console.log("화면 요소 위치 추가 조정 시작");
