@@ -159,6 +159,16 @@ class RentContractService extends LookupService{
       sterilizeProductAmount,
       sterilizeProductType,
     } = cleanData;
+    
+    // 배열이 아닌 데이터를 배열로 변환
+    sterilizeType = Array.isArray(sterilizeType) ? sterilizeType : [sterilizeType];
+    sterilizeDate = Array.isArray(sterilizeDate) ? sterilizeDate : [sterilizeDate];
+    sterilizeCompanyName = Array.isArray(sterilizeCompanyName) ? sterilizeCompanyName : [sterilizeCompanyName];
+    sterilizeCompanyNumber = Array.isArray(sterilizeCompanyNumber) ? sterilizeCompanyNumber : [sterilizeCompanyNumber];
+    sterilizeNumber = Array.isArray(sterilizeNumber) ? sterilizeNumber : [sterilizeNumber];
+    sterilizeProductName = Array.isArray(sterilizeProductName) ? sterilizeProductName : [sterilizeProductName];
+    sterilizeProductAmount = Array.isArray(sterilizeProductAmount) ? sterilizeProductAmount : [sterilizeProductAmount];
+    sterilizeProductType = Array.isArray(sterilizeProductType) ? sterilizeProductType : [sterilizeProductType];
     // 전화번호 형식 처리
     let phone = orderData.phone1 || '';
     phone = phone.replace(' ', '').replace('-', '');
