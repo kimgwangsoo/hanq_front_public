@@ -504,33 +504,33 @@ class RentContractService extends LookupService{
                 
                 // 작업자 정보 입력
                 await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.edt_wrkerNm:input"]')).click();
-                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.edt_wrkerNm:input"]')).sendKeys(sterilizeCompanyName);
+                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.edt_wrkerNm:input"]')).sendKeys(sterilizeCompanyName[j]);
                 
                 // 등록번호 입력
                 await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.met_regNo:input"]')).click();
-                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.met_regNo:input"]')).sendKeys(sterilizeCompanyNumber);
+                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.met_regNo:input"]')).sendKeys(sterilizeCompanyNumber[j]);
                 
                 // 소독필증 번호 입력
                 await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.div_rexdcert.form.edt_rexdcertNo:input"]')).click();
-                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.div_rexdcert.form.edt_rexdcertNo:input"]')).sendKeys(sterilizeNumber);
+                await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.div_rexdcert.form.edt_rexdcertNo:input"]')).sendKeys(sterilizeNumber[j]);
               }
               
               // 소독일자 입력
               await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.cal_exposeDt.calendaredit"]')).click();
               await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.cal_exposeDt.calendaredit"]/input')).clear();
-              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.cal_exposeDt.calendaredit"]/input')).sendKeys(sterilizeDate);
+              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.cal_exposeDt.calendaredit"]/input')).sendKeys(sterilizeDate[j]);
               
               // 소독 방법 선택
               let meditxtcnt = 1;
-              if (sterilizeProductType === "약물소독") {
+              if (sterilizeProductType[j] === "약물소독") {
                 meditxtcnt = 1;
-              } else if (sterilizeProductType === "증기소독") {
+              } else if (sterilizeProductType[j] === "증기소독") {
                 meditxtcnt = 2;
-              } else if (sterilizeProductType === "일광소독") {
+              } else if (sterilizeProductType[j] === "일광소독") {
                 meditxtcnt = 3;
-              } else if (sterilizeProductType === "끓는물소독") {
+              } else if (sterilizeProductType[j] === "끓는물소독") {
                 meditxtcnt = 4;
-              } else if (sterilizeProductType === "기타") {
+              } else if (sterilizeProductType[j] === "기타") {
                 meditxtcnt = 5;
               }
               
@@ -545,9 +545,9 @@ class RentContractService extends LookupService{
               
               // 약제명과 규격 입력
               await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.grid_wimExposeDesc.body.gridrow_0.cell_0_3"]')).click();
-              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.grid_wimExposeDesc.body.gridrow_0.cell_0_3.celledit:input"]')).sendKeys(sterilizeProductName);
+              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.grid_wimExposeDesc.body.gridrow_0.cell_0_3.celledit:input"]')).sendKeys(sterilizeProductName[j]);
               await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.grid_wimExposeDesc.body.gridrow_0.cell_0_5"]')).click();
-              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.grid_wimExposeDesc.body.gridrow_0.cell_0_5.celledit:input"]')).sendKeys(sterilizeProductAmount);
+              await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.grid_wimExposeDesc.body.gridrow_0.cell_0_5.celledit:input"]')).sendKeys(sterilizeProductAmount[j]);
               
               // 바코드 검색
               await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.edt_bcdNo.value='111111111111'");
@@ -1173,26 +1173,34 @@ class RentContractService extends LookupService{
                   }
                 } catch (error) {
                   console.log(error);
-                  event.sender.send('rentContractCancelResponse', { success: false, message: p+"취소계약 진행중..1" });
-
+                  // event.sender.send('rentContractCancelResponse', { success: false, message: p+"취소계약 진행중..1" });
+                  
                 }
                 
+                console.log("완료버튼")
+                // event.sender.send('rentContractCancelResponse', { success: false, message: "ㅁㅁㅁ" });
+
                 try {
                   await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.btn_updDescTrs_onclick()");
                 } catch (error) {
-                  event.sender.send('rentContractCancelResponse', { success: false, message: p+"취소계약 진행중.. 2" });
+                  // event.sender.send('rentContractCancelResponse', { success: false, message: p+"취소계약 진행중.. 2" });
                   console.log(error);
                 }
-                const alertText = await handleAlerts(this.driver);
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                if (alertText.includes('변경된내역이 없습니다')) {
-                  event.sender.send('rentContractCancelResponse', { success: false, message: alertText });
+                try {
+                  const alertText = await handleAlerts(this.driver);
+                  await new Promise(resolve => setTimeout(resolve, 1500));
+                  if (alertText.includes('변경된내역이 없습니다')) {
+                    event.sender.send('rentContractCancelResponse', { success: false, message: alertText });
+                  }
+                } catch (error) {
+                  // event.sender.send('rentContractCancelResponse', { success: false, message: p+"취소계약 진행중.. 3" });
+                  console.log(error);
                 }
                 try {
                   await handleAlerts(this.driver);
                   await new Promise(resolve => setTimeout(resolve, 1500));
                 } catch (error) {
-                  event.sender.send('rentContractCancelResponse', { success: false, message: p+"취소계약 진행중.. 4" });
+                  // event.sender.send('rentContractCancelResponse', { success: false, message: p+"취소계약 진행중.. 4" });
                   console.log(error);
                 }
                 
@@ -1238,10 +1246,10 @@ class RentContractService extends LookupService{
             
             // event.sender.send('rentContractCancelResponse', { success: false, message: "5" });
             
-
+            console.log(edate[0], "최종완료edate[0]");
             await this.updateRentEndDate(rentId,edate[0],0);
             await this.updateContractState(orderData.id,'cok');
-            console.log(edate[0], "edate[0]");
+            console.log(edate[0], "최종완료edate[1]");
           
             event.sender.send('rentContractCancelResponse', { 
               success: true, 
