@@ -58,6 +58,11 @@ contextBridge.exposeInMainWorld('electron', {
     const claimChannel = [
       'claimStart',
     ];
+
+    // 문서24 채널
+    const doc24Channel = [
+      'doc24Start',
+    ];
     
     // 허용된 채널 목록
     const validChannels = [
@@ -70,7 +75,8 @@ contextBridge.exposeInMainWorld('electron', {
       ...rentContractChannel,
       ...authChannel,
       ...downloadChannel,
-      ...claimChannel
+      ...claimChannel,
+      ...doc24Channel
     ];
     
     if (validChannels.includes(channel)) {
@@ -103,6 +109,10 @@ contextBridge.exposeInMainWorld('electron', {
     const claimChannel = [
       'claimStartResponse',
     ];
+    // 문서24 채널
+    const doc24Channel = [
+      'doc24StartResponse',
+    ];
     // 허용된 채널 목록
     const validChannels = [
       'automation-complete',
@@ -111,7 +121,8 @@ contextBridge.exposeInMainWorld('electron', {
       'reply',
       ...contractChannel,
       ...rentContractChannel,
-      ...claimChannel
+      ...claimChannel,
+      ...doc24Channel
     ];
     
     if (validChannels.includes(channel)) {
