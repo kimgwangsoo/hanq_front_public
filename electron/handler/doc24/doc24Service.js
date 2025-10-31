@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const electron = require('electron');
 const app = electron.app || require('@electron/remote').app;
+const os = require('os');
 const { waitForLoading } = require('../common/commonService');
 const LongtermLoginService = require('../login/longtermLoginService');
 class Doc24Service extends LongtermLoginService {
@@ -26,9 +27,8 @@ class Doc24Service extends LongtermLoginService {
     const { BrowserWindow } = electron;
     let win;
     try {
-      // 저장 경로 준비
-      const appPath = app.getAppPath();
-      const outDir = path.join(appPath, 'doc24');
+      // 저장 경로 준비 (사용자 Documents 폴더 사용 - 배포 환경에서도 쓰기 가능)
+      const outDir = path.join(os.homedir(), 'Documents', 'hanq_doc24');
       const outPath = path.join(outDir, 'doc24.pdf');
       if (!fs.existsSync(outDir)) {
         fs.mkdirSync(outDir, { recursive: true });
@@ -211,9 +211,8 @@ class Doc24Service extends LongtermLoginService {
       await this.driver.findElement(By.css('#apprNm')).clear();
       await this.driver.findElement(By.css('#apprNm')).sendKeys(docManagerName);
       
-      // 파일 첨부
-      const appPath = app.getAppPath();
-      const filePath = path.join(appPath, 'doc24', 'doc24.pdf');
+      // 파일 첨부 (htmlConvertPDF에서 생성한 PDF 파일 경로 사용)
+      const filePath = pdf.filePath;
       await this.driver.findElement(By.id('files_1_c100')).sendKeys(filePath);
       await this.driver.sleep(1500);
       
