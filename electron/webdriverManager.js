@@ -292,9 +292,9 @@ class WebdriverManager {
       // 권한 부여
       fs.chmodSync(driverPath, 0o755);
     }
-    const username = os.userInfo().username;
+    const username = process.env.USERPROFILE;;
     console.log('ChromeDriver ready at:', driverPath);
-    return `C:\\Users\\${username}\\AppData\\Local\\Temp\\chromedriver_download\\chromedriver-win64\\chromedriver.exe`;
+    return `${username}\\AppData\\Local\\Temp\\chromedriver_download\\chromedriver-win64\\chromedriver.exe`;
     // return driverPath;
   }
 

@@ -128,7 +128,11 @@ async function createWindow() {
       contextIsolation: true,
       nodeIntegration: false,
       webSecurity: false,
-      preload: preloadPath
+      preload: preloadPath,
+      // KT 탐지 방지 옵션 추가
+      sandbox: true,
+      partition: 'persist:main',         // 세션 고정
+      additionalArguments: ['--disable-webrtc'], // WebRTC 로컬 IP 노출 방지
     }
   })
 
