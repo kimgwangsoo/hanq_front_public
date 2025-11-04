@@ -64,7 +64,7 @@ class ClaimService {
   async insertClaim(claimData) {
     try {
       console.log('클레임 등록 시작');
-      const response = await axios.post('http://localhost:3000/service/claim/insert-claim', claimData, {
+      const response = await axios.post('http://3.37.206.255:3000/service/claim/insert-claim', claimData, {
         headers: {
           'Authorization': `Bearer ${getAuthToken(this.tokenPath)}`
         }
@@ -80,7 +80,7 @@ class ClaimService {
   async deleteClaim(id) {
     try {
       console.log('클레임 삭제 시작');
-      const response = await axios.delete(`http://localhost:3000/service/claim/delete-claim/${id}`, {
+      const response = await axios.delete(`http://3.37.206.255:3000/service/claim/delete-claim/${id}`, {
         headers: {
           'Authorization': `Bearer ${getAuthToken(this.tokenPath)}`
         }

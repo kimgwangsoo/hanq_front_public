@@ -35,14 +35,9 @@ class RentContractAddService extends LookupService{
 
   async createAddContract(items) {
     try {
-      const token = getAuthToken(this.tokenPath);
+      // const token = getAuthToken(this.tokenPath);
       const response = await axios.post('http://3.37.206.255:3000/rent/create/add-contract', {
         items: items,
-      },
-        {
-        headers: token ? {
-          'Authorization': `Bearer ${token}`
-        } : {}
       });
       console.log(response, "response");
     } catch (error) {
