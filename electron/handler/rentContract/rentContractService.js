@@ -790,14 +790,15 @@ class RentContractService extends LookupService{
         // 다음 적용 구간이 없는 경우 처리
         if (!nextDateArray || nextDateArray.length < 1) {
           console.log("다음 적용 구간 없음");
-          await this.driver.executeScript(`
-            function getElementByXpath(path) {
-              return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-            } 
-            getElementByXpath('/html/body/div[2]/div[1]/div/div[3]/div/div[3]/div/div[2]/div/div[1]/div[1]/div/div[1]/div/div[1]/div/div[3]/div').style.top = '0px';
-          `);
-          event.sender.send('rentContractResponse', { success: false, message: '다음 적용 구간 없음' });
-          return { success: false, message: '다음 적용 구간 없음' };
+          nextDateArray = [];
+          // await this.driver.executeScript(`
+          //   function getElementByXpath(path) {
+          //     return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+          //   } 
+          //   getElementByXpath('/html/body/div[2]/div[1]/div/div[3]/div/div[3]/div/div[2]/div/div[1]/div[1]/div/div[1]/div/div[1]/div/div[3]/div').style.top = '0px';
+          // `);
+          // event.sender.send('rentContractResponse', { success: false, message: '다음 적용 구간 없음' });
+          // return { success: false, message: '다음 적용 구간 없음' };
         }
         
         const itemsArray = [];
@@ -1014,9 +1015,9 @@ class RentContractService extends LookupService{
         // 알림 처리
         try {
           await handleAlerts(this.driver);
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise(resolve => setTimeout(resolve, 5000));
           await handleAlerts(this.driver);
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise(resolve => setTimeout(resolve, 5000));
           // 성공 메시지 확인
 
           const result2 = await this.driver.switchTo().alert();

@@ -122,6 +122,7 @@ class BuyContractService {
       await waitForLoading(this.driver); // await 추가
       // 알림창 처리
       let sresult = '';
+      await new Promise(resolve => setTimeout(resolve, 1000));
       try {
         // WebDriverWait 대신 Promise 기반 대기 로직 구현 필요
         // 알림창 감지 로직
@@ -129,29 +130,34 @@ class BuyContractService {
       } catch (error) {
         console.log(error);
       }
-      
+      console.log(sresult, "sresult");
       if (sresult !== '') {
-        if (!sresult.text.includes('시설급여')) {
-          sresult.accept();
-          this.driver.executeScript(
-            "nexacro.getApplication().all[0].VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010100.npia210p01.form._div_bizFrameMain.form.div_cfmRst_btn_close_onclick();"
-          );
-          return 0;
-        } else if (sresult.text.includes("접속대기시간")) {
-          sresult.accept();
-          this.run();
-        } else if (sresult.text.includes('시설급여')) {
-          sresult.accept();
-          await this.driver.executeScript(
-            "nexacro.getApplication().all[0].VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010100.npia210p01.form._div_bizFrameMain.form.div_cfmRst_btn_apply_onclick()"
-          );
-          await waitForLoading(this.driver);
-
-          await menuMove('nprk101m01',this.driver);
+        try {
+          const alertText = await sresult.getText();
+          
+          if (!alertText.includes('시설급여')) {
+            await sresult.accept();
+            await this.driver.executeScript(
+              "nexacro.getApplication().all[0].VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010100.npia210p01.form._div_bizFrameMain.form.div_cfmRst_btn_close_onclick();"
+            );
+            return 0;
+          } else if (alertText.includes("접속대기시간")) {
+            await sresult.accept();
+          } else if (alertText.includes('시설급여')) {
+            await sresult.accept();
+            await this.driver.executeScript(
+              "nexacro.getApplication().all[0].VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010100.npia210p01.form._div_bizFrameMain.form.div_cfmRst_btn_apply_onclick()"
+            );
+            await waitForLoading(this.driver);
+          }
+        } catch (error) {
+          console.log('알림창 텍스트 처리 중 오류 발생:', error);
+          await sresult.accept();
         }
       }else{
           console.log("알림창 없음 스크립트 실행");
-
+          await waitForLoading(this.driver);
+          await new Promise(resolve => setTimeout(resolve, 1000));
           await this.driver.executeScript(
               "nexacro.getApplication().all[0].VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010100.npia210p01.form._div_bizFrameMain.form.div_cfmRst_btn_apply_onclick()"
           );

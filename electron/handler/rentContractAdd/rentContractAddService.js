@@ -465,24 +465,27 @@ class RentContractAddService extends LookupService{
                 );
                 // 알림 처리
                 try {
-                    const alertText = await handleAlerts(this.driver);
-                    console.log(alertText, "alertText");
-                    if (alertText.includes("연장대여하시겠습니까")) {
-                      try {
-                          await this.driver.wait(until.alertIsPresent(), 5000);
-                          const secondAlert = await this.driver.switchTo().alert();
-                          await secondAlert.accept();
-                          
-                          await this.driver.manage().setTimeouts({ implicit: 3000 });
-                          
-                          await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010100.npia207p01.npia207p04.form._div_bizFrameMain.form.btn_apply"]')).click();
-                          
-                          await this.driver.executeScript(
-                              `nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010100.npia207p01.form._div_bizFrameMain.form.fn_validlndPsblYn(${rpnum})`
-                          );
-                      } catch (error) {
-                          console.log('연장대여 알림 처리 중 오류:', error);
-                      }
+                  const alertText = await handleAlerts(this.driver);
+                  console.log(alertText, "alertText");
+                  if (alertText.includes("연장대여하시겠습니까")) {
+                    try {
+                        await this.driver.wait(until.alertIsPresent(), 5000);
+                        const secondAlert = await this.driver.switchTo().alert();
+                        await secondAlert.accept();
+                        
+                        await this.driver.manage().setTimeouts({ implicit: 3000 });
+                        
+                        await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010100.npia207p01.npia207p04.form._div_bizFrameMain.form.btn_apply"]')).click();
+                        
+                        await this.driver.executeScript(
+                            `nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010100.npia207p01.form._div_bizFrameMain.form.fn_validlndPsblYn(${rpnum})`
+                        );
+                    } catch (error) {
+                        console.log('연장대여 알림 처리 중 오류:', error);
+                    }
+                  }else{
+                    event.sender.send('rentContractAddResponse', { success: false, message: alertText });
+                    return { success: false, message: alertText };
                   }
                 } catch (error) {
                     console.log('알림 처리 중 오류:', error);
@@ -530,9 +533,9 @@ class RentContractAddService extends LookupService{
           try {
             await handleAlerts(this.driver);
             // await sleep(1000);
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 1000));
             await handleAlerts(this.driver);
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 1000));
             // 성공 메시지 확인
             console.log(itemsArray, "itemsArray");
            
