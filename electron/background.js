@@ -12,6 +12,7 @@ const RentContractController = require('./handler/rentContract/rentContractContr
 const RentContractAddController = require('./handler/rentContractAdd/rentContractAddController')
 const ClaimController = require('./handler/claim/claimController')
 const Doc24Controller = require('./handler/doc24/doc24Controller')
+const DisinfectionController = require('./handler/disinfection/disinfectionController')
 const { initAutoUpdater, scheduleAutoUpdate, autoUpdater } = require('./updater')
 // 컨트롤러 및 유틸리티 임포트
 const ipcManager = require('./ipcManager')
@@ -32,6 +33,7 @@ let rentContractController
 let rentContractAddController
 let claimController
 let doc24Controller
+let disinfectionController
 // Scheme 등록
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
@@ -335,6 +337,8 @@ async function initializeControllers() {
     doc24Controller = new Doc24Controller(webdriverManagerInstance);
     doc24Controller.registerHandlers();
 
+    disinfectionController = new DisinfectionController(webdriverManagerInstance);
+    disinfectionController.registerHandlers();
     console.log('컨트롤러 초기화 완료');
   } catch (error) {
     console.error('컨트롤러 초기화 중 오류:', error);

@@ -63,7 +63,11 @@ contextBridge.exposeInMainWorld('electron', {
     const doc24Channel = [
       'doc24Start',
     ];
-    
+
+    // 소독 채널
+    const disinfectionChannel = [
+      'disinfectionStart',
+    ];
     // 허용된 채널 목록
     const validChannels = [
       ...windowChannel,
@@ -76,7 +80,8 @@ contextBridge.exposeInMainWorld('electron', {
       ...authChannel,
       ...downloadChannel,
       ...claimChannel,
-      ...doc24Channel
+      ...doc24Channel,
+      ...disinfectionChannel
     ];
     
     if (validChannels.includes(channel)) {
@@ -113,6 +118,10 @@ contextBridge.exposeInMainWorld('electron', {
     const doc24Channel = [
       'doc24StartResponse',
     ];
+    // 소독 채널
+    const disinfectionChannel = [
+      'disinfectionStartResponse',
+    ];
     // 허용된 채널 목록
     const validChannels = [
       'automation-complete',
@@ -122,7 +131,8 @@ contextBridge.exposeInMainWorld('electron', {
       ...contractChannel,
       ...rentContractChannel,
       ...claimChannel,
-      ...doc24Channel
+      ...doc24Channel,
+      ...disinfectionChannel
     ];
     
     if (validChannels.includes(channel)) {
@@ -149,7 +159,8 @@ contextBridge.exposeInMainWorld('electron', {
       'reply',
       'buyContract-complete',
       'buyCancle-complete',
-      'rentContract-complete'
+      'rentContract-complete',
+      'disinfection-complete'
     ];
     
     if (validChannels.includes(channel)) {
@@ -168,7 +179,8 @@ contextBridge.exposeInMainWorld('electron', {
       'reply',
       'buyContract-complete',
       'buyCancle-complete',
-      'rentContract-complete'
+      'rentContract-complete',
+      'disinfection-complete'
     ];
     
     if (validChannels.includes(channel)) {
