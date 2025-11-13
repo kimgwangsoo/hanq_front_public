@@ -1,6 +1,6 @@
 {
   "name": "hanq",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "private": true,
   "engines": {
     "node": "^20.19.0 || >=22.12.0"
