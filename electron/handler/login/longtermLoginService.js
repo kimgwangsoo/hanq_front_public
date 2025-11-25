@@ -51,7 +51,7 @@ class LongtermLoginService {
   }
 
   // 전체 로그인 프로세스 실행 (간소화)
-  async MainLoginProcess(driver, cnum, cname, certPassword, companyId) {
+  async MainLoginProcess(driver, cnum, cname, certPassword, certType, companyId) {
     try {    
       console.log("1. 로그인 시작")
       // 1단계: 기관번호 입력 및 법인인증서 로그인
@@ -59,7 +59,7 @@ class LongtermLoginService {
       await driver.sleep(3000);
       console.log("2. 인증서 선택 시작")
       // 2단계: 인증서 선택
-      await this.SelectCertificate(driver, cname);
+      await this.SelectCertificate(driver, cname, certType);
       
       console.log("3. 비밀번호 입력 시작")
       // 3단계: 비밀번호 입력
@@ -103,7 +103,7 @@ class LongtermLoginService {
   }
 
   // 0. Chrome 브라우저 열기 및 로그인 실행
-  async LongtermLogin(driver, url, cnum, cname, certPassword, companyId) {
+  async LongtermLogin(driver, url, cnum, cname, certPassword, certType, companyId) {
     try {
       console.log('롱텀로그인시작');
       console.log(driver, "driver");
@@ -114,7 +114,7 @@ class LongtermLoginService {
       const title = await driver.getTitle();
       
       // 로그인 프로세스 실행
-      const result = await this.MainLoginProcess(driver, cnum, cname, certPassword, companyId);
+      const result = await this.MainLoginProcess(driver, cnum, cname, certPassword, certType, companyId);
       
       // 결과 처리 및 메시지 전송
       if (process.send) {
@@ -193,7 +193,7 @@ class LongtermLoginService {
   }
 
   // 2. 인증서 목록에서 기관명과 일치하는 인증서 선택
-  async SelectCertificate(driver, cname) {
+  async SelectCertificate(driver, cname, certType) {
     try {
       // 인증서 테이블이 완전히 로드될 때까지 대기 (최대 30초)
       const certTable = await driver.wait(
@@ -249,11 +249,12 @@ class LongtermLoginService {
         try {
           const row = certRows[i];
           const userCells = await row.findElements(By.css('td:nth-child(2) .xwup-tableview-cell'));
-          
+          const userTypeCells = await row.findElements(By.css('td:nth-child(1) > div:nth-child(2)'));
           if (userCells.length > 0) {
             const userName = await userCells[0].getText();
-            
-            if (userName && userName.includes(cname)) {
+            const userType = await userTypeCells[0].getText();
+            console.log(userName, userType, "userName, userType");
+            if (userName && userName.includes(cname) && userType.includes(certType)) {
               // 행이 클릭 가능할 때까지 대기
               await driver.wait(until.elementIsVisible(row), 5000);
               await driver.wait(until.elementIsEnabled(row), 5000);

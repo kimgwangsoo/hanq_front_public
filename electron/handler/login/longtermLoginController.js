@@ -22,7 +22,7 @@ class LongtermController extends BaseController {
     
     try {
       // 인수 추출
-      const [browserType, companyId, cnum, cname, certPassword] = args;
+      const [browserType, companyId, cnum, cname, certPassword, certType] = args;
       
       // 입력값 검증
       if (!cnum || !cname || !certPassword) {
@@ -37,7 +37,7 @@ class LongtermController extends BaseController {
         const url = 'https://www.longtermcare.or.kr/npbs/auth/login/loginForm.web?menuId=npe0000002160&rtnUrl=&zoomSize=';
         
         return await this.longtermLoginService.LongtermLogin(
-          driver, url, cnum, cname, certPassword, companyId
+          driver, url, cnum, cname, certPassword, certType, companyId
         );
       });
 

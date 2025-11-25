@@ -1015,9 +1015,9 @@ class RentContractService extends LookupService{
         // 알림 처리
         try {
           await handleAlerts(this.driver);
-          await new Promise(resolve => setTimeout(resolve, 5000));
+          await new Promise(resolve => setTimeout(resolve, 2000));
           await handleAlerts(this.driver);
-          await new Promise(resolve => setTimeout(resolve, 5000));
+          await new Promise(resolve => setTimeout(resolve, 2000));
           // 성공 메시지 확인
 
           const result2 = await this.driver.switchTo().alert();

@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const electron = require('electron');
 const app = electron.app || require('@electron/remote').app;
-const { waitForLoading, menuMove, getAuthToken } = require('../common/commonService');
+const { waitForLoading, menuMove, getAuthToken, handleAlerts } = require('../common/commonService');
 const os = require('os');
 class BuyContractService {
   constructor(driver) {
@@ -236,10 +236,10 @@ class BuyContractService {
             
             // 알림창 처리
             try {
-              const alert = await this.driver.switchTo().alert();
-              await alert.accept();
+              await handleAlerts(this.driver);
+              await new Promise(resolve => setTimeout(resolve, 1500));
             } catch (error) {
-              console.log('알림창 처리 중 오류:', error);
+              console.log(error);
             }
             
             // 로딩 대기

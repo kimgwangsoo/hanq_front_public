@@ -14,7 +14,7 @@ class DisinfectionService {
 
     async createCleanHistory(cleanHistoryData) {
         try {
-            const response = await axios.post('http://localhost:3000/service/disinfection', cleanHistoryData);
+            const response = await axios.post('http://3.37.206.255:3000/service/disinfection', cleanHistoryData);
             
             if (response.data.success) {
                 return { success: true, message: response.data.message, data: response.data.data };
@@ -220,26 +220,26 @@ class DisinfectionService {
                     await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.edt_wimCd.value='" + pcode + "'");
                     await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.edt_bcdNo.value='" + bcode + "'");
                     await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.btn_search"]')).click();
-            await waitForLoading(this.driver);
+                    await waitForLoading(this.driver);
                     
                     // 검색 결과 선택 및 저장
-                    // await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.grid_wimList.body.gridrow_0.cell_0_0.cellcheckbox:icontext"]')).click();
-                    // await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form.div_functionButton.form.btn_save"]')).click();
+                    await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form._div_bizFrameMain.form.grid_wimList.body.gridrow_0.cell_0_0.cellcheckbox:icontext"]')).click();
+                    await this.driver.findElement(By.xpath('//*[@id="mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04030100.form.div_functionButton.form.btn_save"]')).click();
                     
-                    // // 알림창 처리
-                    // try {
-                    //     const alert1 = await this.driver.wait(until.alertIsPresent(), 5000);
-                    //     await alert1.accept();
+                    // 알림창 처리
+                    try {
+                        const alert1 = await this.driver.wait(until.alertIsPresent(), 5000);
+                        await alert1.accept();
                         
-                    //     try {
-                    //         const alert2 = await this.driver.wait(until.alertIsPresent(), 5000);
-                    //         await alert2.accept();
-                    //     } catch (error) {
-                    //         console.log("두 번째 알림창 없음:", error);
-                    //     }
-                    // } catch (error) {
-                    //     console.log("알림창 처리 오류:", error);
-                    // }
+                        try {
+                            const alert2 = await this.driver.wait(until.alertIsPresent(), 5000);
+                            await alert2.accept();
+                        } catch (error) {
+                            console.log("두 번째 알림창 없음:", error);
+                        }
+                    } catch (error) {
+                        console.log("알림창 처리 오류:", error);
+                    }
                     
                     // CleanHistory 엔티티 형식에 맞게 데이터 생성
                     const cleanHistoryData = {
