@@ -1084,7 +1084,12 @@ class RentContractService extends LookupService{
       const products = rentCancelContractData.products;
       const cproductname2 = products.map(p => p.pitem);
       const cbcode = products.map(p => p.bcode);
-      const edate = products.map(p => p.endDate);
+      const edate = products.map(p => (p.endDate || '').replace(/\D/g, ''));
+      const normalizeProductName = (name = '') => {
+        if (name === "경사로(실외)") return "경사로(실외용)";
+        if (name === "욕창예방 매트리스") return "욕창예방매트리스";
+        return name;
+      }
       
       
       try {
@@ -1115,9 +1120,11 @@ class RentContractService extends LookupService{
       let canclec = 0;
       
       for (let j = 0; j < cproductname2.length; j++) {
-        let productName = cproductname2[j];
-        if (productName === "경사로(실외)") {
-          productName = "경사로(실외용)";
+        let productName = normalizeProductName(cproductname2[j]);
+        const targetEndDateValue = edate[0];
+        if (!targetEndDateValue) {
+          event.sender.send('rentContractCancelResponse', { success: false, message: '종료일 정보가 없습니다.' });
+          return;
         }
         
         let rplist = await this.driver.executeScript("return nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.ds_weltoolCtrLndList._viewRecords");
@@ -1132,19 +1139,19 @@ class RentContractService extends LookupService{
             if (rplist[p][0] === cbcode[j].replace(" ", "") && rplist[p][37] === productName) {
               console.log(rplist[p][24].replace(" ", ""));
               console.log(rplist[p][1].replace(" ", ""));
-              console.log(edate[0]);
+              console.log(targetEndDateValue);
               
-              const urents1 = new Date(rplist[p][24].replace(" ", "").replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")).getTime();
-              const urente1 = new Date(rplist[p][1].replace(" ", "").replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")).getTime();
-              const uedate = new Date(edate[0].replace(" ", "").replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")).getTime();
+              const targetStartDate = new Date(rplist[p][24].replace(" ", "").replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")).getTime();
+              const targetEndDate = new Date(rplist[p][1].replace(" ", "").replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")).getTime();
+              const uedate = new Date(targetEndDateValue.replace(" ", "").replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")).getTime();
               
-              if (urents1 < uedate && urente1 <= uedate) {
+              if (targetStartDate < uedate && targetEndDate <= uedate) {
                 p++;
                 console.log('1:' + p);
                 console.log('1:' + rplist.length);
-              } else if (urents1 <= uedate && urente1 > uedate) {
+              } else if (targetStartDate <= uedate && targetEndDate >= uedate) {
                 console.log('2:' + p);
-                await this.driver.executeScript(`nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.ds_weltoolCtrLndList.setColumn(${p},'AF_POF_TO_DT',${edate[0]})`);
+                await this.driver.executeScript(`nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.ds_weltoolCtrLndList.setColumn(${p},'AF_POF_TO_DT',${targetEndDateValue})`);
                 
                 try {
                   const alert = await this.driver.wait(until.alertIsPresent(), 3000);
@@ -1218,7 +1225,7 @@ class RentContractService extends LookupService{
                 await this.driver.sleep(500);
 
                 p++;
-              } else if (urents1 > uedate) {
+              } else if (targetStartDate > uedate) {
                 await this.driver.executeScript(`return nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.fn_validateChkAfPofToDt(${p}, 'delete')`);
                 
                 try {
@@ -1226,6 +1233,7 @@ class RentContractService extends LookupService{
                   await new Promise(resolve => setTimeout(resolve, 1500));
                   if (alertText.includes('지급내역')) {
                     await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form.cfn_close()");
+                    return;
                   }
                 } catch (error) {
                   await this.driver.executeScript(`nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.ds_weltoolCtrLndList.setColumn(${p}, 'CNCL_YN', '1')`);
@@ -1304,7 +1312,13 @@ class RentContractService extends LookupService{
       const products = rentStopContractData.products;
       const cproductname2 = products.map(p => p.pitem);
       const cbcode = products.map(p => p.bcode);
-      const edate = stopEndDate;
+      const sanitizeDate = (value = '') => value.toString().replace(/\D/g, '');
+      const edateList = Array.isArray(stopEndDate) ? stopEndDate.map(sanitizeDate) : [sanitizeDate(stopEndDate)];
+      const normalizeProductName = (name = '') => {
+        if (name === "경사로(실외)") return "경사로(실외용)";
+        if (name === "욕창예방 매트리스") return "욕창예방매트리스";
+        return name;
+      };
       
       try {
         await this.driver.executeScript("return nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form.cfn_close()");
@@ -1334,9 +1348,11 @@ class RentContractService extends LookupService{
       let canclec = 0;
       
       for (let j = 0; j < cproductname2.length; j++) {
-        let productName = cproductname2[j];
-        if (productName === "경사로(실외)") {
-          productName = "경사로(실외용)";
+        let productName = normalizeProductName(cproductname2[j]);
+        const targetEndDateValue = edateList[j] || edateList[0];
+        if (!targetEndDateValue) {
+          event.sender.send('rentContractStopResponse', { success: false, message: '종료일 정보가 없습니다.' });
+          return;
         }
         
         let rplist = await this.driver.executeScript("return nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.ds_weltoolCtrLndList._viewRecords");
@@ -1351,19 +1367,19 @@ class RentContractService extends LookupService{
             if (rplist[p][0] === cbcode[j].replace(" ", "") && rplist[p][37] === productName) {
               console.log(rplist[p][24].replace(" ", ""));
               console.log(rplist[p][1].replace(" ", ""));
-              console.log(edate[0]);
+              console.log(targetEndDateValue);
               
-              const urents1 = new Date(rplist[p][24].replace(" ", "").replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")).getTime();
-              const urente1 = new Date(rplist[p][1].replace(" ", "").replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")).getTime();
-              const uedate = new Date(edate[0].replace(" ", "").replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")).getTime();
+              const targetStartDate = new Date(rplist[p][24].replace(" ", "").replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")).getTime();
+              const targetEndDate = new Date(rplist[p][1].replace(" ", "").replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")).getTime();
+              const uedate = new Date(targetEndDateValue.replace(" ", "").replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")).getTime();
               
-              if (urents1 < uedate && urente1 <= uedate) {
+              if (targetStartDate < uedate && targetEndDate <= uedate) {
                 p++;
                 console.log('1:' + p);
                 console.log('1:' + rplist.length);
-              } else if (urents1 <= uedate && urente1 > uedate) {
+              } else if (targetStartDate <= uedate && targetEndDate >= uedate) {
                 console.log('2:' + p);
-                await this.driver.executeScript(`nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.ds_weltoolCtrLndList.setColumn(${p},'AF_POF_TO_DT',${edate})`);
+                await this.driver.executeScript(`nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.ds_weltoolCtrLndList.setColumn(${p},'AF_POF_TO_DT',${targetEndDateValue})`);
                 
                 try {
                   const alert = await this.driver.wait(until.alertIsPresent(), 3000);
@@ -1425,7 +1441,7 @@ class RentContractService extends LookupService{
                 
                 // await sleep(500);
                 p++;
-              } else if (urents1 > uedate) {
+              } else if (targetStartDate > uedate) {
                 await this.driver.executeScript(`return nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.fn_validateChkAfPofToDt(${p}, 'delete')`);
                 
                 try {
@@ -1435,6 +1451,7 @@ class RentContractService extends LookupService{
                     await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form.cfn_close()");
                   }
                   await alert.accept();
+                  return;
                 } catch (error) {
                   await this.driver.executeScript(`nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form._div_bizFrameMain.form.ds_weltoolCtrLndList.setColumn(${p}, 'CNCL_YN', '1')`);
                 }
@@ -1464,17 +1481,17 @@ class RentContractService extends LookupService{
           if (j === cproductname2.length - 1) {
             await this.driver.executeScript("nexacro.getApplication().mainframe.VFrameSet.HFrameSet.VFrameSetSub.framesetWork.winNPA04010200.form.cfn_close()");
 
-            await this.updateRentEndDate(rentId,edate,1);
+            await this.updateRentEndDate(rentId,edateList[0],1);
             await this.insertRentStopContract(insertRentStopContractData);
             // await this.updateContractState(orderData.id,'cok');
-            console.log(edate, "edate");
+            console.log(edateList[0], "edate");
           
             event.sender.send('rentContractStopResponse', { 
               success: true, 
               message: '계약이 정상적으로 완료되었습니다.',
               data: {
                 bcode: cbcode,
-                endDate: edate[0]
+                endDate: edateList[0]
               }
             });
           }
