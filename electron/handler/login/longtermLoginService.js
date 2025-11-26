@@ -254,6 +254,7 @@ class LongtermLoginService {
             const userName = await userCells[0].getText();
             const userType = await userTypeCells[0].getText();
             console.log(userName, userType, "userName, userType");
+            if (certType == "" || certType == null) certType = "일반";
             if (userName && userName.includes(cname) && userType.includes(certType)) {
               // 행이 클릭 가능할 때까지 대기
               await driver.wait(until.elementIsVisible(row), 5000);
